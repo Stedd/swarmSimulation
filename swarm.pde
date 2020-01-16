@@ -10,7 +10,7 @@ class Swarm {
 
   float  closeBoundary = 60;
   //float  detBoundary =5.5*closeBoundary;
-  float  detBoundary =closeBoundary+800;
+  float  detBoundary =closeBoundary+400;
 
 
   //Constructor
@@ -27,6 +27,7 @@ class Swarm {
 
 
   public void Loop() {
+    
     updateSwarm();
     mousePos.set(mouseX, mouseY);
   }
@@ -35,14 +36,16 @@ class Swarm {
     for (int i = 0; i<bots.size(); i++) {
       Bot bot = bots.get(i);
       if (i==0) {
-        if (mousePressed) {
+        if (mousePressed && (mouseButton == RIGHT)) {
+
           bot.setPos(mousePos);
         }
       }
-
+      bot.setSize(bot_Size);
       bot.Loop();
     }
   }
+
 
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
