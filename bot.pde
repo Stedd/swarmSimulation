@@ -74,7 +74,9 @@ class Bot {
     }
 
     swarmRulescombine();
-
+    
+    
+    
     //Move robot
     move();
 

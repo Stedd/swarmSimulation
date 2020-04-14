@@ -8,7 +8,7 @@ class Swarm {
 
   int             botcount = 0;
 
-  float  closeBoundary = 60;
+  float  closeBoundary = 10;
   //float  detBoundary =5.5*closeBoundary;
   float  detBoundary =closeBoundary+400;
 
@@ -35,13 +35,15 @@ class Swarm {
   public void updateSwarm() {
     for (int i = 0; i<bots.size(); i++) {
       Bot bot = bots.get(i);
+      
       if (i==0) {
         if (mousePressed && (mouseButton == RIGHT)) {
-
           bot.setPos(mousePos);
         }
       }
+      
       bot.setSize(bot_Size);
+      
       bot.Loop();
     }
   }

@@ -56,7 +56,7 @@ void buttons() {
     .setValue(40)
     .setPosition(60, 150)
     //.setSize(20, 60)
-    .setRange(0, 60)
+    .setRange(0, 300)
     ;
 
   cp5.addToggle("Detect_Zone")
@@ -66,13 +66,13 @@ void buttons() {
     ;
 
   cp5.addToggle("Safe_Zone")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, height-80)
     .setSize(20, 20)
     ;
 
   cp5.addToggle("Resultant")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, height-40)
     .setSize(20, 20)
     ;
