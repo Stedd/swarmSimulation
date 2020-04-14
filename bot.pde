@@ -16,7 +16,7 @@ class Bot {
   float   theta_ref         = 0;
   float   ang_vel           = 0; 
   float   ang               = random(2*PI);
-  float moveThreshold  = 0.1;
+  float moveThreshold       = 0.1;
 
   //Swarm rule help variable
   float w;
@@ -236,7 +236,7 @@ class Bot {
     line(pos.x, pos.y, pos.x+((closeBoundary-30)/2*cos(ang)), pos.y+((closeBoundary-30)/2*sin(ang)));
 
     //Draw robot name
-    //text("Bot "+botID, pos.x-14, pos.y-20);
+    //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
 
     //Draw Resultant vector
     if (Resultant) {

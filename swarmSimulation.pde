@@ -23,6 +23,8 @@ void setup() {
 void draw() {
   background(125);
   swarmsystem.Loop();
+
+  
 }
 
 public float tanh(float x_) {
