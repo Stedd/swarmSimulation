@@ -1,22 +1,22 @@
 class Swarm {
   //Variables
-  ArrayList<Bot>  bots;
+  ArrayList<Bot>          bots;
 
-  PVector move =  new PVector();
-  PVector mousePos =  new PVector();
-  PVector mouseMove =  new PVector();
+  PVector move         =  new PVector();
+  PVector mousePos     =  new PVector();
+  PVector mouseMove    =  new PVector();
 
-  int             botcount = 0;
+  int     botcount     = 0;
 
   float  closeBoundary = 10;
-  //float  detBoundary =5.5*closeBoundary;
-  float  detBoundary =closeBoundary+400;
+  float  detBoundary   = closeBoundary+400;
 
 
   //Constructor
   Swarm(int botcount_) {
     botcount=botcount_;
   }
+
 
   public void Init() {
     bots = new ArrayList<Bot>();
@@ -27,23 +27,23 @@ class Swarm {
 
 
   public void Loop() {
-    
     updateSwarm();
     mousePos.set(mouseX, mouseY);
   }
 
+
   public void updateSwarm() {
     for (int i = 0; i<bots.size(); i++) {
       Bot bot = bots.get(i);
-      
+
       if (i==0) {
         if (mousePressed && (mouseButton == RIGHT)) {
           bot.setPos(mousePos);
         }
       }
-      
+
       bot.setSize(bot_Size);
-      
+
       bot.Loop();
     }
   }
