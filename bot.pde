@@ -27,7 +27,7 @@ class Bot {
   int   r, g, b;
   int   botID               = 0;
   float fovWidth            = 100;
-  float fovHeight           = 200;
+  float fovHeight           = 100;
 
   //sensor variables
   float    closeBoundary    = 0;
@@ -78,7 +78,6 @@ class Bot {
     swarmRulescombine();
 
 
-
     //Move robot
     move();
 
@@ -93,7 +92,7 @@ class Bot {
     //clear resultant vectors before new run
     target_vec_res.set(0, 0);
 
-    for ( int x = 0; x<botcount*2; x++) {
+    for ( int x = 0; x<botcount; x++) {
       target_vecs[x].set(0, 0);
     }
   }
@@ -137,13 +136,17 @@ class Bot {
     //  ang_vel = sat(ang_vel, -0.025, 0.025);
     //}
 
+
+    //Stop if velocity vector is lower than the threshold
     if (!(abs(target_vec_res.mag())>moveThreshold)) {
       ang_vel=0;
     }
 
+    //iterate angle of bot
     ang += ang_vel;
 
 
+    //iterate position of bot
     vel.set(lin_vel*cos(ang), lin_vel*sin(ang));
     pos.add(vel);
 
@@ -243,16 +246,15 @@ class Bot {
     //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
 
     if (FOV_zone) {
-
       float fovAng = -ang - HALF_PI;
+      float botSize = (closeBoundary-30)/2;
       noStroke();
       fill(125, 0, 125, 30);
+      //-(closeBoundary-30)/2)
       beginShape();
-      vertex(pos.x, pos.y);
-      vertex(pos.x + (-fovWidth*cos(fovAng)) + (-fovHeight*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + (-fovHeight*cos(fovAng)) );
-      vertex(pos.x + (+fovWidth*cos(fovAng)) + (-fovHeight*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + (-fovHeight*cos(fovAng)) );
-      //vertex((mouseX+fovWidth*cos(angle))-(mouseY-100*-sin(angle)), (mouseX+fovWidth*sin(angle))+(mouseY-100*cos(angle)));
-      //vertex(mouseX+50*-sin(angle), mouseY-100*cos(angle));
+      vertex(pos.x + (botSize)*cos(-ang), pos.y - (botSize)*sin(-ang));
+      vertex(pos.x + (-fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) );
+      vertex(pos.x + (+fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) );
       endShape(CLOSE);
     }
 
