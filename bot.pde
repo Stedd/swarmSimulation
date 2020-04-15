@@ -24,8 +24,10 @@ class Bot {
   float c;
 
   //bot properties
-  int     r, g, b;
-  int    botID              = 0;
+  int   r, g, b;
+  int   botID               = 0;
+  float fovWidth            = 100;
+  float fovHeight           = 200;
 
   //sensor variables
   float    closeBoundary    = 0;
@@ -74,9 +76,9 @@ class Bot {
     }
 
     swarmRulescombine();
-    
-    
-    
+
+
+
     //Move robot
     move();
 
@@ -197,7 +199,7 @@ class Bot {
     for (int j = 0; j<botcount; j++) {
       Bot targetBot = bots.get(j);
       if (botDistVec.mag()<detBoundary) {
-      target_vecs[n].add(targetBot.botHeading());
+        target_vecs[n].add(targetBot.botHeading());
       }
     }
 
@@ -235,10 +237,25 @@ class Bot {
 
     //Draw Robot heading indicator
     strokeWeight(2);
-    line(pos.x, pos.y, pos.x+((closeBoundary-30)/2*cos(ang)), pos.y+((closeBoundary-30)/2*sin(ang)));
+    line(pos.x, pos.y, pos.x+(((closeBoundary-30)/2)*cos(ang)), pos.y+(((closeBoundary-30)/2)*sin(ang)));
 
     //Draw robot name
     //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
+
+    if (FOV_zone) {
+
+      float fovAng = -ang - HALF_PI;
+      noStroke();
+      fill(125, 0, 125, 30);
+      beginShape();
+      vertex(pos.x, pos.y);
+      vertex(pos.x + (-fovWidth*cos(fovAng)) + (-fovHeight*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + (-fovHeight*cos(fovAng)) );
+      vertex(pos.x + (+fovWidth*cos(fovAng)) + (-fovHeight*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + (-fovHeight*cos(fovAng)) );
+      //vertex((mouseX+fovWidth*cos(angle))-(mouseY-100*-sin(angle)), (mouseX+fovWidth*sin(angle))+(mouseY-100*cos(angle)));
+      //vertex(mouseX+50*-sin(angle), mouseY-100*cos(angle));
+      endShape(CLOSE);
+    }
+
 
     //Draw Resultant vector
     if (Resultant) {

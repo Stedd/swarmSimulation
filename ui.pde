@@ -7,7 +7,7 @@ float bot_Size;
 float Separation_weight, Cohesion_weight, Alignment_weight;
 
 //Debug
-boolean Detect_Zone, Safe_Zone, Resultant;
+boolean FOV_zone, Detect_Zone, Safe_Zone, Resultant;
 
 void buttons() {
   //Buttons
@@ -57,6 +57,12 @@ void buttons() {
     .setPosition(60, 150)
     //.setSize(20, 60)
     .setRange(0, 300)
+    ;
+
+  cp5.addToggle("FOV_zone")
+    .setValue(1)
+    .setPosition(20, height-160)
+    .setSize(20, 20)
     ;
 
   cp5.addToggle("Detect_Zone")
