@@ -1,7 +1,9 @@
 //Import
 import controlP5.*;
 
-
+//Util
+PFont f;
+int backgroundColor = 125;
 //Variables
 ControlP5 cp5;
 Swarm  swarmsystem;
@@ -10,7 +12,10 @@ Swarm  swarmsystem;
 void setup() {
   //Set up Canvas
   size(1200, 900);
-  background(125);
+  background(backgroundColor);
+
+  //Util
+  f = createFont("Arial", 16, true); 
 
   initMap();
 
@@ -26,11 +31,15 @@ void draw() {
   background(125);
   drawMap();
 
-  editMap();
+  if (edit) {
+    editMap();
+  }
 
   swarmsystem.Loop();
 }
 
 void keyReleased() {
-  swarmsystem.Init();
+  if (key=='r' || key == 'R') {
+    swarmsystem.Init();
+  }
 }

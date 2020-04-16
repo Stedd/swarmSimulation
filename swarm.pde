@@ -35,7 +35,6 @@ class Swarm {
   public void updateSwarm() {
     for (int i = 0; i<bots.size(); i++) {
       Bot bot = bots.get(i);
-
       if (i==0) {
         if (mousePressed && (mouseButton == RIGHT)) {
           bot.setPos(mousePos);
