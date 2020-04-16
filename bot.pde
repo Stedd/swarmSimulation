@@ -26,7 +26,7 @@ class Bot {
   //bot properties
   int   r, g, b;
   int   botID               = 0;
-  float fovWidth            = 100;
+  float fovWidth            = 20;
   float fovHeight           = 100;
 
   //sensor variables
@@ -121,14 +121,14 @@ class Bot {
 
     //linear
     lin_vel = target_vec_res.mag()*cos(theta_ref);
-    lin_vel = sat(lin_vel, -0.2, 0.5);
+    lin_vel = sat(lin_vel, 0, 0.7);
     if (!(abs(target_vec_res.mag())>moveThreshold)) {
       lin_vel=0;
     }
 
     //angular
     ang_vel = target_vec_res.mag()*sin(theta_ref);
-    ang_vel = sat(ang_vel, -0.025, 0.025);
+    ang_vel = sat(ang_vel, -0.05, 0.05);
 
     //if (lin_vel<0) {
     //  ang_vel= -1 * sat(ang_vel, -0.025, 0.025);

@@ -14,7 +14,7 @@ void buttons() {
   cp5 = new ControlP5(this);
 
   cp5.addSlider("bot_Size")
-    .setValue(130)
+    .setValue(80)
     .setPosition(20, 10)
     //.setSize(20, 60)
     .setRange(35, 150)

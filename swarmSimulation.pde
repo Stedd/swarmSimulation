@@ -12,6 +12,8 @@ void setup() {
   size(1200, 900);
   background(125);
 
+  initMap();
+
   //Initialize buttons
   buttons();
 
@@ -22,6 +24,10 @@ void setup() {
 
 void draw() {
   background(125);
+  drawMap();
+
+  editMap();
+
   swarmsystem.Loop();
 }
 
