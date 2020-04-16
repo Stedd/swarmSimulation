@@ -23,6 +23,11 @@ class Cell{
 
 void initMap() {
   // Instantiate arrays 
+  //cells = new ArrayList<Cell>();
+  //for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
+  //    cells.add(new Cell());
+  //    println(i);
+  //  }
   cells = new int[width/cellSize][height/cellSize];
   cellsBuffer = new int[width/cellSize][height/cellSize];
 
