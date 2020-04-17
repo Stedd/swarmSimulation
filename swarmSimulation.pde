@@ -33,9 +33,9 @@ void draw() {
 
   if (edit) {
     editMap();
+  } else {
+    swarmsystem.Loop();
   }
-
-  swarmsystem.Loop();
 }
 
 void keyReleased() {
