@@ -26,7 +26,7 @@ class Bot {
   //bot properties
   int   r, g, b;
   int   botID               = 0;
-  float fovWidth            = 20;
+  float fovWidth            = 100;
   float fovHeight           = 100;
 
   //sensor variables

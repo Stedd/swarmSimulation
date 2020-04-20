@@ -1,4 +1,4 @@
-int cellSize = 40;
+int cellSize = 20;
 
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
@@ -52,13 +52,8 @@ void drawRays() {
   if (edgePool.size()>0) {
     for (int i=0; i<edgePool.size(); i++) {
       stroke(0, 255, 0);
-      
       line(edgePool.get(i).sx, edgePool.get(i).sy, mouseX, mouseY);
       line(edgePool.get(i).ex, edgePool.get(i).ey, mouseX, mouseY);
-      //noStroke();
-      //fill(255, 0, 0, 100);
-      //ellipse(edgePool.get(i).sx, edgePool.get(i).sy, 10, 10);
-      //ellipse(edgePool.get(i).ex, edgePool.get(i).ey, 10, 10);
     }
   }
 }

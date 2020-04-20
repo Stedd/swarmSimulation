@@ -42,21 +42,17 @@ class Swarm {
       }
 
       bot.setSize(bot_Size);
+ 
+      bot.Loop(); 
 
-      bot.Loop();
-
-
-      if (edgePool.size()>0) {
-        for (int j=0; j<edgePool.size(); j++) {
-          stroke(255, 255, 0); 
-          line(edgePool.get(j).sx, edgePool.get(j).sy, bot.pos.x, bot.pos.y);
-          line(edgePool.get(j).ex, edgePool.get(j).ey, bot.pos.x, bot.pos.y);
-          //noStroke();
-          //fill(255, 0, 0, 100);
-          //ellipse(edgePool.get(i).sx, edgePool.get(i).sy, 10, 10);
-          //ellipse(edgePool.get(i).ex, edgePool.get(i).ey, 10, 10);
-        }
-      }
+      // Draw rays to edge nodes
+      //if (edgePool.size()>0) {
+      //  for (int j=0; j<=edgePool.size()-1; j++) {
+      //    stroke(255, 255, 0); 
+      //    line(edgePool.get(j).sx, edgePool.get(j).sy, bot.pos.x, bot.pos.y);
+      //    line(edgePool.get(j).ex, edgePool.get(j).ey, bot.pos.x, bot.pos.y);
+      //  }
+      //}
     }
   }
 
