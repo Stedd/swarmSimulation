@@ -1,4 +1,4 @@
-int cellSize = 20;
+int cellSize = 30;
 
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
@@ -31,6 +31,7 @@ class Cell {
   int[] edge_id = new int[4];
   boolean[] edge_exist = new boolean[4];
   boolean exist = false;
+  boolean discovered = false;
 }
 
 
@@ -72,22 +73,25 @@ void drawEdges() {
   }
 }
 
+
+
 void drawMap() {
   for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
-    if (cells.get(i).exist) {
-      stroke(0);
-      fill(0);
-    } else {
-      stroke(backgroundColor);
-      fill(backgroundColor);
+    if (cells.get(i).discovered) {
+      if (cells.get(i).exist) {
+        stroke(0);
+        fill(0);
+        int x = i%(width/cellSize);
+        int y = floor(i/(width/cellSize));
+        rect (x*cellSize, y*cellSize, cellSize, cellSize);
+      } else {
+        stroke(backGroundColor);
+        fill(255);
+        int x = i%(width/cellSize);
+        int y = floor(i/(width/cellSize));
+        rect (x*cellSize, y*cellSize, cellSize, cellSize);
+      }
     }
-    int x = i%(width/cellSize);
-    int y = floor(i/(width/cellSize));
-
-    if (edit) {
-      stroke(80);
-    }
-    rect (x*cellSize, y*cellSize, cellSize, cellSize);
   }
 }
 
@@ -106,11 +110,32 @@ void keyPressed() {
 }
 
 
+void drawEditMap() {
+  for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
+    if (edit) {
+      if (cells.get(i).exist) {
+        stroke(0);
+        fill(0);
+      } else {
+        stroke(255);
+        fill(255);
+      }
+      stroke(80);
+      int x = i%(width/cellSize);
+      int y = floor(i/(width/cellSize));
+
+      rect (x*cellSize, y*cellSize, cellSize, cellSize);
+    }
+  }
+}
+
 void editMap() {
 
   //clear edges
   edgePool.clear();
   for (int i= 0; i<cellsBuffer.size(); i++) {
+    cells.get(i).discovered = false;
+    cellsBuffer.get(i).discovered = false;
     for (int j= 0; j<4; j++) {
       cells.get(i).edge_id[j] = 0;
       cells.get(i).edge_exist[j] = false;
@@ -120,11 +145,7 @@ void editMap() {
   }
 
 
-  fill(255);
-  textMode(MODEL);
-  textAlign(CENTER);
-  textFont(f, 50);
-  text("Map edit mode", width/2, height/2-5);
+
 
   if (mousePressed) {
     bufferUpdated = false;

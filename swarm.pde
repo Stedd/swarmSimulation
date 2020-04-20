@@ -4,7 +4,7 @@ class Swarm {
 
   PVector move         =  new PVector();
   PVector mousePos     =  new PVector();
-  PVector mouseMove    =  new PVector();
+  //PVector mouseMove    =  new PVector();
 
   int     botcount     = 0;
 
@@ -42,8 +42,22 @@ class Swarm {
       }
 
       bot.setSize(bot_Size);
- 
-      bot.Loop(); 
+
+      bot.Loop();
+
+      int xCellOver = int(map(bot.pos.x, 0, width, 0, width/cellSize));
+      xCellOver = constrain(xCellOver, 0, width/cellSize-1);
+      int yCellOver = int(map(bot.pos.y, 0, height, 0, height/cellSize));
+      yCellOver = constrain(yCellOver, 0, height/cellSize-1);
+      int j = yCellOver*(width/cellSize) + xCellOver;
+      Cell currentBufferCell = cellsBuffer.get(j);
+      Cell currentCell = cells.get(j);
+
+      if (currentBufferCell.discovered) {
+        currentCell.discovered=false;
+      } else { 
+        currentCell.discovered=true;
+      }
 
       // Draw rays to edge nodes
       //if (edgePool.size()>0) {
@@ -60,6 +74,6 @@ class Swarm {
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
     //bots.add(new Bot(setPos));
-    bots.add(new Bot(botcount, bots, setPos.set(random(width), random(height)), closeBoundary, detBoundary, id_, round(225), round(225), round(225)));
+    bots.add(new Bot(botcount, cells, bots, setPos.set(random(width), random(height)), closeBoundary, detBoundary, id_, round(225), round(225), round(225)));
   }
 }

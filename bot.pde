@@ -2,6 +2,7 @@ class Bot {
 
   //Variables
   ArrayList<Bot>            bots;
+  ArrayList<Cell>           cells;
   int                       botcount = 0;
 
   //bot movement variables
@@ -9,6 +10,7 @@ class Bot {
   PVector vel               = new PVector();
   PVector heading_vec       = new PVector();
   PVector temp_heading_vec  = new PVector();
+  PVector camera_lens_pos   = new PVector();
   PVector target_vec_res    = new PVector();
   PVector[]target_vecs     ;
   PVector setpoint          = new PVector(width/2, height/2);
@@ -23,22 +25,25 @@ class Bot {
   int   n;
   float c;
 
-  //bot properties
-  int   r, g, b;
-  int   botID               = 0;
-  float fovWidth            = 100;
-  float fovHeight           = 100;
-
-  //sensor variables
+  //Sensor variables
   float    closeBoundary    = 0;
   float    detBoundary      = 0;
   PVector                   botDistVec  = new PVector();
 
+  //Bot properties
+  int   r, g, b;
+  int   botID               = 0;
+  float botSize             = (closeBoundary-30)/2;
+  float fovWidth            = 100;
+  float fovHeight           = 100;
+
+  //debug
   int debugTarget =5;
 
   //Contructor
-  Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, float closeBoundary_, float detBoundary_, int id_, int r_, int g_, int b_) {
+  Bot(int botcount_, ArrayList<Cell> cells_, ArrayList<Bot> bots_, PVector pos_, float closeBoundary_, float detBoundary_, int id_, int r_, int g_, int b_) {
     botcount = botcount_;
+    cells = cells_;
     bots = bots_;
     pos.set(pos_);
     closeBoundary = closeBoundary_;
@@ -76,13 +81,19 @@ class Bot {
     }
 
     swarmRulescombine();
-
+    
+    
+    
+    //Sensors
+    
 
     //Move robot
     move();
 
     //Display robot
     display();
+    
+    depthCamera();
   }
 
 
@@ -109,6 +120,14 @@ class Bot {
     }
   }
 
+  void depthCamera() {
+    
+    camera_lens_pos.set(pos.x + (botSize)*cos(-ang), pos.y - (botSize)*sin(-ang));
+    fill(0,255,0);
+    ellipse(camera_lens_pos.x,camera_lens_pos.y,10,10);
+  }
+
+
   void move() {
 
     //Robot heading
@@ -129,12 +148,6 @@ class Bot {
     //angular
     ang_vel = target_vec_res.mag()*sin(theta_ref);
     ang_vel = sat(ang_vel, -0.05, 0.05);
-
-    //if (lin_vel<0) {
-    //  ang_vel= -1 * sat(ang_vel, -0.025, 0.025);
-    //} else {
-    //  ang_vel = sat(ang_vel, -0.025, 0.025);
-    //}
 
 
     //Stop if velocity vector is lower than the threshold
@@ -247,12 +260,12 @@ class Bot {
 
     if (FOV_zone) {
       float fovAng = -ang - HALF_PI;
-      float botSize = (closeBoundary-30)/2;
+      botSize      = (closeBoundary-30)/2;
       noStroke();
       fill(125, 0, 125, 30);
       //-(closeBoundary-30)/2)
       beginShape();
-      vertex(pos.x + (botSize)*cos(-ang), pos.y - (botSize)*sin(-ang));
+      vertex(camera_lens_pos.x, camera_lens_pos.y);
       vertex(pos.x + (-fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) );
       vertex(pos.x + (+fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) );
       endShape(CLOSE);

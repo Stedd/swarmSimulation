@@ -3,7 +3,7 @@ import controlP5.*;
 
 //Util
 PFont f;
-int backgroundColor = 125;
+int backGroundColor = 125;
 
 int fcount, lastm;
 float frate;
@@ -13,11 +13,13 @@ float fint = 0.25;
 ControlP5 cp5;
 Swarm  swarmsystem;
 
+int numberOfBots = 10;
+
 
 void setup() {
   //Set up Canvas
   size(1200, 900);
-  background(backgroundColor);
+  background(backGroundColor);
 
   //Util
   f = createFont("Arial", 16, true); 
@@ -28,26 +30,31 @@ void setup() {
   buttons();
 
   //Initialize Swarm
-  swarmsystem = new Swarm(2);
+  swarmsystem = new Swarm(numberOfBots);
   swarmsystem.Init();
 }
 
 void draw() {
   frameRate(500);
-  background(125);
-
-  drawMap();
-  drawEdges();
-  //drawRays();
+  background(backGroundColor);
 
 
   if (edit) {
     editMap();
+    drawEditMap();
+
+    fill(0);
+    textMode(MODEL);
+    textAlign(CENTER);
+    textFont(f, 50);
+    text("Map edit mode", width/2, height/2-5);
+    
   } else {
+    drawMap();
+    //drawEdges();
+    //drawRays();
     swarmsystem.Loop();
   }
 
-
   fps();
-  
 }

@@ -28,6 +28,6 @@ void fps() {
 
 void keyReleased() {
   if (key=='r' || key == 'R') {
-    swarmsystem.Init();
+  swarmsystem.Init();
   }
 }
