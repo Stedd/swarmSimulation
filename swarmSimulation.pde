@@ -13,7 +13,7 @@ float fint = 0.25;
 ControlP5 cp5;
 Swarm  swarmsystem;
 
-int numberOfBots = 5;
+int numberOfBots = 1;
 
 
 void setup() {
@@ -24,7 +24,7 @@ void setup() {
   //Util
   f = createFont("Arial", 16, true); 
 
-  initMap();
+  initMap(); 
 
   //Initialize buttons
   buttons();
@@ -49,12 +49,8 @@ void draw() {
     textFont(f, 50);
     text("Map edit mode", width/2, height/2-5);
   } else {
-    //if (mousePressed) {
     drawMap();
-    drawEdges();
-    //drawRays();
-
-    //}
+    //drawEdges();
     swarmsystem.Loop();
   }
 

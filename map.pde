@@ -273,7 +273,7 @@ void updateEdges() {
         // 
         if (cellsBuffer.get(w).exist) { 
           //Has a neighbour. No edge
-          println("pixel:"+x+","+y+" has a neighbour West" );
+          println("pixel:"+x+","+y+" has a neighbour WEST" );
         } else {
           if (!cellsBuffer.get(n).edge_exist[WEST]) {
             //Create a new edge, create an id for that edge and tie it to the western edge id of this cell

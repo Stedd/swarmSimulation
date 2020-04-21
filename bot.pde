@@ -21,12 +21,13 @@ class Bot {
 
   //bot depth camera variables
   PVector camera_lens_pos   = new PVector();
-  float cameraAng           = 0;
-  float fovHorizontal       = (59*PI)/180;
-  float cameraDepth         = 100;
-  float beamLength          = 0;
-  float numberOfBeams       = 10;
 
+  float cameraAng           = 0;
+  float fovHorizontal       = (140*PI)/180;
+  float cameraDepth         = 200;
+  float beamLength          = 0;
+  float numberOfBeams       = 30;
+  PVector[] beamEndPoints;
 
   //Swarm rule help variable
   float w;
@@ -62,6 +63,11 @@ class Bot {
     target_vecs=new PVector[botcount*2];
     for ( int i = 0; i<botcount*2; i++) {
       target_vecs[i]=new PVector(0, 0);
+    }
+
+    beamEndPoints=new PVector[int(numberOfBeams)];
+    for ( int i = 0; i<numberOfBeams; i++) {
+      beamEndPoints[i]=new PVector(0, 0);
     }
   }
 
@@ -105,13 +111,22 @@ class Bot {
     cameraAng = -ang+QUARTER_PI;
     beamLength = cameraDepth+botSize;
 
-
-    for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
-      beginShape(); 
-      vertex(camera_lens_pos.x, camera_lens_pos.y); 
-      vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
-      endShape(CLOSE);
+    for ( int i = 0; i<numberOfBeams; i++) {
+      float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/numberOfBeams);
+      beamEndPoints[i]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
     }
+
+    //for (float i = 0; beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
+    //  for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
+    //    beamEndPoints[i]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+    //  }
+
+    //for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
+    //  beginShape(); 
+    //  vertex(camera_lens_pos.x, camera_lens_pos.y); 
+    //  vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
+    //  endShape(CLOSE);
+    //}
 
     //debug:This should be a single beam pointing straight forward
     //beginShape(); 
@@ -200,12 +215,18 @@ class Bot {
     if (FOV_zone) {
 
       stroke(255);
-      for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
-        beginShape(); 
-        vertex(camera_lens_pos.x, camera_lens_pos.y); 
-        vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
-        endShape(CLOSE);
+      
+      for ( int i = 0; i<numberOfBeams; i++) {
+        line(camera_lens_pos.x, camera_lens_pos.y, beamEndPoints[i].x, beamEndPoints[i].y);
       }
+
+      //for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
+      //  //beginShape(); 
+      //  //vertex(camera_lens_pos.x, camera_lens_pos.y); 
+      //  //vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
+      //  //endShape(CLOSE);
+      //  line(camera_lens_pos.x, camera_lens_pos.y, camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+      //}
 
 
       //noStroke(); 
