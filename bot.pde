@@ -2,7 +2,6 @@ class Bot {
 
   //Variables
   ArrayList<Bot>            bots;
-  ArrayList<Cell>           cells;
   int                       botcount = 0;
 
   //bot movement variables
@@ -10,7 +9,7 @@ class Bot {
   PVector vel               = new PVector();
   PVector heading_vec       = new PVector();
   PVector temp_heading_vec  = new PVector();
-  PVector camera_lens_pos   = new PVector();
+
   PVector target_vec_res    = new PVector();
   PVector[]target_vecs     ;
   PVector setpoint          = new PVector(width/2, height/2);
@@ -19,6 +18,15 @@ class Bot {
   float   ang_vel           = 0; 
   float   ang               = random(2*PI);
   float moveThreshold       = 0.1;
+
+  //bot depth camera variables
+  PVector camera_lens_pos   = new PVector();
+  float cameraAng           = 0;
+  float fovHorizontal       = (59*PI)/180;
+  float cameraDepth         = 100;
+  float beamLength          = 0;
+  float numberOfBeams       = 10;
+
 
   //Swarm rule help variable
   float w;
@@ -34,16 +42,14 @@ class Bot {
   int   r, g, b;
   int   botID               = 0;
   float botSize             = (closeBoundary-30)/2;
-  float fovWidth            = 100;
-  float fovHeight           = 100;
+
 
   //debug
   int debugTarget =5;
 
   //Contructor
-  Bot(int botcount_, ArrayList<Cell> cells_, ArrayList<Bot> bots_, PVector pos_, float closeBoundary_, float detBoundary_, int id_, int r_, int g_, int b_) {
+  Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, float closeBoundary_, float detBoundary_, int id_, int r_, int g_, int b_) {
     botcount = botcount_;
-    cells = cells_;
     bots = bots_;
     pos.set(pos_);
     closeBoundary = closeBoundary_;
@@ -81,27 +87,151 @@ class Bot {
     }
 
     swarmRulescombine();
-    
-    
-    
+
+
     //Sensors
-    
+    depthCamera();
 
     //Move robot
     move();
 
     //Display robot
     display();
-    
-    depthCamera();
+  }
+
+  void depthCamera() {
+    camera_lens_pos.set(pos.x + (botSize)*cos(-ang), pos.y - (botSize)*sin(-ang));
+    //fovAng = -ang -HALF_PI;
+    cameraAng = -ang+QUARTER_PI;
+    beamLength = cameraDepth+botSize;
+
+
+    for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
+      beginShape(); 
+      vertex(camera_lens_pos.x, camera_lens_pos.y); 
+      vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
+      endShape(CLOSE);
+    }
+
+    //debug:This should be a single beam pointing straight forward
+    //beginShape(); 
+    //vertex(camera_lens_pos.x, camera_lens_pos.y); 
+    //vertex(camera_lens_pos.x + (beamLength*cos(cameraAng)) + ((beamLength)*sin(cameraAng)), camera_lens_pos.y + (beamLength*-sin(cameraAng)) + ((beamLength)*cos(cameraAng)) );
+    //endShape();
   }
 
 
+  void move() {
+
+    //Robot heading
+    heading_vec.set(PVector.fromAngle(ang)); 
+
+    //Reference angle
+    theta_ref= target_vec_res.heading()-heading_vec.heading(); 
+
+    //Speed controllers
+
+    //linear
+    lin_vel = target_vec_res.mag()*cos(theta_ref); 
+    lin_vel = sat(lin_vel, 0, 0.7); 
+    if (!(abs(target_vec_res.mag())>moveThreshold)) {
+      lin_vel=0;
+    }
+
+    //angular
+    ang_vel = target_vec_res.mag()*sin(theta_ref); 
+    ang_vel = sat(ang_vel, -0.05, 0.05); 
+
+
+    //Stop if velocity vector is lower than the threshold
+    if (!(abs(target_vec_res.mag())>moveThreshold)) {
+      ang_vel=0;
+    }
+
+    //iterate angle of bot
+    ang += ang_vel; 
+
+
+    //iterate position of bot
+    vel.set(lin_vel*cos(ang), lin_vel*sin(ang)); 
+    pos.add(vel); 
+
+    //DEBUG OPTIONS
+    if (botID == debugTarget) {
+      //println(theta_ref);
+    }
+  }
+
+  void display() {
+    stroke(255); 
+    strokeWeight(1); 
+
+    //Bot info
+    //fovAng = -ang - HALF_PI; 
+    botSize      = (closeBoundary-30)/2; 
+
+    //Draw detection zone
+    if (Detect_Zone) {
+      stroke(0, 255, 255); 
+      noFill(); 
+      ellipse(pos.x, pos.y, detBoundary, detBoundary);
+    }
+
+
+    //Draw safe zone
+    if (Safe_Zone) {
+      stroke(255, 255, 255, 255); 
+      noFill(); 
+      ellipse(pos.x, pos.y, closeBoundary, closeBoundary);
+    }
+
+    //Draw Robot frame
+    stroke(0); 
+    fill(r, g, b); 
+    ellipse(pos.x, pos.y, closeBoundary-30, closeBoundary-30); 
+
+    //Draw Robot heading indicator
+    strokeWeight(2); 
+    line(pos.x, pos.y, pos.x+(((closeBoundary-30)/2)*cos(ang)), pos.y+(((closeBoundary-30)/2)*sin(ang))); 
+
+    //Draw robot name
+    //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
+
+    if (FOV_zone) {
+
+      stroke(255);
+      for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
+        beginShape(); 
+        vertex(camera_lens_pos.x, camera_lens_pos.y); 
+        vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
+        endShape(CLOSE);
+      }
+
+
+      //noStroke(); 
+      //fill(125, 0, 125, 30); 
+      ////-(closeBoundary-30)/2)
+      //beginShape(); 
+      //vertex(camera_lens_pos.x, camera_lens_pos.y); 
+      //vertex(pos.x + (-fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) ); 
+      //vertex(pos.x + (+fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) ); 
+      //endShape(CLOSE);
+    }
+
+
+    //Draw Resultant vector
+    if (Resultant) {
+      strokeWeight(1); 
+      stroke(0, 0, 255); 
+      line(pos.x, pos.y, pos.x+10*target_vec_res.x, pos.y+10*target_vec_res.y);
+    }
+  }
+
   void swarmRulesInit() {
-    n=0;
-    c=0.0;
+    n=0; 
+    c=0.0; 
     //clear resultant vectors before new run
-    target_vec_res.set(0, 0);
+    target_vec_res.set(0, 0); 
 
     for ( int x = 0; x<botcount; x++) {
       target_vecs[x].set(0, 0);
@@ -120,69 +250,20 @@ class Bot {
     }
   }
 
-  void depthCamera() {
-    
-    camera_lens_pos.set(pos.x + (botSize)*cos(-ang), pos.y - (botSize)*sin(-ang));
-    fill(0,255,0);
-    ellipse(camera_lens_pos.x,camera_lens_pos.y,10,10);
-  }
-
-
-  void move() {
-
-    //Robot heading
-    heading_vec.set(PVector.fromAngle(ang));
-
-    //Reference angle
-    theta_ref= target_vec_res.heading()-heading_vec.heading();
-
-    //Speed controllers
-
-    //linear
-    lin_vel = target_vec_res.mag()*cos(theta_ref);
-    lin_vel = sat(lin_vel, 0, 0.7);
-    if (!(abs(target_vec_res.mag())>moveThreshold)) {
-      lin_vel=0;
-    }
-
-    //angular
-    ang_vel = target_vec_res.mag()*sin(theta_ref);
-    ang_vel = sat(ang_vel, -0.05, 0.05);
-
-
-    //Stop if velocity vector is lower than the threshold
-    if (!(abs(target_vec_res.mag())>moveThreshold)) {
-      ang_vel=0;
-    }
-
-    //iterate angle of bot
-    ang += ang_vel;
-
-
-    //iterate position of bot
-    vel.set(lin_vel*cos(ang), lin_vel*sin(ang));
-    pos.add(vel);
-
-    //DEBUG OPTIONS
-    if (botID == debugTarget) {
-      //println(theta_ref);
-    }
-  }
-
   void ruleSeparation() {
-    w=Separation_weight;
+    w=Separation_weight; 
     //Read position of other bots
     for (int j = 0; j<botcount; j++) {
       if (j!=botID) {
-        Bot targetBot = bots.get(j);
-        PVector.sub(pos(), targetBot.pos(), botDistVec);
+        Bot targetBot = bots.get(j); 
+        PVector.sub(pos(), targetBot.pos(), botDistVec); 
         if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()<closeBoundary) {
-            target_vecs[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6))));
-            stroke(255, 0, 0, 100);
+            target_vecs[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6)))); 
+            stroke(255, 0, 0, 100); 
             //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
           }
-          n+=1;
+          n+=1; 
           c+=1.0f;
         }
       }
@@ -190,19 +271,19 @@ class Bot {
   }
 
   void ruleCohesion() {
-    w=Cohesion_weight;
+    w=Cohesion_weight; 
     //Read position of other bots
     for (int j = 0; j<botcount; j++) {
       if (j!=botID) {
-        Bot targetBot = bots.get(j);
-        PVector.sub(pos(), targetBot.pos(), botDistVec);
+        Bot targetBot = bots.get(j); 
+        PVector.sub(pos(), targetBot.pos(), botDistVec); 
         if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()>closeBoundary) {
-            target_vecs[n].set(botDistVec.mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
-            stroke(0, 255, 0, 100);
+            target_vecs[n].set(botDistVec.mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6))))); 
+            stroke(0, 255, 0, 100); 
             //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
           }
-          n+=1;
+          n+=1; 
           c+=1.0f;
         }
       }
@@ -210,82 +291,30 @@ class Bot {
   }
 
   void ruleAlignment() {
-    w=Alignment_weight;
+    w=Alignment_weight; 
     //Calculate average heading of group
     for (int j = 0; j<botcount; j++) {
-      Bot targetBot = bots.get(j);
+      Bot targetBot = bots.get(j); 
       if (botDistVec.mag()<detBoundary) {
         target_vecs[n].add(targetBot.botHeading());
       }
     }
 
-    target_vecs[n].normalize(target_vecs[n]);
-    PVector.sub(heading_vec.normalize(), target_vecs[n], temp_heading_vec);
-    target_vecs[n].mult(w*temp_heading_vec.mag());
+    target_vecs[n].normalize(target_vecs[n]); 
+    PVector.sub(heading_vec.normalize(), target_vecs[n], temp_heading_vec); 
+    target_vecs[n].mult(w*temp_heading_vec.mag()); 
 
-    n+=1;
+    n+=1; 
     c+=1.0;
   }
 
-  void display() {
-    stroke(255);
-    strokeWeight(1);
-
-    //Draw detection zone
-    if (Detect_Zone) {
-      stroke(0, 255, 255);
-      noFill();
-      ellipse(pos.x, pos.y, detBoundary, detBoundary);
-    }
-
-
-    //Draw safe zone
-    if (Safe_Zone) {
-      stroke(255, 255, 255, 255);
-      noFill();
-      ellipse(pos.x, pos.y, closeBoundary, closeBoundary);
-    }
-
-    //Draw Robot frame
-    stroke(0);
-    fill(r, g, b);
-    ellipse(pos.x, pos.y, closeBoundary-30, closeBoundary-30);
-
-    //Draw Robot heading indicator
-    strokeWeight(2);
-    line(pos.x, pos.y, pos.x+(((closeBoundary-30)/2)*cos(ang)), pos.y+(((closeBoundary-30)/2)*sin(ang)));
-
-    //Draw robot name
-    //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
-
-    if (FOV_zone) {
-      float fovAng = -ang - HALF_PI;
-      botSize      = (closeBoundary-30)/2;
-      noStroke();
-      fill(125, 0, 125, 30);
-      //-(closeBoundary-30)/2)
-      beginShape();
-      vertex(camera_lens_pos.x, camera_lens_pos.y);
-      vertex(pos.x + (-fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) );
-      vertex(pos.x + (+fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) );
-      endShape(CLOSE);
-    }
-
-
-    //Draw Resultant vector
-    if (Resultant) {
-      strokeWeight(1);
-      stroke(0, 0, 255);
-      line(pos.x, pos.y, pos.x+10*target_vec_res.x, pos.y+10*target_vec_res.y);
-    }
-  }
 
   //return position
   public void setPos(PVector newPos_) {
     pos.set(newPos_);
   }
   public void setSize(float newSize_) {
-    closeBoundary = newSize_;
+    closeBoundary = newSize_; 
     detBoundary =closeBoundary+200;
   }
   public PVector pos() {

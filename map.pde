@@ -1,4 +1,4 @@
-int cellSize = 30;
+int cellSize =30;
 
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
@@ -79,13 +79,15 @@ void drawMap() {
   for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
     if (cells.get(i).discovered) {
       if (cells.get(i).exist) {
-        stroke(0);
+        //stroke(0);
+        noStroke();
         fill(0);
         int x = i%(width/cellSize);
         int y = floor(i/(width/cellSize));
         rect (x*cellSize, y*cellSize, cellSize, cellSize);
       } else {
-        stroke(backGroundColor);
+        //stroke(backGroundColor);
+        noStroke();
         fill(255);
         int x = i%(width/cellSize);
         int y = floor(i/(width/cellSize));
@@ -114,13 +116,15 @@ void drawEditMap() {
   for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
     if (edit) {
       if (cells.get(i).exist) {
-        stroke(0);
+        //stroke(0);
+        noStroke();
         fill(0);
       } else {
-        stroke(255);
+        //stroke(255);
+        noStroke();
         fill(255);
       }
-      stroke(80);
+      //stroke(80);
       int x = i%(width/cellSize);
       int y = floor(i/(width/cellSize));
 
