@@ -23,8 +23,12 @@ void setup() {
 
   //Util
   f = createFont("Arial", 16, true); 
-
+  
+  //initialize map arrays
   initMap(); 
+  
+  //Load pre-generated map
+  loadMap();
 
   //Initialize buttons
   buttons();
@@ -35,7 +39,7 @@ void setup() {
 }
 
 void draw() {
-  frameRate(60);
+  frameRate(600);
   background(backGroundColor);
 
 

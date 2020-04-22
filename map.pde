@@ -1,4 +1,4 @@
-int cellSize =10;
+int cellSize =20;
 
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
@@ -46,6 +46,56 @@ void initMap() {
     cells.add(new Cell());
     cellsBuffer.add(new Cell());
   }
+}
+
+void loadMap() {
+  //Draw pre generated map
+
+  //some for loops drawing the map.
+  for (int x = 1; x < (width/cellSize)-1; x++) {
+    for (int y = 1; y < (height/cellSize)-1; y++) {
+      int i = y*(width/cellSize) + x;
+      Cell currentCell = cells.get(i);
+      currentCell.exist=true;
+    }
+  }
+
+  //some for loops drawing the map.
+  for (int x = 2; x < (width/cellSize)-2; x++) {
+    for (int y = 2; y < (height/cellSize)-2; y++) {
+      int i = y*(width/cellSize) + x;
+      Cell currentCell = cells.get(i);
+      currentCell.exist=false;
+    }
+  }
+  
+    //some for loops drawing the map.
+  for (int x = 14; x < (width/cellSize)-14; x++) {
+    for (int y = 14; y < (height/cellSize)-14; y++) {
+      int i = y*(width/cellSize) + x;
+      Cell currentCell = cells.get(i);
+      currentCell.exist=true;
+    }
+  }
+  
+    //some for loops drawing the map.
+  for (int x = 15; x < (width/cellSize)-15; x++) {
+    for (int y = 15; y < (height/cellSize)-15; y++) {
+      int i = y*(width/cellSize) + x;
+      Cell currentCell = cells.get(i);
+      currentCell.exist=false;
+    }
+  }
+
+
+  for (int x=0; x<((width/cellSize)*(height/cellSize)); x++) {
+    Cell currentBufferCell = cellsBuffer.get(x);
+    Cell currentCell = cells.get(x);
+    currentBufferCell.exist = currentCell.exist;
+  }
+
+  //update edges
+  updateEdges();
 }
 
 
