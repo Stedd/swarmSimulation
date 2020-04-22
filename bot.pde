@@ -23,8 +23,8 @@ class Bot {
   PVector camera_lens_pos   = new PVector();
 
   float cameraAng           = 0;
-  float fovHorizontal       = (140*PI)/180;
-  float cameraDepth         = 200;
+  float fovHorizontal       = (60*PI)/180;
+  float cameraDepth         = 300;
   float beamLength          = 0;
   float numberOfBeams       = 30;
   PVector[] beamEndPoints;
