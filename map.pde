@@ -1,4 +1,4 @@
-int cellSize =20;
+int cellSize =8;
 
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;

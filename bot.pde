@@ -28,6 +28,7 @@ class Bot {
   float beamLength          = 0;
   float numberOfBeams       = 30;
   PVector[] beamEndPoints;
+  PVector[] beamEndPointsIntersect;
 
   //Swarm rule help variable
   float w;
@@ -66,8 +67,10 @@ class Bot {
     }
 
     beamEndPoints=new PVector[int(numberOfBeams)];
+    beamEndPointsIntersect=new PVector[int(numberOfBeams)];
     for ( int i = 0; i<numberOfBeams; i++) {
       beamEndPoints[i]=new PVector(0, 0);
+      beamEndPointsIntersect[i]=new PVector(0, 0);
     }
   }
 
@@ -155,17 +158,18 @@ class Bot {
 
     //angular
     ang_vel = target_vec_res.mag()*sin(theta_ref); 
-    ang_vel = sat(ang_vel, -0.05, 0.05); 
+    ang_vel = sat(ang_vel, -0.025, 0.025); 
 
 
     //Stop if velocity vector is lower than the threshold
     if (!(abs(target_vec_res.mag())>moveThreshold)) {
       ang_vel=0;
     }
-
+    //ang_vel=-0.0015;
     //iterate angle of bot
     ang += ang_vel; 
-
+    
+    lin_vel = 0.5;
 
     //iterate position of bot
     vel.set(lin_vel*cos(ang), lin_vel*sin(ang)); 
@@ -214,10 +218,10 @@ class Bot {
 
     if (FOV_zone) {
 
-      stroke(255);
+      stroke(0,255,0,125);
       
       for ( int i = 0; i<numberOfBeams; i++) {
-        line(camera_lens_pos.x, camera_lens_pos.y, beamEndPoints[i].x, beamEndPoints[i].y);
+        line(camera_lens_pos.x, camera_lens_pos.y, beamEndPointsIntersect[i].x, beamEndPointsIntersect[i].y);
       }
 
       //for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {

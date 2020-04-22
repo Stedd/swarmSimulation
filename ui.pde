@@ -60,7 +60,7 @@ void buttons() {
     ;
 
   cp5.addToggle("FOV_zone")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, height-160)
     .setSize(20, 20)
     ;
