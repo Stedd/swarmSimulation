@@ -1,46 +1,86 @@
 //Import
 import controlP5.*;
 
-
 //Variables
 ControlP5 cp5;
 Swarm  swarmsystem;
 
+//Util
+PFont f;
+int backGroundColor  = 125;
+
+int fcount, lastm, startFrame;
+float frate;
+float fint           = 0.25;
+
+//Simulation Parameters
+int numberOfBots = 6;
+
+float time;
+float dt                      = 0.016;//16ms per frame
+
+float pixelsPerMeter          = 50;
+int   cellSize                = 7;
+float realCellSize            = float(cellSize)/pixelsPerMeter;
+
+float depthCameraMinRange     = 0.55;
+float depthCameraMaxRange     = 2.8;
+float depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
+
+float realBotMaxLinearSpeed   = 0.25; //[m/s]
+float realBotMaxAngularSpeed  = QUARTER_PI; //[rad/s]
+
+float simBotMaxLinearSpeed   = (realBotMaxLinearSpeed/pixelsPerMeter)/dt; //[m/s]
+float simBotMaxAngularSpeed  = realBotMaxAngularSpeed*dt; //[rad/s]
+
 
 void setup() {
   //Set up Canvas
-  size(1200, 900);
-  background(125);
+  size(1300, 900);
+  background(backGroundColor);
+
+  //Util
+  f = createFont("Arial", 16, true); 
+  startFrame = 0;
+
+  //initialize map arrays
+  initMap(); 
+
+  //Load pre-generated map
+  loadMap();
 
   //Initialize buttons
   buttons();
 
   //Initialize Swarm
-  swarmsystem = new Swarm(100);
+  swarmsystem = new Swarm(numberOfBots);
   swarmsystem.Init();
 }
 
 void draw() {
-  background(125);
-  swarmsystem.Loop();
+  frameRate(600);
+  background(backGroundColor);
 
-  
-}
 
-public float tanh(float x_) {
-  x_ *= 1e-2;
-  return (exp(x_)-exp(-x_))/(exp(x_)+exp(-x_));
-}
+  if (edit) {
+    editMap();
+    drawEditMap();
 
-public float sat(float val_, float min_, float max_) {
-  if (val_>max_) {
-    val_ = max_;
-  } else if (val_<min_) {
-    val_ = min_;
+    textMode(MODEL);
+    textAlign(CENTER);
+    textFont(f, 50);
+    fill(0, 255, 255);
+    text("Map edit mode", width/2, height/2-5);
+  } else {
+    if (Draw_Map) {
+      drawMap();
+    }
+
+    //drawEdges();
+    swarmsystem.Loop();
   }
-  return val_;
-}
 
-void keyReleased() {
-  swarmsystem.Init();
+  time();
+
+  fps();
 }
