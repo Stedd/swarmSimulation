@@ -1,4 +1,5 @@
-int cellSize =8;
+
+
 
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
@@ -41,7 +42,7 @@ void initMap() {
   cellsBuffer     = new ArrayList<Cell>();
   edgePool        = new ArrayList<Edge>();
 
-  println("generating" + ((width/cellSize)*(height/cellSize)) + "cells");
+  println("Map contains " + ((width/cellSize)*(height/cellSize)) + " cells (" + width/cellSize+ " * "+height/cellSize +") Each cell is " + realCellSize*100 + "cm * "+ realCellSize*100 + "cm. The total map is: " + (width/cellSize)*realCellSize+ "m * "+(height/cellSize)*realCellSize +"m");
   for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
     cells.add(new Cell());
     cellsBuffer.add(new Cell());
@@ -50,37 +51,37 @@ void initMap() {
 
 void loadMap() {
   //Draw pre generated map
-
+  int offset = 1;
   //some for loops drawing the map.
-  for (int x = 1; x < (width/cellSize)-1; x++) {
-    for (int y = 1; y < (height/cellSize)-1; y++) {
+  for (int x = offset; x < (width/cellSize)-offset; x++) {
+    for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
       currentCell.exist=true;
     }
   }
-
+  offset = 2;
   //some for loops drawing the map.
-  for (int x = 2; x < (width/cellSize)-2; x++) {
-    for (int y = 2; y < (height/cellSize)-2; y++) {
+  for (int x = offset; x < (width/cellSize)-offset; x++) {
+    for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
       currentCell.exist=false;
     }
   }
-  
-    //some for loops drawing the map.
-  for (int x = 14; x < (width/cellSize)-14; x++) {
-    for (int y = 14; y < (height/cellSize)-14; y++) {
+  offset = 14;
+  //some for loops drawing the map.
+  for (int x = offset; x < (width/cellSize)-offset; x++) {
+    for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
       currentCell.exist=true;
     }
   }
-  
-    //some for loops drawing the map.
-  for (int x = 15; x < (width/cellSize)-15; x++) {
-    for (int y = 15; y < (height/cellSize)-15; y++) {
+  offset = 15;
+  //some for loops drawing the map.
+  for (int x = offset; x < (width/cellSize)-offset; x++) {
+    for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
       currentCell.exist=false;
@@ -156,6 +157,8 @@ void keyPressed() {
     //Recalculate the shapes
     if (!edit) {
       println("calculating edges");
+      //restart timer
+      startFrame = frameCount;
       updateEdges();
     }
   }
@@ -251,24 +254,24 @@ void updateEdges() {
 
         int xPixel = x*cellSize;
         int yPixel = y*cellSize;
-        println("pixel:("+xPixel+","+ yPixel + ")index: " + i);
+        //println("pixel:("+xPixel+","+ yPixel + ")index: " + i);
 
         //Neighbour checks 
         // 
         if (cellsBuffer.get(n).exist) { 
           //Has a neighbour. No edge
-          println("pixel:"+x+","+y+" has a neighbour NORTH" );
+          //println("pixel:"+x+","+y+" has a neighbour NORTH" );
         } else {
           if (!cellsBuffer.get(w).edge_exist[NORTH]) {
             //Create a new edge, create an id for that edge and tie it to the northern edge id of this cell
-            println("Creating Norhtern edge to pixel:"+x+","+y);
+            //println("Creating Norhtern edge to pixel:"+x+","+y);
             edgePool.add(new Edge(xPixel, yPixel, xPixel+cellSize, yPixel));
             currentBufferCell.edge_id[NORTH] = edgePool.size()-1;
-            println("edgepoolsize:"+edgePool.size());
+            //println("edgepoolsize:"+edgePool.size());
             currentBufferCell.edge_exist[NORTH] = true;
           } else {
             //Change end point of northern edge of western neighbour cell
-            println("Western neigbour of pixel:"+x+","+y+" has a NORTHERN edge. Extending");
+            //println("Western neigbour of pixel:"+x+","+y+" has a NORTHERN edge. Extending");
             edgePool.get(cellsBuffer.get(w).edge_id[NORTH]).ex += cellSize;
             currentBufferCell.edge_id[NORTH] = cellsBuffer.get(w).edge_id[NORTH];
             currentBufferCell.edge_exist[NORTH] = true;
@@ -279,18 +282,18 @@ void updateEdges() {
         // 
         if (cellsBuffer.get(s).exist) { 
           //Has a neighbour. No edge
-          println("pixel:"+x+","+y+" has a neighbour SOUTH" );
+          //println("pixel:"+x+","+y+" has a neighbour SOUTH" );
         } else {
           if (!cellsBuffer.get(w).edge_exist[SOUTH]) {
             //Create a new edge, create an id for that edge and tie it to the southern edge id of this cell
-            println("Creating Southern edge to pixel:"+x+","+y);
+            //println("Creating Southern edge to pixel:"+x+","+y);
             edgePool.add(new Edge(xPixel, yPixel+cellSize, xPixel+cellSize, yPixel+cellSize));
             currentBufferCell.edge_id[SOUTH] = edgePool.size()-1;
-            println("edgepoolsize:"+edgePool.size());
+            //println("edgepoolsize:"+edgePool.size());
             currentBufferCell.edge_exist[SOUTH] = true;
           } else {
             //Change end point of northern edge of western neighbour cell
-            println("Western neigbour of pixel:"+x+","+y+" has a SOUTHERN edge. Extending");
+            //println("Western neigbour of pixel:"+x+","+y+" has a SOUTHERN edge. Extending");
             edgePool.get(cellsBuffer.get(w).edge_id[SOUTH]).ex += cellSize;
             currentBufferCell.edge_id[SOUTH] = cellsBuffer.get(w).edge_id[SOUTH];
             currentBufferCell.edge_exist[SOUTH] = true;
@@ -301,18 +304,18 @@ void updateEdges() {
         // 
         if (cellsBuffer.get(e).exist) { 
           //Has a neighbour. No edge
-          println("pixel:"+x+","+y+" has a neighbour EAST" );
+          //println("pixel:"+x+","+y+" has a neighbour EAST" );
         } else {
           if (!cellsBuffer.get(n).edge_exist[EAST]) {
             //Create a new edge, create an id for that edge and tie it to the eastern edge id of this cell
-            println("Creating Eastern edge to pixel:"+x+","+y);
+            //println("Creating Eastern edge to pixel:"+x+","+y);
             edgePool.add(new Edge(xPixel+cellSize, yPixel, xPixel+cellSize, yPixel+cellSize));
             currentBufferCell.edge_id[EAST] = edgePool.size()-1;
-            println("edgepoolsize:"+edgePool.size());
+            //println("edgepoolsize:"+edgePool.size());
             currentBufferCell.edge_exist[EAST] = true;
           } else {
             //Change end point of eastern edge of northern neighbour cell
-            println("Northern neigbour of pixel:"+x+","+y+" has a EASTERN edge. Extending");
+            //println("Northern neigbour of pixel:"+x+","+y+" has a EASTERN edge. Extending");
             edgePool.get(cellsBuffer.get(n).edge_id[EAST]).ey += cellSize;
             currentBufferCell.edge_id[EAST] = cellsBuffer.get(n).edge_id[EAST];
             currentBufferCell.edge_exist[EAST] = true;
@@ -323,25 +326,25 @@ void updateEdges() {
         // 
         if (cellsBuffer.get(w).exist) { 
           //Has a neighbour. No edge
-          println("pixel:"+x+","+y+" has a neighbour WEST" );
+          //println("pixel:"+x+","+y+" has a neighbour WEST" );
         } else {
           if (!cellsBuffer.get(n).edge_exist[WEST]) {
             //Create a new edge, create an id for that edge and tie it to the western edge id of this cell
-            println("Creating Western edge to pixel:"+x+","+y);
+            //println("Creating Western edge to pixel:"+x+","+y);
             edgePool.add(new Edge(xPixel, yPixel, xPixel, yPixel+cellSize));
             currentBufferCell.edge_id[WEST] = edgePool.size()-1;
-            println("edgepoolsize:"+edgePool.size());
+            //println("edgepoolsize:"+edgePool.size());
             currentBufferCell.edge_exist[WEST] = true;
           } else {
             //Change end point of eastern edge of northern neighbour cell
-            println("Northern neigbour of pixel:"+x+","+y+" has a WESTERN edge. Extending");
+            //println("Northern neigbour of pixel:"+x+","+y+" has a WESTERN edge. Extending");
             edgePool.get(cellsBuffer.get(n).edge_id[WEST]).ey += cellSize;
             currentBufferCell.edge_id[WEST] = cellsBuffer.get(n).edge_id[WEST];
             currentBufferCell.edge_exist[WEST] = true;
           }
         }
 
-        println("NEXT");
+        //println("NEXT");
       }
     }
   }

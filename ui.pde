@@ -7,17 +7,17 @@ float bot_Size;
 float Separation_weight, Cohesion_weight, Alignment_weight;
 
 //Debug
-boolean FOV_zone, Detect_Zone, Safe_Zone, Resultant;
+boolean Draw_Map, Depth_camera_zone, Detect_Zone, Safe_Zone, Resultant;
 
 void buttons() {
   //Buttons
   cp5 = new ControlP5(this);
 
   cp5.addSlider("bot_Size")
-    .setValue(80)
+    .setValue(50)
     .setPosition(20, 10)
     //.setSize(20, 60)
-    .setRange(35, 150)
+    .setRange(10, 100)
     ;
 
   cp5.addToggle("Separation")
@@ -47,7 +47,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Alignment")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, 150)
     .setSize(20, 20)
     ;
@@ -59,7 +59,13 @@ void buttons() {
     .setRange(0, 300)
     ;
 
-  cp5.addToggle("FOV_zone")
+  cp5.addToggle("Draw_Map")
+    .setValue(1)
+    .setPosition(20, height-200)
+    .setSize(20, 20)
+    ;
+
+  cp5.addToggle("Depth_camera_zone")
     .setValue(1)
     .setPosition(20, height-160)
     .setSize(20, 20)

@@ -12,6 +12,13 @@ public float sat(float val_, float min_, float max_) {
   return val_;
 }
 
+void time() {
+  time = dt*(float(frameCount)-float(startFrame));
+  fill(0, 50, 155);
+  textFont(f, 20);
+  text("t: " + nf(time, 4, 2) + " s", width-320, 40);
+}
+
 void fps() {
   fcount += 1;
   int m = millis();
@@ -21,13 +28,13 @@ void fps() {
     lastm = m;
     //println("fps: " + frate);
   }
-  fill(0);
-  textFont(f, 16);
-  text("fps: " + frate, width-100, 20);
+  fill(0, 50, 155);
+  textFont(f, 20);
+  text("FPS: " + frate, width-150, 40);
 }
 
 void keyReleased() {
   if (key=='r' || key == 'R') {
-  swarmsystem.Init();
+    swarmsystem.Init();
   }
 }

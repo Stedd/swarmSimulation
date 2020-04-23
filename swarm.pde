@@ -4,12 +4,8 @@ class Swarm {
 
   PVector move         =  new PVector();
   PVector mousePos     =  new PVector();
-  //PVector mouseMove    =  new PVector();
 
   int     botcount     = 0;
-
-  float  closeBoundary = 10;
-  float  detBoundary   = closeBoundary+400;
 
 
   //Constructor
@@ -56,6 +52,7 @@ class Swarm {
         boolean wallintersectionExists = false;
         boolean botintersectionExists = false;
         //rays
+        //PVector p1 = new PVector(bot.beamStartPoints[k].x, bot.beamStartPoints[k].y);
         PVector p2 = new PVector(bot.beamEndPoints[k].x, bot.beamEndPoints[k].y);
         PVector sub = PVector.sub(p2, p1);
         // y = a * x + b
@@ -71,7 +68,7 @@ class Swarm {
           if (!(ii == i)) {
             float A = (1 + a * a);
             float B = (2 * a *( b - targetBot.pos.y) - 2 * targetBot.pos.x);
-            float C = (targetBot.pos.x * targetBot.pos.x + (b - targetBot.pos.y) * (b - targetBot.pos.y)) - (targetBot.botSize * targetBot.botSize);
+            float C = (targetBot.pos.x * targetBot.pos.x + (b - targetBot.pos.y) * (b - targetBot.pos.y)) - (targetBot.botSizePixels/2 * targetBot.botSizePixels/2);
             float delta = B * B - 4 * A * C;
             if (delta >= 0) {
               float x1 = (-B - sqrt(delta)) / (2 * A);
@@ -123,7 +120,7 @@ class Swarm {
               wallintersectionExists = true;
 
               PVector closestIntersection     = PVector.sub(p1, closestIntersectionPoint);
-              PVector intersectionPoint = new PVector(x, y);
+              PVector intersectionPoint = new PVector(x+random(-3, 3), y);
               PVector.sub(p1, intersectionPoint, distanceToIntersection);
               //println(distanceToIntersection);
               if (distanceToIntersection.mag()<closestIntersection.mag()) {
@@ -135,7 +132,7 @@ class Swarm {
           if (wallintersectionExists&&(closestIntersectionPoint.x<width)&&(closestIntersectionPoint.y<height)) {
             fill(255, 0, 0);
             noStroke();
-            ellipse(closestIntersectionPoint.x, closestIntersectionPoint.y, 6, 6);
+            //ellipse(closestIntersectionPoint.x, closestIntersectionPoint.y, 6, 6);
 
             //discoverCell(closestIntersectionPoint);
 
@@ -151,11 +148,14 @@ class Swarm {
 
       //for loop through beams
       for (int a=0; a<bot.numberOfBeams; a++) {
-        PVector start = bot.camera_lens_pos;
-        PVector end   = bot.beamEndPointsIntersect[a];
-        PVector diff = PVector.sub(end, start);
-        for (float b=0; b<1; b+=10) {
-          discoverCell(PVector.add(start,PVector.mult(diff,b)));
+        if (PVector.sub(bot.beamEndPointsIntersect[a], bot.camera_lens_pos).mag()>PVector.sub(bot.beamStartPoints[a], bot.camera_lens_pos).mag()) {
+          PVector start = bot.beamStartPoints[a];
+          PVector end   = bot.beamEndPointsIntersect[a];
+          PVector diff = PVector.sub(end, start);
+          for (float b=0; b<=1; b+=float(cellSize)/(bot.cameraSpan*1.75)) {
+            //println("beam: "+a+" checking: "+b);
+            discoverCell(PVector.add(start, PVector.mult(diff, b)));
+          }
         }
       }
     }
@@ -164,9 +164,9 @@ class Swarm {
 
   void discoverCell(PVector scanPoint) {
     int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
-    //xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+    xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
     int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
-    //yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+    yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
     int l = yCellOver*(width/cellSize) + xCellOver;
     Cell currentCell = cells.get(l);
     currentCell.discovered=true;
@@ -175,6 +175,6 @@ class Swarm {
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
     //bots.add(new Bot(setPos));
-    bots.add(new Bot(botcount, bots, setPos.set(random(width), random(height)), closeBoundary, detBoundary, id_, round(225), round(225), round(225)));
+    bots.add(new Bot(botcount, bots, setPos.set(random(width), random(height)), id_));
   }
 }

@@ -10,7 +10,7 @@ class Bot {
   PVector heading_vec       = new PVector();
   PVector temp_heading_vec  = new PVector();
 
-  PVector target_vec_res    = new PVector();
+  PVector resultantVelocityVector    = new PVector();
   PVector[]target_vecs     ;
   PVector setpoint          = new PVector(width/2, height/2);
   float   lin_vel           = 0;
@@ -23,9 +23,11 @@ class Bot {
   PVector camera_lens_pos   = new PVector();
   float cameraAng           = 0;
   float fovHorizontal       = (60*PI)/180;
-  float cameraDepth         = 50;
+  float cameraMinRange      = depthCameraMinRange*pixelsPerMeter;
+  float cameraSpan          = depthCameraSpan*pixelsPerMeter;
   float beamLength          = 0;
-  float numberOfBeams       = 1;
+  float numberOfBeams       = 15;
+  PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
 
@@ -40,34 +42,32 @@ class Bot {
   PVector                   botDistVec  = new PVector();
 
   //Bot properties
-  int   r, g, b;
   int   botID               = 0;
-  float botSize             = (closeBoundary-30)/2;
+  float botSizeReal         = (closeBoundary-30)/2;
+  float botSizePixels       = (closeBoundary-30)/2;
+  
 
 
   //debug
   int debugTarget =5;
 
   //Contructor
-  Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, float closeBoundary_, float detBoundary_, int id_, int r_, int g_, int b_) {
+  Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, int id_) {
     botcount = botcount_;
     bots = bots_;
     pos.set(pos_);
-    closeBoundary = closeBoundary_;
-    detBoundary = detBoundary_;
     botID = id_;
-    r=r_;
-    g=g_;
-    b=b_;
 
     target_vecs=new PVector[botcount*2];
     for ( int i = 0; i<botcount*2; i++) {
       target_vecs[i]=new PVector(0, 0);
     }
-
+    
+    beamStartPoints =new PVector[int(numberOfBeams)];
     beamEndPoints=new PVector[int(numberOfBeams)];
     beamEndPointsIntersect=new PVector[int(numberOfBeams)];
     for ( int i = 0; i<numberOfBeams; i++) {
+      beamStartPoints[i] = new PVector(0, 0);
       beamEndPoints[i]=new PVector(0, 0);
       beamEndPointsIntersect[i]=new PVector(0, 0);
     }
@@ -108,10 +108,10 @@ class Bot {
   }
 
   void depthCamera() {
-    camera_lens_pos.set(pos.x + (botSize)*cos(-ang), pos.y - (botSize)*sin(-ang));
+    camera_lens_pos.set(pos.x + (botSizePixels/2)*cos(-ang), pos.y - (botSizePixels/2)*sin(-ang));
     //fovAng = -ang -HALF_PI;
     cameraAng = -ang+QUARTER_PI;
-    beamLength = cameraDepth+botSize;
+    beamLength = cameraSpan+botSizePixels;
 
     if (numberOfBeams==1) {
       float beamAng = cameraAng;
@@ -119,27 +119,10 @@ class Bot {
     } else {
       for ( int i = 0; i<numberOfBeams; i++) {
         float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(numberOfBeams-1));
-        beamEndPoints[i]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+        beamStartPoints[i] = new PVector(camera_lens_pos.x + (cameraMinRange*cos(beamAng)) + ((cameraMinRange)*sin(beamAng)), camera_lens_pos.y + (cameraMinRange*-sin(beamAng)) + ((cameraMinRange)*cos(beamAng)));
+        beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
       }
     }
-
-    //for (float i = 0; beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
-    //  for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
-    //    beamEndPoints[i]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
-    //  }
-
-    //for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
-    //  beginShape(); 
-    //  vertex(camera_lens_pos.x, camera_lens_pos.y); 
-    //  vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
-    //  endShape(CLOSE);
-    //}
-
-    //debug:This should be a single beam pointing straight forward
-    //beginShape(); 
-    //vertex(camera_lens_pos.x, camera_lens_pos.y); 
-    //vertex(camera_lens_pos.x + (beamLength*cos(cameraAng)) + ((beamLength)*sin(cameraAng)), camera_lens_pos.y + (beamLength*-sin(cameraAng)) + ((beamLength)*cos(cameraAng)) );
-    //endShape();
   }
 
 
@@ -149,31 +132,31 @@ class Bot {
     heading_vec.set(PVector.fromAngle(ang)); 
 
     //Reference angle
-    theta_ref= target_vec_res.heading()-heading_vec.heading(); 
+    theta_ref= resultantVelocityVector.heading()-heading_vec.heading(); 
 
     //Speed controllers
 
     //linear
-    lin_vel = target_vec_res.mag()*cos(theta_ref); 
-    lin_vel = sat(lin_vel, 0, 0.7); 
-    if (!(abs(target_vec_res.mag())>moveThreshold)) {
+    lin_vel = resultantVelocityVector.mag()*cos(theta_ref); 
+    lin_vel = sat(lin_vel, 0, simBotMaxLinearSpeed); 
+    if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
       lin_vel=0;
     }
 
     //angular
-    ang_vel = target_vec_res.mag()*sin(theta_ref); 
-    ang_vel = sat(ang_vel, -0.025, 0.025); 
+    ang_vel = resultantVelocityVector.mag()*sin(theta_ref); 
+    ang_vel = sat(ang_vel, -simBotMaxAngularSpeed, simBotMaxAngularSpeed); 
 
 
     //Stop if velocity vector is lower than the threshold
-    if (!(abs(target_vec_res.mag())>moveThreshold)) {
+    if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
       ang_vel=0;
     }
     //ang_vel=-0.0015;
     //iterate angle of bot
     ang += ang_vel; 
 
-    //lin_vel = 0.5;
+    lin_vel = 0.5;
 
     //iterate position of bot
     vel.set(lin_vel*cos(ang), lin_vel*sin(ang)); 
@@ -191,7 +174,7 @@ class Bot {
 
     //Bot info
     //fovAng = -ang - HALF_PI; 
-    botSize      = (closeBoundary-30)/2; 
+    //botSize      = (closeBoundary-30)/2; 
 
     //Draw detection zone
     if (Detect_Zone) {
@@ -210,41 +193,25 @@ class Bot {
 
     //Draw Robot frame
     stroke(0); 
-    fill(r, g, b); 
-    ellipse(pos.x, pos.y, closeBoundary-30, closeBoundary-30); 
+    fill(100);
+    ellipse(pos.x, pos.y, botSizePixels, botSizePixels); 
 
     //Draw Robot heading indicator
     strokeWeight(2); 
-    line(pos.x, pos.y, pos.x+(((closeBoundary-30)/2)*cos(ang)), pos.y+(((closeBoundary-30)/2)*sin(ang))); 
+    line(pos.x, pos.y, pos.x+((botSizePixels/2)*cos(ang)), pos.y+((botSizePixels/2)*sin(ang))); 
 
     //Draw robot name
     //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
 
-    if (FOV_zone) {
-
+    //Draw depth camera zone
+    if (Depth_camera_zone) {
       stroke(0, 255, 0, 125);
-
+      
       for ( int i = 0; i<numberOfBeams; i++) {
-        line(camera_lens_pos.x, camera_lens_pos.y, beamEndPointsIntersect[i].x, beamEndPointsIntersect[i].y);
+        if(PVector.sub(beamEndPointsIntersect[i],camera_lens_pos).mag()>PVector.sub(beamStartPoints[i],camera_lens_pos).mag()){
+        line(beamStartPoints[i].x, beamStartPoints[i].y, beamEndPointsIntersect[i].x, beamEndPointsIntersect[i].y);
+        }
       }
-
-      //for (float beamAng = cameraAng-(fovHorizontal/2); beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
-      //  //beginShape(); 
-      //  //vertex(camera_lens_pos.x, camera_lens_pos.y); 
-      //  //vertex(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)) ); 
-      //  //endShape(CLOSE);
-      //  line(camera_lens_pos.x, camera_lens_pos.y, camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
-      //}
-
-
-      //noStroke(); 
-      //fill(125, 0, 125, 30); 
-      ////-(closeBoundary-30)/2)
-      //beginShape(); 
-      //vertex(camera_lens_pos.x, camera_lens_pos.y); 
-      //vertex(pos.x + (-fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (-fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) ); 
-      //vertex(pos.x + (+fovWidth*cos(fovAng)) + ((-fovHeight-botSize)*sin(fovAng)), pos.y + (+fovWidth*-sin(fovAng)) + ((-fovHeight-botSize)*cos(fovAng)) ); 
-      //endShape(CLOSE);
     }
 
 
@@ -252,7 +219,7 @@ class Bot {
     if (Resultant) {
       strokeWeight(1); 
       stroke(0, 0, 255); 
-      line(pos.x, pos.y, pos.x+10*target_vec_res.x, pos.y+10*target_vec_res.y);
+      line(pos.x, pos.y, pos.x+10*resultantVelocityVector.x, pos.y+10*resultantVelocityVector.y);
     }
   }
 
@@ -260,7 +227,7 @@ class Bot {
     n=0; 
     c=0.0; 
     //clear resultant vectors before new run
-    target_vec_res.set(0, 0); 
+    resultantVelocityVector.set(0, 0); 
 
     for ( int x = 0; x<botcount; x++) {
       target_vecs[x].set(0, 0);
@@ -271,11 +238,11 @@ class Bot {
     //Set the target vector
     for (int k = 0; k<n; k++) {
       if (target_vecs[k].x!=0 && target_vecs[k].y!=0) {
-        target_vec_res.add(target_vecs[k]);
+        resultantVelocityVector.add(target_vecs[k]);
       }
     }
     if (n!=0) {
-      target_vec_res.mult(1/c);
+      resultantVelocityVector.mult(1/c);
     }
   }
 
@@ -343,8 +310,11 @@ class Bot {
     pos.set(newPos_);
   }
   public void setSize(float newSize_) {
-    closeBoundary = newSize_; 
-    detBoundary =closeBoundary+200;
+    botSizeReal   = newSize_/100; 
+    botSizePixels = pixelsPerMeter*botSizeReal;
+    closeBoundary    = botSizePixels + 0.75*pixelsPerMeter;
+    detBoundary      = botSizePixels + 3*pixelsPerMeter;
+    
   }
   public PVector pos() {
     return pos;

@@ -1,32 +1,51 @@
 //Import
 import controlP5.*;
 
-//Util
-PFont f;
-int backGroundColor = 125;
-
-int fcount, lastm;
-float frate;
-float fint = 0.25;
-
 //Variables
 ControlP5 cp5;
 Swarm  swarmsystem;
 
-int numberOfBots = 1;
+//Util
+PFont f;
+int backGroundColor  = 125;
+
+int fcount, lastm, startFrame;
+float frate;
+float fint           = 0.25;
+
+//Simulation Parameters
+int numberOfBots = 6;
+
+float time;
+float dt                      = 0.016;//16ms per frame
+
+float pixelsPerMeter          = 50;
+int   cellSize                = 7;
+float realCellSize            = float(cellSize)/pixelsPerMeter;
+
+float depthCameraMinRange     = 0.55;
+float depthCameraMaxRange     = 2.8;
+float depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
+
+float realBotMaxLinearSpeed   = 0.25; //[m/s]
+float realBotMaxAngularSpeed  = QUARTER_PI; //[rad/s]
+
+float simBotMaxLinearSpeed   = (realBotMaxLinearSpeed/pixelsPerMeter)/dt; //[m/s]
+float simBotMaxAngularSpeed  = realBotMaxAngularSpeed*dt; //[rad/s]
 
 
 void setup() {
   //Set up Canvas
-  size(1200, 900);
+  size(1300, 900);
   background(backGroundColor);
 
   //Util
   f = createFont("Arial", 16, true); 
-  
+  startFrame = 0;
+
   //initialize map arrays
   initMap(); 
-  
+
   //Load pre-generated map
   loadMap();
 
@@ -39,7 +58,7 @@ void setup() {
 }
 
 void draw() {
-  frameRate(60);
+  frameRate(600);
   background(backGroundColor);
 
 
@@ -47,16 +66,21 @@ void draw() {
     editMap();
     drawEditMap();
 
-    fill(0);
     textMode(MODEL);
     textAlign(CENTER);
     textFont(f, 50);
+    fill(0, 255, 255);
     text("Map edit mode", width/2, height/2-5);
   } else {
-    drawMap();
+    if (Draw_Map) {
+      drawMap();
+    }
+
     //drawEdges();
     swarmsystem.Loop();
   }
+
+  time();
 
   fps();
 }
