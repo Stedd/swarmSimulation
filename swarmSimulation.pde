@@ -13,7 +13,7 @@ float fint = 0.25;
 ControlP5 cp5;
 Swarm  swarmsystem;
 
-int numberOfBots = 2;
+int numberOfBots = 15;
 
 
 void setup() {

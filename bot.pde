@@ -21,12 +21,11 @@ class Bot {
 
   //bot depth camera variables
   PVector camera_lens_pos   = new PVector();
-
   float cameraAng           = 0;
   float fovHorizontal       = (60*PI)/180;
-  float cameraDepth         = 300;
+  float cameraDepth         = 50;
   float beamLength          = 0;
-  float numberOfBeams       = 30;
+  float numberOfBeams       = 5;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
 
@@ -114,9 +113,14 @@ class Bot {
     cameraAng = -ang+QUARTER_PI;
     beamLength = cameraDepth+botSize;
 
-    for ( int i = 0; i<numberOfBeams; i++) {
-      float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/numberOfBeams);
-      beamEndPoints[i]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+    if (numberOfBeams==1) {
+      float beamAng = cameraAng;
+      beamEndPoints[0]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+    } else {
+      for ( int i = 0; i<numberOfBeams; i++) {
+        float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(numberOfBeams-1));
+        beamEndPoints[i]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+      }
     }
 
     //for (float i = 0; beamAng<cameraAng+(fovHorizontal/2); beamAng+=fovHorizontal/numberOfBeams) {
@@ -168,8 +172,8 @@ class Bot {
     //ang_vel=-0.0015;
     //iterate angle of bot
     ang += ang_vel; 
-    
-    lin_vel = 0.5;
+
+    //lin_vel = 0.5;
 
     //iterate position of bot
     vel.set(lin_vel*cos(ang), lin_vel*sin(ang)); 
@@ -218,8 +222,8 @@ class Bot {
 
     if (FOV_zone) {
 
-      stroke(0,255,0,125);
-      
+      stroke(0, 255, 0, 125);
+
       for ( int i = 0; i<numberOfBeams; i++) {
         line(camera_lens_pos.x, camera_lens_pos.y, beamEndPointsIntersect[i].x, beamEndPointsIntersect[i].y);
       }
