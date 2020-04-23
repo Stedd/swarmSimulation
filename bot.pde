@@ -25,7 +25,7 @@ class Bot {
   float fovHorizontal       = (60*PI)/180;
   float cameraDepth         = 50;
   float beamLength          = 0;
-  float numberOfBeams       = 5;
+  float numberOfBeams       = 1;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
 
