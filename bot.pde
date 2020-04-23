@@ -27,6 +27,7 @@ class Bot {
   float cameraSpan          = depthCameraSpan*pixelsPerMeter;
   float beamLength          = 0;
   float numberOfBeams       = 15;
+  int   numberOfBeams       = 30;
   PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
