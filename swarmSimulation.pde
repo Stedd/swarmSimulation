@@ -30,13 +30,13 @@ float depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 float realBotMaxLinearSpeed   = 0.3; //[m/s]
 float realBotMaxAngularSpeed  = QUARTER_PI; //[rad/s]
 
-float simBotMaxLinearSpeed   = realBotMaxLinearSpeed*pixelsPerMeter*dt; //[m/s]
-float simBotMaxAngularSpeed  = realBotMaxAngularSpeed*dt; //[rad/s]
+float simBotMaxLinearSpeed   = realBotMaxLinearSpeed*pixelsPerMeter*dt; //[pixel/frame]
+float simBotMaxAngularSpeed  = realBotMaxAngularSpeed*dt; //[rad/frame]
 
 
 void setup() {
   //Set up Canvas
-  size(600, 600);
+  size(1200, 600);
   background(backGroundColor);
 
   //Util
@@ -53,7 +53,7 @@ void setup() {
   buttons();
 
   //Initialize Swarm
-  swarmsystem = new Swarm(numberOfBots);s
+  swarmsystem = new Swarm(numberOfBots);
   swarmsystem.Init();
 }
 
