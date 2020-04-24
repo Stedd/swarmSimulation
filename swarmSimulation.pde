@@ -5,6 +5,9 @@ import controlP5.*;
 ControlP5 cp5;
 Swarm  swarmsystem;
 
+PGraphics frameBuffer;
+
+
 //Util
 PFont f;
 int backGroundColor  = 125;
@@ -13,14 +16,17 @@ int fcount, lastm, startFrame;
 float frate;
 float fint           = 0.25;
 
+boolean updated = true;
+int updateCount = 0;
+
 //Simulation Parameters
-int numberOfBots = 6;
+int numberOfBots = 3;
 
 float time;
 float dt                      = 0.016;//16ms per frame
 
 float pixelsPerMeter          = 50;
-int   cellSize                = 7;
+int   cellSize                = 1;
 float realCellSize            = float(cellSize)/pixelsPerMeter;
 
 float depthCameraMinRange     = 0.55;
@@ -37,14 +43,15 @@ float simBotMaxAngularSpeed  = realBotMaxAngularSpeed*dt; //[rad/s]
 void setup() {
   //Set up Canvas
   size(1300, 900);
-  background(backGroundColor);
+  frameBuffer = createGraphics(1300,900);
+
 
   //Util
-  f = createFont("Arial", 16, true); 
+  f = createFont("Arial", 16, true);
   startFrame = 0;
 
   //initialize map arrays
-  initMap(); 
+  initMap();
 
   //Load pre-generated map
   loadMap();
@@ -58,6 +65,7 @@ void setup() {
 }
 
 void draw() {
+  //noLoop();
   frameRate(600);
   background(backGroundColor);
 
@@ -72,9 +80,11 @@ void draw() {
     fill(0, 255, 255);
     text("Map edit mode", width/2, height/2-5);
   } else {
-    if (Draw_Map) {
+    if (Draw_Map & fcount%10 == 0 & updated) {
       drawMap();
     }
+    image(frameBuffer,0,0);
+    text("Map updates: " + updateCount, width-600, 40);
 
     //drawEdges();
     swarmsystem.Loop();
