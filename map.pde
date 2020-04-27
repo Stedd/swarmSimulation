@@ -29,11 +29,9 @@ class Edge {
 
 class Cell {
   float probability     = 0.5;
+  float mapValue        = 1.0;             
   int[] edge_id         = new int[4];
   boolean[] edge_exist  = new boolean[4];
-  boolean exist         = false;
-  boolean discovered    = false;
-  boolean rendered      = false;
 }
 
 
@@ -48,6 +46,7 @@ void initMap() {
   for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
     cells.add(new Cell());
     cellsBuffer.add(new Cell());
+    cellsToRender.append(i);
   }
 }
 
@@ -60,45 +59,45 @@ void loadMap() {
     for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
-      currentCell.exist=true;
+      currentCell.mapValue=0.0;
     }
   }
+
   offset = 2;
   //some for loops drawing the map.
   for (int x = offset; x < (width/cellSize)-offset; x++) {
     for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
-      currentCell.exist=false;
+      currentCell.mapValue=1.0;
     }
   }
-  offset = 14;
+
+  offset = 14; 
   //some for loops drawing the map.
   for (int x = offset; x < (width/cellSize)-offset; x++) {
     for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
-      currentCell.exist=true;
+      currentCell.mapValue=0.0;
     }
   }
+
   offset = 15;
   //some for loops drawing the map.
   for (int x = offset; x < (width/cellSize)-offset; x++) {
     for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
       Cell currentCell = cells.get(i);
-      currentCell.exist=false;
+      currentCell.mapValue=1.0;
     }
   }
-
 
   for (int x=0; x<((width/cellSize)*(height/cellSize)); x++) {
     Cell currentBufferCell = cellsBuffer.get(x);
     Cell currentCell = cells.get(x);
-    currentBufferCell.exist = currentCell.exist;
+    currentBufferCell.mapValue = currentCell.mapValue;
   }
-
-  //update edges
   updateEdges();
 }
 
@@ -112,6 +111,7 @@ void drawRays() {
     }
   }
 }
+
 
 void drawEdges() {
   if (edgePool.size()>0) {
@@ -131,26 +131,51 @@ void drawEdges() {
 void drawMap() {
   frameBuffer.beginDraw();
   if (cellsToRender.size() > 0) {
-    for (int cell : cellsToRender)
-      if (cells.get(cell).exist) {
-        //stroke(0);
-          frameBuffer.noStroke();
-          frameBuffer.fill(0);
-        int x = cell%(width/cellSize);
-        int y = floor(cell/(width/cellSize));
-        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
-      } else {
-        //stroke(backGroundColor);
-          frameBuffer.noStroke();
-          frameBuffer.fill(255);
-        int x = cell%(width/cellSize);
-        int y = floor(cell/(width/cellSize));
-        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
-      }
-      frameBuffer.endDraw();
-      cellsToRender.clear();
-      updateCount++;
+    for (int cell : cellsToRender){
+      frameBuffer.noStroke();
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      frameBuffer.fill(fill);
+      int x = cell%(width/cellSize);
+      int y = floor(cell/(width/cellSize));
+      frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
     }
+    frameBuffer.endDraw();
+    cellsToRender.clear();
+    updateCount++;
+  }
+}
+
+
+void drawEditMap() {
+  frameBuffer.beginDraw();
+  if (cellsToRender.size() > 0) {
+    for (int cell : cellsToRender){
+      frameBuffer.noStroke();
+      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255);
+      frameBuffer.fill(fill);
+      int x = cell%(width/cellSize);
+      int y = floor(cell/(width/cellSize));
+      frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
+    }
+    frameBuffer.endDraw();
+    cellsToRender.clear();
+    updateCount++;
+    }
+  }
+
+
+void updateCell(PVector scanPoint, float targetValue, float modifier) {
+  int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
+  xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+  int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
+  yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+  int l = yCellOver*(width/cellSize) + xCellOver;
+  Cell currentCell = cells.get(l);
+  float difference = targetValue - currentCell.probability;
+  if ((currentCell.probability < 1.0 && difference > 0) || (currentCell.probability > 0.0 && difference < 0)) {
+    currentCell.probability += difference * modifier;
+    cellsToRender.append(l);
+  }
 }
 
 
@@ -164,40 +189,24 @@ void keyPressed() {
       println("calculating edges");
       //restart timer
       startFrame = frameCount;
+
+    //reset probability
+    for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
+      cells.get(i).probability = 0.5;
+      cellsToRender.append(i);
+  }
       updateEdges();
     }
   }
 }
 
 
-void drawEditMap() {
-  for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
-    if (edit) {
-      if (cells.get(i).exist) {
-        //stroke(0);
-        noStroke();
-        fill(0);
-      } else {
-        //stroke(255);
-        noStroke();
-        fill(255);
-      }
-      //stroke(80);
-      int x = i%(width/cellSize);
-      int y = floor(i/(width/cellSize));
-
-      rect (x*cellSize, y*cellSize, cellSize, cellSize);
-    }
-  }
-}
-
 void editMap() {
-
   //clear edges
   edgePool.clear();
   for (int i= 0; i<cellsBuffer.size(); i++) {
-    cells.get(i).discovered = false;
-    cellsBuffer.get(i).discovered = false;
+    cells.get(i).probability = 0.5;
+    cellsBuffer.get(i).probability = 0.5;
     for (int j= 0; j<4; j++) {
       cells.get(i).edge_id[j] = 0;
       cells.get(i).edge_exist[j] = false;
@@ -205,9 +214,6 @@ void editMap() {
       cellsBuffer.get(i).edge_exist[j] = false;
     }
   }
-
-
-
 
   if (mousePressed) {
     bufferUpdated = false;
@@ -219,19 +225,21 @@ void editMap() {
     int i = yCellOver*(width/cellSize) + xCellOver;
     Cell currentBufferCell = cellsBuffer.get(i);
     Cell currentCell = cells.get(i);
-
-    if (currentBufferCell.exist) {
-      currentCell.exist=false;
+    cellsToRender.append(i);
+    if (currentBufferCell.mapValue == 0) {
+      currentCell.mapValue = 1.0;
     } else {
-      currentCell.exist=true;
+      currentCell.mapValue = 0.0;
     }
   }
+
   if (!bufferUpdated && !mousePressed) {
     bufferUpdated = true;
     for (int x=0; x<((width/cellSize)*(height/cellSize)); x++) {
       Cell currentBufferCell = cellsBuffer.get(x);
       Cell currentCell = cells.get(x);
-      currentBufferCell.exist = currentCell.exist;
+      currentBufferCell.mapValue = currentCell.mapValue;
+      cellsToRender.append(x);
     }
   }
 }
@@ -243,7 +251,7 @@ void updateEdges() {
       int i = y*(width/cellSize) + x;
       //println("scanning pixel:("+x+","+y + ")index: " + i);
       Cell currentBufferCell = cellsBuffer.get(i);
-      if (currentBufferCell.exist) {
+      if (currentBufferCell.mapValue==1.0) {
         //println("pixel:"+x+","+y+" exists, scanning neighbours" );
         //Neighbour indices
         int n = (y-1)*(width/cellSize) + x  ;
@@ -263,7 +271,7 @@ void updateEdges() {
 
         //Neighbour checks
         //
-        if (cellsBuffer.get(n).exist) {
+        if (cellsBuffer.get(n).mapValue==1.0) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour NORTH" );
         } else {
@@ -285,7 +293,7 @@ void updateEdges() {
 
         //Neighbour checks
         //
-        if (cellsBuffer.get(s).exist) {
+        if (cellsBuffer.get(s).mapValue==1.0) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour SOUTH" );
         } else {
@@ -307,7 +315,7 @@ void updateEdges() {
 
         //Neighbour checks
         //
-        if (cellsBuffer.get(e).exist) {
+        if (cellsBuffer.get(e).mapValue==1.0) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour EAST" );
         } else {
@@ -329,7 +337,7 @@ void updateEdges() {
 
         //Neighbour checks
         //
-        if (cellsBuffer.get(w).exist) {
+        if (cellsBuffer.get(w).mapValue==1.0) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour WEST" );
         } else {

@@ -25,7 +25,7 @@ class Bot {
   float cameraMinRange      = depthCameraMinRange*pixelsPerMeter;
   float cameraSpan          = depthCameraSpan*pixelsPerMeter;
   float beamLength          = 0;
-  int   numberOfBeams       = 30;
+  int   numberOfBeams       = 10;
   PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
@@ -132,24 +132,11 @@ class Bot {
     }
   }
 
-    void ultrasonicSensor() {
-    // camera_lens_pos.set(pos.x + (botSizePixels/2)*cos(-ang), pos.y - (botSizePixels/2)*sin(-ang));
-    // //fovAng = -ang -HALF_PI;
-    // cameraAng = -ang+QUARTER_PI;
-    beamLength = ultrasonicSpan+botSizePixels;
-
-    if (numberOfBeams==1) {
-      float beamAng = cameraAng;
-      beamEndPoints[0]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
-    }
-    //  else {
-    //   for ( int i = 0; i<numberOfBeams; i++) {
-    //     float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
-    //     beamStartPoints[i] = new PVector(camera_lens_pos.x + (cameraMinRange*cos(beamAng)) + ((cameraMinRange)*sin(beamAng)), camera_lens_pos.y + (cameraMinRange*-sin(beamAng)) + ((cameraMinRange)*cos(beamAng)));
-    //     beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
-    //   }
-    // }
-  }
+  //   void ultrasonicSensor() {
+  //     beamLength = ultrasonicSpan+botSizePixels;
+  //     beamAng = cameraAng;
+  //     beamEndPoints[0]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+  // }
 
 
   void move() {

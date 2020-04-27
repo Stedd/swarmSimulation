@@ -7,7 +7,7 @@ Swarm     swarmsystem;
 
 //Map variables
 PGraphics frameBuffer;
-boolean   updated = true;
+// boolean   mapUpdated = false;
 int       updateCount             = 0;
 
 //Util
@@ -22,10 +22,10 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 6;
+int       numberOfBots            = 1;
 
 float     time;
-float     dt                      = 0.05;//50ms per frame
+float     dt                      = 0.016;//50ms per frame
 
 float pixelsPerMeter              = 50;
 int   cellSize                    = 5;
@@ -81,6 +81,9 @@ void draw() {
   if (edit) {
     editMap();
     drawEditMap();
+    if (Draw_Map) {
+      image(frameBuffer,0,0);
+    }
 
     textMode(MODEL);
     textAlign(CENTER);
@@ -89,7 +92,7 @@ void draw() {
     text("Map edit mode", width/2, height/2-5);
   } else {
     drawMap();
-    if (Draw_Map & updated) {
+    if (Draw_Map) {
       image(frameBuffer,0,0);
     }
 

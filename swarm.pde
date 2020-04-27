@@ -116,7 +116,7 @@ class Swarm {
               wallintersectionExists = true;
 
               PVector closestIntersection     = PVector.sub(p1, closestIntersectionPoint);
-              PVector intersectionPoint = new PVector(x+random(-3, 3), y);
+              PVector intersectionPoint = new PVector(x+random(-3, 3), y+random(-3, 3));
               PVector.sub(p1, intersectionPoint, distanceToIntersection);
               //println(distanceToIntersection);
               if (distanceToIntersection.mag()<closestIntersection.mag()) {
@@ -140,49 +140,25 @@ class Swarm {
         if (botintersectionExists&&(closestIntersectionPoint.x<width)&&(closestIntersectionPoint.y<height)) {
           bot.beamEndPointsIntersect[k].set(closestIntersectionPoint);
         }
-      }
 
-      //for loop through beams
-      for (int a=0; a<bot.numberOfBeams; a++) {
-        if (PVector.sub(bot.beamEndPointsIntersect[a], bot.camera_lens_pos).mag()>PVector.sub(bot.beamStartPoints[a], bot.camera_lens_pos).mag()) {
-          PVector start = bot.beamStartPoints[a];
-          PVector end   = bot.beamEndPointsIntersect[a];
+        if (PVector.sub(bot.beamEndPointsIntersect[k], bot.camera_lens_pos).mag()>PVector.sub(bot.beamStartPoints[k], bot.camera_lens_pos).mag()) {
+          PVector start = bot.beamStartPoints[k];
+          PVector end   = bot.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
-          for (float b=0; b<=1; b+=float(cellSize)/(bot.cameraSpan*1.75)) {
+          for (float m=0; m<=1; m+=float(cellSize)/(bot.cameraSpan*1.75)) {
             //println("beam: "+a+" checking: "+b);
-            discoverCell(PVector.add(start, PVector.mult(diff, b)));
+            if((wallintersectionExists || botintersectionExists) && m>=0.95){
+              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.01);
+            }else{
+              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.01);
+            }
           }
         }
+
       }
     }
   }
 
-
-  void discoverCell(PVector scanPoint) {
-    int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
-    xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-    int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
-    yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-    int l = yCellOver*(width/cellSize) + xCellOver;
-    Cell currentCell = cells.get(l);
-    if (!currentCell.discovered) {
-      currentCell.discovered=true;
-      cellsToRender.append(l);
-    }
-  }
-
-  void updateCell(PVector scanPoint) {
-    int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
-    xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-    int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
-    yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-    int l = yCellOver*(width/cellSize) + xCellOver;
-    Cell currentCell = cells.get(l);
-    if (!currentCell.discovered) {
-      currentCell.discovered=true;
-      updated = true;
-    }
-  }
 
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
