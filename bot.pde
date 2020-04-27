@@ -98,7 +98,7 @@ class Bot {
 
     //Sensors
     sensors();
-    depthCamera();
+    // depthCamera();
 
     //Move robot
     move();
@@ -112,7 +112,7 @@ class Bot {
     cameraAng = -ang+QUARTER_PI;
 
     depthCamera();
-    ultrasonicSensor();
+    // ultrasonicSensor();
 
   }
 

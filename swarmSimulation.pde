@@ -22,14 +22,14 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots = 6;
+int       numberOfBots            = 6;
 
 float     time;
-float     dt                      = 0.016;//100ms per frame
+float     dt                      = 0.05;//50ms per frame
 
-float pixelsPerMeter          = 50;
-int   cellSize                = 5;
-float realCellSize            = float(cellSize)/pixelsPerMeter;
+float pixelsPerMeter              = 50;
+int   cellSize                    = 5;
+float realCellSize                = float(cellSize)/pixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
 float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
