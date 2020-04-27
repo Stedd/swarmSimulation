@@ -171,6 +171,19 @@ class Swarm {
     }
   }
 
+  void updateCell(PVector scanPoint) {
+    int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
+    xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+    int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
+    yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+    int l = yCellOver*(width/cellSize) + xCellOver;
+    Cell currentCell = cells.get(l);
+    if (!currentCell.discovered) {
+      currentCell.discovered=true;
+      updated = true;
+    }
+  }
+
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
     //bots.add(new Bot(setPos));

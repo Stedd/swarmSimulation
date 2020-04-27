@@ -28,10 +28,11 @@ class Edge {
 
 
 class Cell {
+  float probability     = 0.5;
   int[] edge_id         = new int[4];
   boolean[] edge_exist  = new boolean[4];
   boolean exist         = false;
-  boolean discovered    = false;
+  // boolean discovered    = false;
   boolean rendered      = false;
 }
 
@@ -145,6 +146,7 @@ void drawMap() {
         int x = cell%(width/cellSize);
         int y = floor(cell/(width/cellSize));
         frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
+        cells.get(i).rendered = true;
       }
       frameBuffer.endDraw();
       cellsToRender.clear();
