@@ -4,6 +4,7 @@
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
 ArrayList<Cell>  cellsBuffer;
+IntList   cellsToRender;
 
 //Util
 boolean bufferUpdated = false;
@@ -42,6 +43,7 @@ void initMap() {
   cells           = new ArrayList<Cell>();
   cellsBuffer     = new ArrayList<Cell>();
   edgePool        = new ArrayList<Edge>();
+  cellsToRender   = new IntList();
 
   println("Map contains " + ((width/cellSize)*(height/cellSize)) + " cells (" + width/cellSize+ " * "+height/cellSize +") Each cell is " + realCellSize*100 + "cm * "+ realCellSize*100 + "cm. The total map is: " + (width/cellSize)*realCellSize+ "m * "+(height/cellSize)*realCellSize +"m");
   for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
@@ -125,34 +127,59 @@ void drawEdges() {
   }
 }
 
-
-
 void drawMap() {
   frameBuffer.beginDraw();
-  for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
-    if (cells.get(i).discovered & !cells.get(i).rendered) {
-      if (cells.get(i).exist) {
+  if (cellsToRender.size() > 0) {
+    for (int cell : cellsToRender)
+      if (cells.get(cell).exist) {
         //stroke(0);
           frameBuffer.noStroke();
           frameBuffer.fill(0);
-        int x = i%(width/cellSize);
-        int y = floor(i/(width/cellSize));
+        int x = cell%(width/cellSize);
+        int y = floor(cell/(width/cellSize));
         frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
       } else {
         //stroke(backGroundColor);
           frameBuffer.noStroke();
           frameBuffer.fill(255);
-        int x = i%(width/cellSize);
-        int y = floor(i/(width/cellSize));
+        int x = cell%(width/cellSize);
+        int y = floor(cell/(width/cellSize));
         frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
       }
-      cells.get(i).rendered = true;
+      frameBuffer.endDraw();
+      cellsToRender.clear();
+      updateCount++;
     }
-  }
-  frameBuffer.endDraw();
-  updated = false;
-  updateCount++;
 }
+
+
+
+//void drawMap() {
+//  frameBuffer.beginDraw();
+//  for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
+//    if (cells.get(i).discovered & !cells.get(i).rendered) {
+//      if (cells.get(i).exist) {
+//        //stroke(0);
+//          frameBuffer.noStroke();
+//          frameBuffer.fill(0);
+//        int x = i%(width/cellSize);
+//        int y = floor(i/(width/cellSize));
+//        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
+//      } else {
+//        //stroke(backGroundColor);
+//          frameBuffer.noStroke();
+//          frameBuffer.fill(255);
+//        int x = i%(width/cellSize);
+//        int y = floor(i/(width/cellSize));
+//        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
+//      }
+//      cells.get(i).rendered = true;
+//    }
+//  }
+//  frameBuffer.endDraw();
+//  updated = false;
+//  updateCount++;
+//}
 
 
 void keyPressed() {

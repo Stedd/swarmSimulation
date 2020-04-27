@@ -171,7 +171,7 @@ class Swarm {
     Cell currentCell = cells.get(l);
     if (!currentCell.discovered) {
       currentCell.discovered=true;
-      updated = true;
+      cellsToRender.append(l);
     }
   }
 

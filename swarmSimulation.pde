@@ -26,7 +26,7 @@ float time;
 float dt                      = 0.016;//16ms per frame
 
 float pixelsPerMeter          = 50;
-int   cellSize                = 1;
+int   cellSize                = 5;
 float realCellSize            = float(cellSize)/pixelsPerMeter;
 
 float depthCameraMinRange     = 0.55;
@@ -80,10 +80,11 @@ void draw() {
     fill(0, 255, 255);
     text("Map edit mode", width/2, height/2-5);
   } else {
-    if (Draw_Map & fcount%10 == 0 & updated) {
-      drawMap();
+    drawMap();
+    if (Draw_Map & updated) {
+      image(frameBuffer,0,0);
     }
-    image(frameBuffer,0,0);
+
     text("Map updates: " + updateCount, width-600, 40);
 
     //drawEdges();
