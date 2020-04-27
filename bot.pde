@@ -21,7 +21,7 @@ class Bot {
   //bot depth camera variables
   PVector camera_lens_pos   = new PVector();
   float cameraAng           = 0;
-  float fovHorizontal       = (60*PI)/180;
+  float fovHorizontal       = (59*PI)/180;
   float cameraMinRange      = depthCameraMinRange*pixelsPerMeter;
   float cameraSpan          = depthCameraSpan*pixelsPerMeter;
   float beamLength          = 0;
@@ -97,6 +97,7 @@ class Bot {
 
 
     //Sensors
+    sensors();
     depthCamera();
 
     //Move robot
@@ -106,10 +107,17 @@ class Bot {
     display();
   }
 
-  void depthCamera() {
+  void sensors(){
     camera_lens_pos.set(pos.x + (botSizePixels/2)*cos(-ang), pos.y - (botSizePixels/2)*sin(-ang));
-    //fovAng = -ang -HALF_PI;
     cameraAng = -ang+QUARTER_PI;
+
+    depthCamera();
+    ultrasonicSensor();
+
+  }
+
+  void depthCamera() {
+    // cameraAng = -ang+QUARTER_PI;
     beamLength = cameraSpan+botSizePixels;
 
     if (numberOfBeams==1) {
@@ -122,6 +130,25 @@ class Bot {
         beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
       }
     }
+  }
+
+    void ultrasonicSensor() {
+    // camera_lens_pos.set(pos.x + (botSizePixels/2)*cos(-ang), pos.y - (botSizePixels/2)*sin(-ang));
+    // //fovAng = -ang -HALF_PI;
+    // cameraAng = -ang+QUARTER_PI;
+    beamLength = ultrasonicSpan+botSizePixels;
+
+    if (numberOfBeams==1) {
+      float beamAng = cameraAng;
+      beamEndPoints[0]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+    }
+    //  else {
+    //   for ( int i = 0; i<numberOfBeams; i++) {
+    //     float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
+    //     beamStartPoints[i] = new PVector(camera_lens_pos.x + (cameraMinRange*cos(beamAng)) + ((cameraMinRange)*sin(beamAng)), camera_lens_pos.y + (cameraMinRange*-sin(beamAng)) + ((cameraMinRange)*cos(beamAng)));
+    //     beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+    //   }
+    // }
   }
 
 
@@ -200,7 +227,7 @@ class Bot {
     line(pos.x, pos.y, pos.x+((botSizePixels/2)*cos(ang)), pos.y+((botSizePixels/2)*sin(ang))); 
 
     //Draw robot name
-    //text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
+    // text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
 
     //Draw depth camera zone
     if (Depth_camera_zone) {
@@ -311,8 +338,8 @@ class Bot {
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
     botSizePixels = pixelsPerMeter*botSizeReal;
-    closeBoundary    = botSizePixels + 0.75*pixelsPerMeter;
-    detBoundary      = botSizePixels + 3*pixelsPerMeter;
+    closeBoundary = botSizePixels + 0.75*pixelsPerMeter;
+    detBoundary   = botSizePixels + 3*pixelsPerMeter;
     
   }
   public PVector pos() {

@@ -31,6 +31,14 @@ float     pixelsPerMeter          = 75;
 int       cellSize                = 4;
 float     realCellSize            = float(cellSize)/pixelsPerMeter;
 
+float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
+float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
+float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
+
+float     irMinRange              = 0.5;  //todo: Update values from manual
+float     irMaxRange              = 1.5;  //todo: Update values from manual
+float     irSpan                  = irMaxRange - irMinRange;
+
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
 float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;

@@ -27,10 +27,11 @@ class Edge {
 
 
 class Cell {
+  float probability     = 0.5;
   int[] edge_id         = new int[4];
   boolean[] edge_exist  = new boolean[4];
   boolean exist         = false;
-  boolean discovered    = false;
+  // boolean discovered    = false;
   boolean rendered      = false;
 }
 
@@ -128,23 +129,14 @@ void drawEdges() {
 void drawMap() {
   frameBuffer.beginDraw();
   for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
-    if (cells.get(i).discovered & !cells.get(i).rendered) {
-      if (cells.get(i).exist) {
-        //stroke(0);
-          frameBuffer.noStroke();
-          frameBuffer.fill(0);
+    if (!cells.get(i).rendered) {
         int x = i%(width/cellSize);
         int y = floor(i/(width/cellSize));
+        noStroke();
+        fill(round(255/probability));
         frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
-      } else {
-        //stroke(backGroundColor);
-          frameBuffer.noStroke();
-          frameBuffer.fill(255);
-        int x = i%(width/cellSize);
-        int y = floor(i/(width/cellSize));
-        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
+        cells.get(i).rendered = true;
       }
-      cells.get(i).rendered = true;
     }
   }
   frameBuffer.endDraw();
