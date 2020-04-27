@@ -145,7 +145,7 @@ class Swarm {
           PVector start = bot.beamStartPoints[k];
           PVector end   = bot.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
-          for (float m=0; m<=1; m+=float(cellSize)/(bot.cameraSpan*1.75)) {
+          for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
             //println("beam: "+a+" checking: "+b);
             if((wallintersectionExists || botintersectionExists) && m>=0.95){
               updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.01);
