@@ -1,6 +1,3 @@
-
-
-
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
 ArrayList<Cell>  cellsBuffer;

@@ -10,9 +10,6 @@ PGraphics frameBuffer;
 boolean   updated = true;
 int       updateCount             = 0;
 
-PGraphics frameBuffer;
-
-
 //Util
 PFont     f;
 int       backGroundColor         = 125;
@@ -23,9 +20,6 @@ int       lastm;
 int       startFrame;
 float     frate;
 float     fint                    = 0.25;
-
-boolean updated = true;
-int updateCount = 0;
 
 //Simulation Parameters
 int       numberOfBots = 6;
@@ -72,7 +66,6 @@ void setup() {
 }
 
 void draw() {
-  //noLoop();
   frameRate(600);
   background(backGroundColor);
 
