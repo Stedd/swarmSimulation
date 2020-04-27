@@ -29,12 +29,11 @@ class Edge {
 }
 
 class Cell {
-  int[] edge_id = new int[4];
-  boolean[] edge_exist = new boolean[4];
-  boolean exist = false;
-  boolean discovered = false;
-  boolean rendered = false;
-}
+  int[] edge_id         = new int[4];
+  boolean[] edge_exist  = new boolean[4];
+  boolean exist         = false;
+  boolean discovered    = false;
+  boolean rendered      = false;
 
 
 void initMap() {

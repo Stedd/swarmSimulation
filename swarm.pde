@@ -41,8 +41,7 @@ class Swarm {
 
       bot.Loop();
 
-      //Reveal scanned cells
-
+      //Detect depth camera ray intersection with bots and walls
       PVector p1 = new PVector(bot.camera_lens_pos.x, bot.camera_lens_pos.y);
       PVector closestIntersectionPoint = new PVector(10000, 10000);
       PVector distanceToIntersection  = new PVector();
@@ -51,8 +50,7 @@ class Swarm {
 
         boolean wallintersectionExists = false;
         boolean botintersectionExists = false;
-        //rays
-        //PVector p1 = new PVector(bot.beamStartPoints[k].x, bot.beamStartPoints[k].y);
+
         PVector p2 = new PVector(bot.beamEndPoints[k].x, bot.beamEndPoints[k].y);
         PVector sub = PVector.sub(p2, p1);
         // y = a * x + b
@@ -60,8 +58,7 @@ class Swarm {
         float b = p1.y - a * p1.x;
         closestIntersectionPoint = new PVector(10000, 10000);
 
-        //Check for Bot intersection
-        //check for beam collision with other bots
+        //Check for beam collision with other bots
         for (int ii = 0; ii<bots.size(); ii++) {
           Bot targetBot = bots.get(ii);
           //do not check self
@@ -99,7 +96,6 @@ class Swarm {
         //Check for line intersection
         if (edgePool.size()>0) {
           for (int j=0; j<edgePool.size(); j++) {
-            //edges
             PVector p3 = new PVector(edgePool.get(j).sx, edgePool.get(j).sy);
             PVector p4 = new PVector(edgePool.get(j).ex+1, edgePool.get(j).ey+1);
             PVector sub1 = PVector.sub(p4, p3);
