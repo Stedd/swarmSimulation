@@ -63,33 +63,24 @@ void loadMap() {
     }
   }
 
-  offset = 2;
-  //some for loops drawing the map.
-  for (int x = offset; x < (width/cellSize)-offset; x++) {
-    for (int y = offset; y < (height/cellSize)-offset; y++) {
-      int i = y*(width/cellSize) + x;
-      Cell currentCell = cells.get(i);
-      currentCell.mapValue=1.0;
-    }
-  }
+  int numberOfRooms = 3;
+  int roomWidth = 3*int(pixelsPerMeter);
+  int roomHeight = 5*int(pixelsPerMeter);
 
-  offset = 14; 
-  //some for loops drawing the map.
-  for (int x = offset; x < (width/cellSize)-offset; x++) {
-    for (int y = offset; y < (height/cellSize)-offset; y++) {
-      int i = y*(width/cellSize) + x;
-      Cell currentCell = cells.get(i);
-      currentCell.mapValue=0.0;
-    }
-  }
-
-  offset = 15;
-  //some for loops drawing the map.
-  for (int x = offset; x < (width/cellSize)-offset; x++) {
-    for (int y = offset; y < (height/cellSize)-offset; y++) {
-      int i = y*(width/cellSize) + x;
-      Cell currentCell = cells.get(i);
-      currentCell.mapValue=1.0;
+  for (int r = 0; r < numberOfRooms; r++) {
+    int startX = 1*int(pixelsPerMeter) + int(((r*roomWidth)+0.1)*pixelsPerMeter);
+    println("StartX: "+startX);
+    // int startY = 1*int(pixelsPerMeter);
+    int startY = 150;
+    println("StartY: "+startY);
+    // offset = 2;
+    //some for loops drawing the map.
+    for (int x = startX; x < startX + (roomWidth/cellSize); x++) {
+      for (int y = startY; y < startY + (roomHeight/cellSize); y++) {
+        int i = y*(width/cellSize) + x;
+        Cell currentCell = cells.get(i);
+        currentCell.mapValue=1.0;
+      }
     }
   }
 
@@ -133,7 +124,8 @@ void drawMap() {
   if (cellsToRender.size() > 0) {
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
       frameBuffer.fill(fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));
