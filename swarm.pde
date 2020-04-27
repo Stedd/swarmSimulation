@@ -97,7 +97,7 @@ class Swarm {
         if (edgePool.size()>0) {
           for (int j=0; j<edgePool.size(); j++) {
             PVector p3 = new PVector(edgePool.get(j).sx, edgePool.get(j).sy);
-            PVector p4 = new PVector(edgePool.get(j).ex+1, edgePool.get(j).ey+1); 
+            PVector p4 = new PVector(edgePool.get(j).ex+1, edgePool.get(j).ey+1);
             PVector sub1 = PVector.sub(p4, p3);
             float a1 = sub1.y / sub1.x;
             float b1 = p3.y - a1 * p3.x;
@@ -121,7 +121,7 @@ class Swarm {
               //println(distanceToIntersection);
               if (distanceToIntersection.mag()<closestIntersection.mag()) {
                 closestIntersectionPoint.set(intersectionPoint);
-              }    
+              }
               //println("intersect at pixel:"+ x + "," + y + " millis: " + millis());
             }
           }

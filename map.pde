@@ -34,11 +34,10 @@ class Cell {
   boolean exist         = false;
   boolean discovered    = false;
   boolean rendered      = false;
-}
 
 
 void initMap() {
-  //Instantiate arrays 
+  //Instantiate arrays
   cells           = new ArrayList<Cell>();
   cellsBuffer     = new ArrayList<Cell>();
   edgePool        = new ArrayList<Edge>();
@@ -223,12 +222,12 @@ void editMap() {
 
     if (currentBufferCell.exist) {
       currentCell.exist=false;
-    } else { 
+    } else {
       currentCell.exist=true;
     }
   }
   if (!bufferUpdated && !mousePressed) {
-    bufferUpdated = true;  
+    bufferUpdated = true;
     for (int x=0; x<((width/cellSize)*(height/cellSize)); x++) {
       Cell currentBufferCell = cellsBuffer.get(x);
       Cell currentCell = cells.get(x);
@@ -245,11 +244,11 @@ void updateEdges() {
       //println("scanning pixel:("+x+","+y + ")index: " + i);
       Cell currentBufferCell = cellsBuffer.get(i);
       if (currentBufferCell.exist) {
-        //println("pixel:"+x+","+y+" exists, scanning neighbours" );            
+        //println("pixel:"+x+","+y+" exists, scanning neighbours" );
         //Neighbour indices
         int n = (y-1)*(width/cellSize) + x  ;
         int s = (y+1)*(width/cellSize) + x  ;
-        int e = y  *(width/cellSize) + (x+1); 
+        int e = y  *(width/cellSize) + (x+1);
         int w = y  *(width/cellSize) + (x-1);
 
         //println("Current index: " + i);
@@ -262,9 +261,9 @@ void updateEdges() {
         int yPixel = y*cellSize;
         //println("pixel:("+xPixel+","+ yPixel + ")index: " + i);
 
-        //Neighbour checks 
-        // 
-        if (cellsBuffer.get(n).exist) { 
+        //Neighbour checks
+        //
+        if (cellsBuffer.get(n).exist) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour NORTH" );
         } else {
@@ -284,9 +283,9 @@ void updateEdges() {
           }
         }
 
-        //Neighbour checks 
-        // 
-        if (cellsBuffer.get(s).exist) { 
+        //Neighbour checks
+        //
+        if (cellsBuffer.get(s).exist) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour SOUTH" );
         } else {
@@ -306,9 +305,9 @@ void updateEdges() {
           }
         }
 
-        //Neighbour checks 
-        // 
-        if (cellsBuffer.get(e).exist) { 
+        //Neighbour checks
+        //
+        if (cellsBuffer.get(e).exist) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour EAST" );
         } else {
@@ -328,9 +327,9 @@ void updateEdges() {
           }
         }
 
-        //Neighbour checks 
-        // 
-        if (cellsBuffer.get(w).exist) { 
+        //Neighbour checks
+        //
+        if (cellsBuffer.get(w).exist) {
           //Has a neighbour. No edge
           //println("pixel:"+x+","+y+" has a neighbour WEST" );
         } else {

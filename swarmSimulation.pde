@@ -10,6 +10,9 @@ PGraphics frameBuffer;
 boolean   updated = true;
 int       updateCount             = 0;
 
+PGraphics frameBuffer;
+
+
 //Util
 PFont     f;
 int       backGroundColor         = 125;
@@ -20,6 +23,9 @@ int       lastm;
 int       startFrame;
 float     frate;
 float     fint                    = 0.25;
+
+boolean updated = true;
+int updateCount = 0;
 
 //Simulation Parameters
 int       numberOfBots = 6;
@@ -48,11 +54,11 @@ void setup() {
   frameBuffer = createGraphics(1300,900);
 
   //Util
-  f = createFont("Arial", 16, true); 
+  f = createFont("Arial", 16, true);
   startFrame = 0;
 
   //initialize map arrays
-  initMap(); 
+  initMap();
 
   //Load pre-generated map
   loadMap();
@@ -66,6 +72,7 @@ void setup() {
 }
 
 void draw() {
+  //noLoop();
   frameRate(600);
   background(backGroundColor);
 
@@ -80,7 +87,7 @@ void draw() {
     fill(0, 255, 255);
     text("Map edit mode", width/2, height/2-5);
   } else {
-  if (Draw_Map & fcount%50 == 0 & updated) {
+    if (Draw_Map & fcount%10 == 0 & updated) {
       drawMap();
     }
     image(frameBuffer,0,0);
