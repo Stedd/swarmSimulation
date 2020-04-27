@@ -27,9 +27,9 @@ int       numberOfBots = 6;
 float     time;
 float     dt                      = 0.016;//100ms per frame
 
-float     pixelsPerMeter          = 75;
-int       cellSize                = 4;
-float     realCellSize            = float(cellSize)/pixelsPerMeter;
+float pixelsPerMeter          = 50;
+int   cellSize                = 5;
+float realCellSize            = float(cellSize)/pixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
 float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
@@ -88,10 +88,11 @@ void draw() {
     fill(0, 255, 255);
     text("Map edit mode", width/2, height/2-5);
   } else {
-    if (Draw_Map & fcount%10 == 0 & updated) {
-      drawMap();
+    drawMap();
+    if (Draw_Map & updated) {
+      image(frameBuffer,0,0);
     }
-    image(frameBuffer,0,0);
+
     text("Map updates: " + updateCount, width-600, 40);
 
     //drawEdges();
