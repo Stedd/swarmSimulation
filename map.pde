@@ -29,10 +29,11 @@ class Edge {
 }
 
 class Cell {
-  int[] edge_id = new int[4];
-  boolean[] edge_exist = new boolean[4];
-  boolean exist = false;
-  boolean discovered = false;
+  int[] edge_id         = new int[4];
+  boolean[] edge_exist  = new boolean[4];
+  boolean exist         = false;
+  boolean discovered    = false;
+  boolean rendered      = false;
 }
 
 
@@ -127,25 +128,30 @@ void drawEdges() {
 
 
 void drawMap() {
+  frameBuffer.beginDraw();
   for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
-    if (cells.get(i).discovered) {
+    if (cells.get(i).discovered & !cells.get(i).rendered) {
       if (cells.get(i).exist) {
         //stroke(0);
-        noStroke();
-        fill(0);
+          frameBuffer.noStroke();
+          frameBuffer.fill(0);
         int x = i%(width/cellSize);
         int y = floor(i/(width/cellSize));
-        rect (x*cellSize, y*cellSize, cellSize, cellSize);
+        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
       } else {
         //stroke(backGroundColor);
-        noStroke();
-        fill(255);
+          frameBuffer.noStroke();
+          frameBuffer.fill(255);
         int x = i%(width/cellSize);
         int y = floor(i/(width/cellSize));
-        rect (x*cellSize, y*cellSize, cellSize, cellSize);
+        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
       }
+      cells.get(i).rendered = true;
     }
   }
+  frameBuffer.endDraw();
+  updated = false;
+  updateCount++;
 }
 
 
