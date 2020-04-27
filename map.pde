@@ -1,6 +1,3 @@
-
-
-
 ArrayList<Edge>  edgePool;
 ArrayList<Cell>  cells;
 ArrayList<Cell>  cellsBuffer;
@@ -29,12 +26,13 @@ class Edge {
   }
 }
 
+
 class Cell {
-  int[] edge_id = new int[4];
-  boolean[] edge_exist = new boolean[4];
-  boolean exist = false;
-  boolean discovered = false;
-  boolean rendered = false;
+  int[] edge_id         = new int[4];
+  boolean[] edge_exist  = new boolean[4];
+  boolean exist         = false;
+  boolean discovered    = false;
+  boolean rendered      = false;
 }
 
 
@@ -51,6 +49,7 @@ void initMap() {
     cellsBuffer.add(new Cell());
   }
 }
+
 
 void loadMap() {
   //Draw pre generated map
@@ -127,6 +126,7 @@ void drawEdges() {
   }
 }
 
+
 void drawMap() {
   frameBuffer.beginDraw();
   if (cellsToRender.size() > 0) {
@@ -151,35 +151,6 @@ void drawMap() {
       updateCount++;
     }
 }
-
-
-
-//void drawMap() {
-//  frameBuffer.beginDraw();
-//  for (int i=0; i<((width/cellSize)*(height/cellSize)); i++) {
-//    if (cells.get(i).discovered & !cells.get(i).rendered) {
-//      if (cells.get(i).exist) {
-//        //stroke(0);
-//          frameBuffer.noStroke();
-//          frameBuffer.fill(0);
-//        int x = i%(width/cellSize);
-//        int y = floor(i/(width/cellSize));
-//        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
-//      } else {
-//        //stroke(backGroundColor);
-//          frameBuffer.noStroke();
-//          frameBuffer.fill(255);
-//        int x = i%(width/cellSize);
-//        int y = floor(i/(width/cellSize));
-//        frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
-//      }
-//      cells.get(i).rendered = true;
-//    }
-//  }
-//  frameBuffer.endDraw();
-//  updated = false;
-//  updateCount++;
-//}
 
 
 void keyPressed() {
