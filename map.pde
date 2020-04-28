@@ -85,22 +85,83 @@ void createMap() {
   
   for (int c = 0; c < numberOfCorridors; c++) {
     int   startY = 1*icellPerMeter + c*wallThickness + c*iroomHeight; 
-    for (int r = 0; r < numberOfRooms; r++) {
-      int startX = 1*icellPerMeter + r*wallThickness + r*iroomWidth;
 
-      //Draw offices
+    if(random(1)>0.15){
+      for (int r = 0; r < numberOfRooms; r++) {
+        int startX = 1*icellPerMeter + r*wallThickness + r*iroomWidth;
+          //Draw offices
+          for (int y = startY; y < startY + iroomHeight; y++) {
+            for (int x = startX; x < startX + iroomWidth; x++) {
+              int i = y*(width/cellSize) + x;
+              // println(i);
+              Cell currentCell = cells.get(i);
+              currentCell.mapValue=1.0;
+            }
+          }
+          //Draw doors
+          for (int d = 0; d <= 3 ; d++) {
+            if(random(1)>0.25 &&d==0){
+              //door north
+              println("North door");
+              for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
+                for (int y = startY - wallThickness; y < startY; y++) {
+                  int i = y*(width/cellSize) + x;
+                  Cell currentCell = cells.get(i);
+                  currentCell.mapValue=1.0;
+                }
+              }
+            }
+            // //door south
+            if(random(1)>0.25 && d==1){
+              println("South door");
+              for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
+                for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {
+                  int i = y*(width/cellSize) + x;
+                  Cell currentCell = cells.get(i);
+                  currentCell.mapValue=1.0;
+                }
+              }
+            }
+            //door east
+            if(random(1)>0.25 && d==2){
+              println("East door");
+              for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
+                for (int x = startX + iroomWidth - wallThickness; x < startX + iroomWidth; x++) {
+                  int i = y*(width/cellSize) + x;
+                  // println(i);
+                  Cell currentCell = cells.get(i);
+                  currentCell.mapValue=1.0;
+                }
+              }
+            }
+            // //door west
+            if(random(1)>0.25 && d==3){
+              println("West door");
+              for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
+                for (int x = startX - wallThickness; x < startX ; x++) {
+                  int i = y*(width/cellSize) + x;
+                  // println(i);
+                  Cell currentCell = cells.get(i);
+                  currentCell.mapValue=1.0;
+                }
+              }
+            }
+          }
+      }
+    }else{
+      int startX = 1*icellPerMeter;
+      //Draw corridor
       for (int y = startY; y < startY + iroomHeight; y++) {
-        for (int x = startX; x < startX + iroomWidth; x++) {
+        for (int x = startX; x < startX + numberOfRooms*iroomWidth + numberOfRooms*wallThickness; x++) {
           int i = y*(width/cellSize) + x;
           // println(i);
           Cell currentCell = cells.get(i);
           currentCell.mapValue=1.0;
         }
       }
-
-      //Draw doors
-      for (int d = 0; d <= 3 ; d++) {
-        if(random(1)>0.25 &&d==0){
+      for (int d = 0; d < numberOfRooms ; d++) {
+        startX = 1*icellPerMeter + d*wallThickness + d*iroomWidth;
+        if(random(1)>0.05){
           //door north
           println("North door");
           for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
@@ -111,8 +172,8 @@ void createMap() {
             }
           }
         }
-        // //door south
-        if(random(1)>0.25 && d==1){
+        //door south
+        if(random(1)>0.05){
           println("South door");
           for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
             for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {
@@ -122,35 +183,11 @@ void createMap() {
             }
           }
         }
-        //door east
-        if(random(1)>0.25 && d==2){
-          println("East door");
-          for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
-            for (int x = startX + iroomWidth - wallThickness; x < startX + iroomWidth; x++) {
-              int i = y*(width/cellSize) + x;
-              // println(i);
-              Cell currentCell = cells.get(i);
-              currentCell.mapValue=1.0;
-            }
-          }
-        }
-        // //door west
-        if(random(1)>0.25 && d==3){
-          println("West door");
-          for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
-            for (int x = startX - wallThickness; x < startX ; x++) {
-              int i = y*(width/cellSize) + x;
-              // println(i);
-              Cell currentCell = cells.get(i);
-              currentCell.mapValue=1.0;
-            }
-          }
-        }
       }
     }
   }
-
-  //Write cellbuffer to cells
+  
+  //Write cellbuffer to cell
   for (int x=0; x<((width/cellSize)*(height/cellSize)); x++) {
     Cell currentBufferCell = cellsBuffer.get(x);
     Cell currentCell = cells.get(x);
@@ -236,6 +273,24 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
     cellsToRender.append(l);
   }
 }
+
+
+// void updateCell(PVector scanPoint, float targetValue, float confidence) {
+//   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
+//   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+//   int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
+//   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+//   int l = yCellOver*(width/cellSize) + xCellOver;
+//   Cell currentCell = cells.get(l);
+//   float prior = currentCell.probability;
+//   float likelihood = targetValue * confidence;
+//   float posterior  = prior * likelihood ;
+//   if ((currentCell.probability < 1.0 && posterior > 0) || (currentCell.probability > 0.0 && posterior < 0)) {
+//     currentCell.probability += posterior ;
+//     currentCell.prior       = currentCell.probability;
+//     cellsToRender.append(l);
+//   }
+// }
 
 
 void keyPressed() {
