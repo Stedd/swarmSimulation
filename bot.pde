@@ -22,10 +22,10 @@ class Bot {
   PVector camera_lens_pos   = new PVector();
   float cameraAng           = 0;
   float fovHorizontal       = (59*PI)/180;
-  float cameraMinRange      = depthCameraMinRange*pixelsPerMeter;
-  float cameraSpan          = depthCameraSpan*pixelsPerMeter;
+  float cameraMinRange      = depthCameraMinRange*fpixelsPerMeter;
+  float cameraSpan          = depthCameraSpan*fpixelsPerMeter;
   float beamLength          = 0;
-  int   numberOfBeams       = 10;
+  int   numberOfBeams       = 20;
   PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
@@ -118,7 +118,7 @@ class Bot {
 
   void depthCamera() {
     // cameraAng = -ang+QUARTER_PI;
-    beamLength = cameraSpan+botSizePixels;
+    beamLength = cameraSpan+(botSizePixels/4);
 
     if (numberOfBeams==1) {
       float beamAng = cameraAng;
@@ -324,9 +324,9 @@ class Bot {
   }
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
-    botSizePixels = pixelsPerMeter*botSizeReal;
-    closeBoundary = botSizePixels + 0.75*pixelsPerMeter;
-    detBoundary   = botSizePixels + 3*pixelsPerMeter;
+    botSizePixels = fpixelsPerMeter*botSizeReal;
+    closeBoundary = botSizePixels + 0.75*fpixelsPerMeter;
+    detBoundary   = botSizePixels + 3*fpixelsPerMeter;
     
   }
   public PVector pos() {

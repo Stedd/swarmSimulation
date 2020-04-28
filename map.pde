@@ -51,10 +51,10 @@ void initMap() {
 }
 
 
-void loadMap() {
-  //Draw pre generated map
+void createMap() {
+  //Offset from map edge
   int offset = 1;
-  //some for loops drawing the map.
+  //Make entire map wall
   for (int x = offset; x < (width/cellSize)-offset; x++) {
     for (int y = offset; y < (height/cellSize)-offset; y++) {
       int i = y*(width/cellSize) + x;
@@ -63,27 +63,94 @@ void loadMap() {
     }
   }
 
-  int numberOfRooms = 3;
-  int roomWidth = 3*int(pixelsPerMeter);
-  int roomHeight = 5*int(pixelsPerMeter);
+  //Draw parameters
+    //doors
+  float doorWidth     = 0.8;  //Meter
 
-  for (int r = 0; r < numberOfRooms; r++) {
-    int startX = 1*int(pixelsPerMeter) + int(((r*roomWidth)+0.1)*pixelsPerMeter);
-    println("StartX: "+startX);
-    // int startY = 1*int(pixelsPerMeter);
-    int startY = 150;
-    println("StartY: "+startY);
-    // offset = 2;
-    //some for loops drawing the map.
-    for (int x = startX; x < startX + (roomWidth/cellSize); x++) {
-      for (int y = startY; y < startY + (roomHeight/cellSize); y++) {
-        int i = y*(width/cellSize) + x;
-        Cell currentCell = cells.get(i);
-        currentCell.mapValue=1.0;
+  //office
+  float officeWidth   = 3;    //Meter
+  float officeHeight  = 3;    //Meter
+
+  int   numberOfRooms     = floor((width/fpixelsPerMeter)/(officeWidth*1.1));
+  int   numberOfCorridors = floor((height/fpixelsPerMeter)/(officeHeight*1.1));
+  int   wallThickness     = 1;
+
+  //help variables
+  float froomWidth        = officeWidth*icellPerMeter;
+  int   iroomWidth        = int(froomWidth);
+  float froomHeight       = officeHeight*icellPerMeter;
+  int   iroomHeight       = int(froomHeight);
+  float fdoorWidth        = doorWidth*icellPerMeter;
+  int   idoorWidth        = int(fdoorWidth);
+  
+  for (int c = 0; c < numberOfCorridors; c++) {
+    int   startY = 1*icellPerMeter + c*wallThickness + c*iroomHeight; 
+    for (int r = 0; r < numberOfRooms; r++) {
+      int startX = 1*icellPerMeter + r*wallThickness + r*iroomWidth;
+
+      //Draw offices
+      for (int y = startY; y < startY + iroomHeight; y++) {
+        for (int x = startX; x < startX + iroomWidth; x++) {
+          int i = y*(width/cellSize) + x;
+          // println(i);
+          Cell currentCell = cells.get(i);
+          currentCell.mapValue=1.0;
+        }
+      }
+
+      //Draw doors
+      for (int d = 0; d <= 3 ; d++) {
+        if(random(1)>0.25 &&d==0){
+          //door north
+          println("North door");
+          for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
+            for (int y = startY - wallThickness; y < startY; y++) {
+              int i = y*(width/cellSize) + x;
+              Cell currentCell = cells.get(i);
+              currentCell.mapValue=1.0;
+            }
+          }
+        }
+        // //door south
+        if(random(1)>0.25 && d==1){
+          println("South door");
+          for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
+            for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {
+              int i = y*(width/cellSize) + x;
+              Cell currentCell = cells.get(i);
+              currentCell.mapValue=1.0;
+            }
+          }
+        }
+        //door east
+        if(random(1)>0.25 && d==2){
+          println("East door");
+          for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
+            for (int x = startX + iroomWidth - wallThickness; x < startX + iroomWidth; x++) {
+              int i = y*(width/cellSize) + x;
+              // println(i);
+              Cell currentCell = cells.get(i);
+              currentCell.mapValue=1.0;
+            }
+          }
+        }
+        // //door west
+        if(random(1)>0.25 && d==3){
+          println("West door");
+          for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
+            for (int x = startX - wallThickness; x < startX ; x++) {
+              int i = y*(width/cellSize) + x;
+              // println(i);
+              Cell currentCell = cells.get(i);
+              currentCell.mapValue=1.0;
+            }
+          }
+        }
       }
     }
   }
 
+  //Write cellbuffer to cells
   for (int x=0; x<((width/cellSize)*(height/cellSize)); x++) {
     Cell currentBufferCell = cellsBuffer.get(x);
     Cell currentCell = cells.get(x);
@@ -124,8 +191,8 @@ void drawMap() {
   if (cellsToRender.size() > 0) {
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
-      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
       frameBuffer.fill(fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));

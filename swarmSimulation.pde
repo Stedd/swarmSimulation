@@ -7,7 +7,6 @@ Swarm     swarmsystem;
 
 //Map variables
 PGraphics frameBuffer;
-// boolean   mapUpdated = false;
 int       updateCount             = 0;
 
 //Util
@@ -22,14 +21,18 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 1;
+int       numberOfBots            = 3;
 
 float     time;
-float     dt                      = 0.016;//50ms per frame
+float     dt                      = 0.05;//50ms per frame
 
-float pixelsPerMeter              = 50;
-int   cellSize                    = 5;
-float realCellSize                = float(cellSize)/pixelsPerMeter;
+float     fpixelsPerMeter         = 30;
+int       ipixelsPerMeter         = int(fpixelsPerMeter);
+float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
+int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
+int       cellSize                = 2;
+int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
+float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
 float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
@@ -43,17 +46,17 @@ float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
 float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
-float     realBotMaxLinearSpeed   = 0.3; //[m/s]
-float     realBotMaxAngularSpeed  = 0.5; //[rad/s]
+float     realBotMaxLinearSpeed   = 0.0; //[m/s]
+float     realBotMaxAngularSpeed  = 0.0; //[rad/s]
 
-float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*pixelsPerMeter*dt; //[pixel/frame]
+float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt; //[pixel/frame]
 float     simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
 
 
 void setup() {
   //Set up Canvas
   size(1300, 900);
-  frameBuffer = createGraphics(1300,900);
+  frameBuffer = createGraphics(width,height);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -62,8 +65,8 @@ void setup() {
   //initialize map arrays
   initMap();
 
-  //Load pre-generated map
-  loadMap();
+  //pre-generate map
+  createMap();
 
   //Initialize buttons
   buttons();
