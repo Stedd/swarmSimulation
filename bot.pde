@@ -25,7 +25,7 @@ class Bot {
   float cameraMinRange      = depthCameraMinRange*fpixelsPerMeter;
   float cameraSpan          = depthCameraSpan*fpixelsPerMeter;
   float beamLength          = 0;
-  int   numberOfBeams       = 20;
+  int   numberOfBeams       = 2;
   PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
@@ -93,6 +93,11 @@ class Bot {
       ruleAlignment();
     }
 
+    //RULE: DepthCamera
+    if (DepthCamera) {
+      ruleDepthCamera();
+    }
+
     swarmRulescombine();
 
 
@@ -118,7 +123,7 @@ class Bot {
 
   void depthCamera() {
     // cameraAng = -ang+QUARTER_PI;
-    beamLength = cameraSpan+(botSizePixels/4);
+    beamLength = cameraSpan;
 
     if (numberOfBeams==1) {
       float beamAng = cameraAng;
@@ -315,6 +320,29 @@ class Bot {
 
     n+=1; 
     c+=1.0;
+  }
+
+
+  void ruleDepthCamera(){
+    w=DepthCamera_weight;
+
+    for ( int i = 0; i<numberOfBeams; i++) {
+      // float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
+      // beamStartPoints[i] = new PVector(camera_lens_pos.x + (cameraMinRange*cos(beamAng)) + ((cameraMinRange)*sin(beamAng)), camera_lens_pos.y + (cameraMinRange*-sin(beamAng)) + ((cameraMinRange)*cos(beamAng)));
+      // beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+      //add steering vector if beam is intersecting (beam is shorter than it should be)
+      // println(PVector.sub(beamEndPointsIntersect[0],beamStartPoints[0]).mag());
+      if(PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag()<cameraSpan){
+        println("beam intersect, adding vector");
+        ruleVector[n].set((PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag())); // todo, calculate the steering vecto size based on the lenth of the intersect vector comparet to the expected beam lengt and use the inverted beam angle for the direction of this vector
+        ruleVector[n].normalize();
+        ruleVector[n].mult(w);
+        n+=1;
+        c+=1.0f;
+      }
+      
+      
+    }
   }
 
 

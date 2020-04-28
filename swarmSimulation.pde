@@ -21,7 +21,7 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 3;
+int       numberOfBots            = 1;
 
 float     time;
 float     dt                      = 0.05;//50ms per frame

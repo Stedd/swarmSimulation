@@ -1,10 +1,10 @@
 
 //Variables
-boolean Separation, Cohesion, Alignment;
+boolean Separation, Cohesion, Alignment, DepthCamera;
 float bot_Size;
 
 //Swarm rule weights
-float Separation_weight, Cohesion_weight, Alignment_weight;
+float Separation_weight, Cohesion_weight, Alignment_weight, DepthCamera_weight;
 
 //Debug
 boolean Draw_Map, Depth_camera_zone, Detect_Zone, Safe_Zone, Resultant;
@@ -21,7 +21,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Separation")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, 50)
     .setSize(20, 20)
     ;
@@ -34,7 +34,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Cohesion")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, 100)
     .setSize(20, 20)
     ;
@@ -57,6 +57,19 @@ void buttons() {
     .setPosition(60, 150)
     //.setSize(20, 60)
     .setRange(0, 300)
+    ;
+
+  cp5.addToggle("DepthCamera")
+    .setValue(1)
+    .setPosition(20, 200)
+    .setSize(20, 20)
+    ;
+
+  cp5.addSlider("DepthCamera_weight")
+    .setValue(0.025)
+    .setPosition(60, 200)
+    //.setSize(20, 60)
+    .setRange(0, 0.1)
     ;
 
   cp5.addToggle("Draw_Map")
@@ -84,7 +97,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Resultant")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, height-40)
     .setSize(20, 20)
     ;
