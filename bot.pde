@@ -25,7 +25,7 @@ class Bot {
   float cameraMinRange      = depthCameraMinRange*fpixelsPerMeter;
   float cameraSpan          = depthCameraSpan*fpixelsPerMeter;
   float beamLength          = 0;
-  int   numberOfBeams       = 50;
+  int   numberOfBeams       = 4;
   PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
@@ -57,8 +57,8 @@ class Bot {
     pos.set(pos_);
     botID = id_;
 
-    ruleVector=new PVector[botcount*2];
-    for ( int i = 0; i<botcount*2; i++) {
+    ruleVector=new PVector[botcount*numberOfBeams];
+    for ( int i = 0; i<botcount*numberOfBeams; i++) {
       ruleVector[i]=new PVector(0, 0);
     }
     
@@ -78,6 +78,9 @@ class Bot {
     //Swarm rules
     swarmRulesInit();
 
+    //Sensors
+    sensors();
+
     //RULE: Separation
     if (Separation) {
       ruleSeparation();
@@ -95,14 +98,13 @@ class Bot {
 
     //RULE: DepthCamera
     if (DepthCamera) {
-      // ruleDepthCamera();
+      ruleDepthCamera();
     }
 
     swarmRulescombine();
 
 
-    //Sensors
-    sensors();
+    
     // depthCamera();
 
     //Move robot
@@ -156,7 +158,7 @@ class Bot {
 
     //linear
     lin_vel = resultantVelocityVector.mag()*cos(theta_ref); 
-    lin_vel = sat(lin_vel, 0, simBotMaxLinearSpeed); 
+    lin_vel = sat(lin_vel, -0*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
     if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
       lin_vel=0;
     }
@@ -174,7 +176,7 @@ class Bot {
     //iterate angle of bot
     ang += ang_vel; 
 
-    lin_vel = simBotMaxLinearSpeed;
+    // lin_vel = simBotMaxLinearSpeed;
 
     //iterate position of bot
     vel.set(lin_vel*cos(ang), lin_vel*sin(ang)); 
@@ -247,7 +249,7 @@ class Bot {
     //clear resultant vectors before new run
     resultantVelocityVector.set(0, 0); 
 
-    for ( int x = 0; x<botcount; x++) {
+    for ( int x = 0; x<botcount*numberOfBeams; x++) {
       ruleVector[x].set(0, 0);
     }
   }
@@ -265,7 +267,7 @@ class Bot {
   }
 
   void ruleSeparation() {
-    w=Separation_weight; 
+    w=Separation_weight/botcount; 
     //Read position of other bots
     for (int j = 0; j<botcount; j++) {
       if (j!=botID) {
@@ -285,7 +287,7 @@ class Bot {
   }
 
   void ruleCohesion() {
-    w=Cohesion_weight; 
+    w=Cohesion_weight/botcount; 
     //Read position of other bots
     for (int j = 0; j<botcount; j++) {
       if (j!=botID) {
@@ -305,7 +307,7 @@ class Bot {
   }
 
   void ruleAlignment() {
-    w=Alignment_weight; 
+    w=Alignment_weight/botcount; 
     //Calculate average heading of group
     for (int j = 0; j<botcount; j++) {
       Bot targetBot = bots.get(j); 
@@ -323,27 +325,31 @@ class Bot {
   }
 
 
-  // void ruleDepthCamera(){
-  //   w=DepthCamera_weight;
+  void ruleDepthCamera(){
+    w=DepthCamera_weight/botcount;
 
-  //   for ( int i = 0; i<numberOfBeams; i++) {
-  //     // float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
-  //     // beamStartPoints[i] = new PVector(camera_lens_pos.x + (cameraMinRange*cos(beamAng)) + ((cameraMinRange)*sin(beamAng)), camera_lens_pos.y + (cameraMinRange*-sin(beamAng)) + ((cameraMinRange)*cos(beamAng)));
-  //     // beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
-  //     //add steering vector if beam is intersecting (beam is shorter than it should be)
-  //     // println(PVector.sub(beamEndPointsIntersect[0],beamStartPoints[0]).mag());
-  //     if(PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag()<cameraSpan){
-  //       println("beam intersect, adding vector");
-  //       ruleVector[n].set((PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag())); // todo, calculate the steering vecto size based on the lenth of the intersect vector comparet to the expected beam lengt and use the inverted beam angle for the direction of this vector
-  //       ruleVector[n].normalize();
-  //       ruleVector[n].mult(w);
-  //       n+=1;
-  //       c+=1.0f;
-  //     }
+    for ( int i = 0; i<numberOfBeams; i++) {
+      // float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
+      // beamStartPoints[i] = new PVector(camera_lens_pos.x + (cameraMinRange*cos(beamAng)) + ((cameraMinRange)*sin(beamAng)), camera_lens_pos.y + (cameraMinRange*-sin(beamAng)) + ((cameraMinRange)*cos(beamAng)));
+      // beamEndPoints[i]   = new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+      //add steering vector if beam is intersecting (beam is shorter than it should be)
+      // println(PVector.sub(beamEndPointsIntersect[0],beamStartPoints[0]).mag());
+      if(PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag()<cameraSpan){
+        // println("beam intersect, adding vector");
+        float resultantMagnitude = (PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag() - beamLength)*w;
+        float beamangle          = -(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
+        float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
+        ruleVector[n].set(resultantMagnitude*0.2*cos(resultantDirection),resultantMagnitude*5*sin(resultantDirection)); // todo, calculate the steering vecto size based on the lenth of the intersect vector comparet to the expected beam lengt and use the inverted beam angle for the direction of this vector
+        // ruleVector[n].normalize();
+        ruleVector[n].mult(1);
+        // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
+        n+=1;
+        c+=1.0f;
+      }
       
       
-  //   }
-  // }
+    }
+  }
 
 
   //return position
@@ -354,7 +360,7 @@ class Bot {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
     closeBoundary = botSizePixels + 1.0*fpixelsPerMeter;
-    detBoundary   = botSizePixels + 10*fpixelsPerMeter;
+    detBoundary   = botSizePixels + 100*fpixelsPerMeter;
     
   }
   public PVector pos() {

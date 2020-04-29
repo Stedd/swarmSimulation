@@ -21,7 +21,7 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 4;
+int       numberOfBots            = 3;
 
 float     time;
 float     dt                      = 0.05;//50ms per frame
@@ -42,12 +42,12 @@ float     irMinRange              = 0.5;  //todo: Update values from manual
 float     irMaxRange              = 1.5;  //todo: Update values from manual
 float     irSpan                  = irMaxRange - irMinRange;
 
-float     depthCameraMinRange     = 0.55;
+float     depthCameraMinRange     = 0.1;
 float     depthCameraMaxRange     = 2.8;
 float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
-float     realBotMaxLinearSpeed   = 0.4; //[m/s]
-float     realBotMaxAngularSpeed  = 0.7; //[rad/s]
+float     realBotMaxLinearSpeed   = 0.2; //[m/s]
+float     realBotMaxAngularSpeed  = 0.3; //[rad/s]
 
 float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt; //[pixel/frame]
 float     simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
@@ -59,7 +59,7 @@ void setup() {
   frameBuffer = createGraphics(width,height);
 
   //
-  randomSeed(3);
+  randomSeed(4);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -80,7 +80,7 @@ void setup() {
 }
 
 void draw() {
-  frameRate(600);
+  frameRate(100);
   background(backGroundColor);
 
 

@@ -34,16 +34,16 @@ void buttons() {
     ;
 
   cp5.addToggle("Cohesion")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, 100)
     .setSize(20, 20)
     ;
 
   cp5.addSlider("Cohesion_weight")
-    .setValue(0.025)
+    .setValue(0.07)
     .setPosition(60, 100)
     //.setSize(20, 60)
-    .setRange(0, 0.1)
+    .setRange(0, 0.3)
     ;
 
   cp5.addToggle("Alignment")
@@ -66,10 +66,10 @@ void buttons() {
     ;
 
   cp5.addSlider("DepthCamera_weight")
-    .setValue(0.025)
+    .setValue(0.4)
     .setPosition(60, 200)
     //.setSize(20, 60)
-    .setRange(0, 0.1)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("Draw_Map")

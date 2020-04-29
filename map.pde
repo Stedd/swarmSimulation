@@ -80,11 +80,11 @@ void createMap() {
   float officeWidth       = 4;    //Meter
   float officeHeight      = 3;    //Meter
 
-  int   buildingCornerX   = 10;
+  int   buildingCornerX   = 2;
   int   buildingCornerY   = 2;
 
-  int   numberOfRooms     = floor(((width/fpixelsPerMeter)-buildingCornerX)/((officeWidth)*1.1));
-  int   numberOfCorridors = floor(((height/fpixelsPerMeter)-buildingCornerY)/((officeHeight)*1.1));
+  int   numberOfRooms     = floor(((width/fpixelsPerMeter)-buildingCornerX)/((officeWidth)*1.05));
+  int   numberOfCorridors = floor(((height/fpixelsPerMeter)-buildingCornerY)/((officeHeight)*1.05));
   int   wallThickness     = 1;
   
   //help variables
@@ -272,22 +272,7 @@ void drawEditMap() {
   }
 
 
-// void updateCell(PVector scanPoint, float targetValue, float modifier) {
-//   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
-//   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-//   int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
-//   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-//   int l = yCellOver*(width/cellSize) + xCellOver;
-//   Cell currentCell = cells.get(l);
-//   float difference = targetValue - currentCell.probability;
-//   if ((currentCell.probability < 1.0 && difference > 0) || (currentCell.probability > 0.0 && difference < 0)) {
-//     currentCell.probability += difference * modifier;
-//     cellsToRender.append(l);
-//   }
-// }
-
-
-void updateCell(PVector scanPoint, float targetValue) {
+void updateCell(PVector scanPoint, float targetValue, float modifier) {
   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
   int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
@@ -295,14 +280,29 @@ void updateCell(PVector scanPoint, float targetValue) {
   int l = yCellOver*(width/cellSize) + xCellOver;
   Cell currentCell = cells.get(l);
   float difference = targetValue - currentCell.probability;
-  float prior      = currentCell.probability;  
   if ((currentCell.probability < 1.0 && difference > 0) || (currentCell.probability > 0.0 && difference < 0)) {
-    currentCell.sum           += targetValue;
-    currentCell.numberOfmeas  += 1;
-    currentCell.probability   += prior * (currentCell.sum/currentCell.numberOfmeas);
+    currentCell.probability += difference * modifier;
     cellsToRender.append(l);
   }
 }
+
+
+// void updateCell(PVector scanPoint, float targetValue) {
+//   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
+//   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+//   int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
+//   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+//   int l = yCellOver*(width/cellSize) + xCellOver;
+//   Cell currentCell = cells.get(l);
+//   float difference = targetValue - currentCell.probability;
+//   float prior      = currentCell.probability;  
+//   if ((currentCell.probability < 1.0 && difference > 0) || (currentCell.probability > 0.0 && difference < 0)) {
+//     currentCell.sum           += targetValue;
+//     currentCell.numberOfmeas  += 1;
+//     currentCell.probability   += prior * (currentCell.sum/currentCell.numberOfmeas);
+//     cellsToRender.append(l);
+//   }
+// }
 
 // void updateCell(PVector scanPoint, float targetValue, float confidence) {
 //   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));

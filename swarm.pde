@@ -148,12 +148,12 @@ class Swarm {
           for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
             //println("beam: "+a+" checking: "+b);
             if((wallintersectionExists || botintersectionExists) && m>=0.95){
-              // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
-              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
+              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
+              // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
 
             }else{
-              // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
-              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
+              // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
             }
           }
         }
