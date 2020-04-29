@@ -74,16 +74,19 @@ void createMap() {
 
   //Draw parameters
   //Doors
-  float doorWidth     = 0.8;  //Meter
+  float doorWidth         = 0.8;  //Meter
 
   //Office
-  float officeWidth   = 4;    //Meter
-  float officeHeight  = 3;    //Meter
+  float officeWidth       = 4;    //Meter
+  float officeHeight      = 3;    //Meter
 
-  int   numberOfRooms     = floor((width/fpixelsPerMeter)/(officeWidth*1.1));
-  int   numberOfCorridors = floor((height/fpixelsPerMeter)/(officeHeight*1.1));
+  int   buildingCornerX   = 10;
+  int   buildingCornerY   = 2;
+
+  int   numberOfRooms     = floor(((width/fpixelsPerMeter)-buildingCornerX)/((officeWidth)*1.1));
+  int   numberOfCorridors = floor(((height/fpixelsPerMeter)-buildingCornerY)/((officeHeight)*1.1));
   int   wallThickness     = 1;
-
+  
   //help variables
   float froomWidth        = officeWidth*icellPerMeter;
   int   iroomWidth        = int(froomWidth);
@@ -93,11 +96,11 @@ void createMap() {
   int   idoorWidth        = int(fdoorWidth);
   
   for (int c = 0; c < numberOfCorridors; c++) {
-    int   startY = 1*icellPerMeter + c*wallThickness + c*iroomHeight; 
+    int   startY = buildingCornerY*icellPerMeter + c*wallThickness + c*iroomHeight; 
 
     if(random(1)>0.15){
       for (int r = 0; r < numberOfRooms; r++) {
-        int startX = 1*icellPerMeter + r*wallThickness + r*iroomWidth;
+        int startX = buildingCornerX*icellPerMeter + r*wallThickness + r*iroomWidth;
           //Draw offices
           for (int y = startY; y < startY + iroomHeight; y++) {
             for (int x = startX; x < startX + iroomWidth; x++) {
@@ -109,7 +112,7 @@ void createMap() {
           }
           //Draw doors
           for (int d = 0; d <= 3 ; d++) {
-            if(random(1)>0.25 &&d==0){
+            if(c!=0 && random(1)>0.35 &&d==0){
               //door north
               // println("North door");
               for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
@@ -121,7 +124,7 @@ void createMap() {
               }
             }
             // //door south
-            if(random(1)>0.25 && d==1){
+            if(c!=numberOfCorridors && random(1)>0.35 && d==1){
               // println("South door");
               for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
                 for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {
@@ -132,7 +135,7 @@ void createMap() {
               }
             }
             //door east
-            if(random(1)>0.25 && d==2){
+            if(r!=numberOfRooms && random(1)>0.25 && d==2){
               // println("East door");
               for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
                 for (int x = startX + iroomWidth - wallThickness; x < startX + iroomWidth; x++) {
@@ -144,7 +147,7 @@ void createMap() {
               }
             }
             // //door west
-            if(random(1)>0.25 && d==3){
+            if(r!=0 && random(1)>0.25 && d==3){
               // println("West door");
               for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
                 for (int x = startX - wallThickness; x < startX ; x++) {
@@ -158,7 +161,7 @@ void createMap() {
           }
       }
     }else{
-      int startX = 1*icellPerMeter;
+      int startX = buildingCornerX*icellPerMeter;
       //Draw corridor
       for (int y = startY; y < startY + iroomHeight; y++) {
         for (int x = startX; x < startX + numberOfRooms*iroomWidth + numberOfRooms*wallThickness; x++) {
@@ -169,8 +172,8 @@ void createMap() {
         }
       }
       for (int d = 0; d < numberOfRooms ; d++) {
-        startX = 1*icellPerMeter + d*wallThickness + d*iroomWidth;
-        if(random(1)>0.05){
+        startX = buildingCornerX*icellPerMeter + d*wallThickness + d*iroomWidth;
+        if(c!=0 && random(1)>0.05){
           //door north
           // println("North door");
           for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
@@ -182,7 +185,7 @@ void createMap() {
           }
         }
         //door south
-        if(random(1)>0.05){
+        if(c!=numberOfCorridors && random(1)>0.05){
           // println("South door");
           for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
             for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {

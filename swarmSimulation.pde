@@ -55,8 +55,11 @@ float     simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
 
 void setup() {
   //Set up Canvas
-  size(1300, 900);
+  size(1500, 900);
   frameBuffer = createGraphics(width,height);
+
+  //
+  randomSeed(3);
 
   //Util
   f = createFont("Arial", 16, true);
