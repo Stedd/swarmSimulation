@@ -27,7 +27,16 @@ class Edge {
 }
 
 
+// class Cell {
+//   float probability     = 0.5;
+//   float mapValue        = 1.0;             
+//   int[] edge_id         = new int[4];
+//   boolean[] edge_exist  = new boolean[4];
+// }
+
 class Cell {
+  float sum             = 0.0;
+  float numberOfmeas    = 0; 
   float probability     = 0.5;
   float mapValue        = 1.0;             
   int[] edge_id         = new int[4];
@@ -64,11 +73,11 @@ void createMap() {
   }
 
   //Draw parameters
-    //doors
+  //Doors
   float doorWidth     = 0.8;  //Meter
 
-  //office
-  float officeWidth   = 3;    //Meter
+  //Office
+  float officeWidth   = 4;    //Meter
   float officeHeight  = 3;    //Meter
 
   int   numberOfRooms     = floor((width/fpixelsPerMeter)/(officeWidth*1.1));
@@ -102,7 +111,7 @@ void createMap() {
           for (int d = 0; d <= 3 ; d++) {
             if(random(1)>0.25 &&d==0){
               //door north
-              println("North door");
+              // println("North door");
               for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
                 for (int y = startY - wallThickness; y < startY; y++) {
                   int i = y*(width/cellSize) + x;
@@ -113,7 +122,7 @@ void createMap() {
             }
             // //door south
             if(random(1)>0.25 && d==1){
-              println("South door");
+              // println("South door");
               for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
                 for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {
                   int i = y*(width/cellSize) + x;
@@ -124,7 +133,7 @@ void createMap() {
             }
             //door east
             if(random(1)>0.25 && d==2){
-              println("East door");
+              // println("East door");
               for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
                 for (int x = startX + iroomWidth - wallThickness; x < startX + iroomWidth; x++) {
                   int i = y*(width/cellSize) + x;
@@ -136,7 +145,7 @@ void createMap() {
             }
             // //door west
             if(random(1)>0.25 && d==3){
-              println("West door");
+              // println("West door");
               for (int y = startY + iroomHeight/2 - idoorWidth/2; y < startY + iroomHeight/2 + idoorWidth/2; y++) {
                 for (int x = startX - wallThickness; x < startX ; x++) {
                   int i = y*(width/cellSize) + x;
@@ -163,7 +172,7 @@ void createMap() {
         startX = 1*icellPerMeter + d*wallThickness + d*iroomWidth;
         if(random(1)>0.05){
           //door north
-          println("North door");
+          // println("North door");
           for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
             for (int y = startY - wallThickness; y < startY; y++) {
               int i = y*(width/cellSize) + x;
@@ -174,7 +183,7 @@ void createMap() {
         }
         //door south
         if(random(1)>0.05){
-          println("South door");
+          // println("South door");
           for (int x = startX + iroomWidth/2 - idoorWidth/2; x < startX + iroomWidth/2 + idoorWidth/2; x++) {
             for (int y = startY + iroomHeight - wallThickness; y < startY + iroomHeight; y++) {
               int i = y*(width/cellSize) + x;
@@ -260,7 +269,22 @@ void drawEditMap() {
   }
 
 
-void updateCell(PVector scanPoint, float targetValue, float modifier) {
+// void updateCell(PVector scanPoint, float targetValue, float modifier) {
+//   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
+//   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+//   int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
+//   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+//   int l = yCellOver*(width/cellSize) + xCellOver;
+//   Cell currentCell = cells.get(l);
+//   float difference = targetValue - currentCell.probability;
+//   if ((currentCell.probability < 1.0 && difference > 0) || (currentCell.probability > 0.0 && difference < 0)) {
+//     currentCell.probability += difference * modifier;
+//     cellsToRender.append(l);
+//   }
+// }
+
+
+void updateCell(PVector scanPoint, float targetValue) {
   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
   int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
@@ -268,12 +292,14 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
   int l = yCellOver*(width/cellSize) + xCellOver;
   Cell currentCell = cells.get(l);
   float difference = targetValue - currentCell.probability;
+  float prior      = currentCell.probability;  
   if ((currentCell.probability < 1.0 && difference > 0) || (currentCell.probability > 0.0 && difference < 0)) {
-    currentCell.probability += difference * modifier;
+    currentCell.sum           += targetValue;
+    currentCell.numberOfmeas  += 1;
+    currentCell.probability   += prior * (currentCell.sum/currentCell.numberOfmeas);
     cellsToRender.append(l);
   }
 }
-
 
 // void updateCell(PVector scanPoint, float targetValue, float confidence) {
 //   int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));

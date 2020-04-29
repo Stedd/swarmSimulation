@@ -21,7 +21,7 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 1;
+int       numberOfBots            = 4;
 
 float     time;
 float     dt                      = 0.05;//50ms per frame
@@ -46,8 +46,8 @@ float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
 float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
-float     realBotMaxLinearSpeed   = 0.0; //[m/s]
-float     realBotMaxAngularSpeed  = 0.0; //[rad/s]
+float     realBotMaxLinearSpeed   = 0.4; //[m/s]
+float     realBotMaxAngularSpeed  = 0.7; //[rad/s]
 
 float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt; //[pixel/frame]
 float     simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
@@ -87,7 +87,6 @@ void draw() {
     if (Draw_Map) {
       image(frameBuffer,0,0);
     }
-
     textMode(MODEL);
     textAlign(CENTER);
     textFont(f, 50);
@@ -98,15 +97,10 @@ void draw() {
     if (Draw_Map) {
       image(frameBuffer,0,0);
     }
-
     text("Map updates: " + updateCount, width-600, 40);
-
     //drawEdges();
-
     swarmsystem.Loop();
   }
-
   time();
-
   fps();
 }

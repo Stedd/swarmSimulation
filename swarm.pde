@@ -42,20 +42,20 @@ class Swarm {
       bot.Loop();
 
       //Detect depth camera ray intersection with bots and walls
-      PVector p1 = new PVector(bot.camera_lens_pos.x, bot.camera_lens_pos.y);
-      PVector closestIntersectionPoint = new PVector(10000, 10000);
-      PVector distanceToIntersection  = new PVector();
+      PVector p1                        = new PVector(bot.camera_lens_pos.x, bot.camera_lens_pos.y);
+      PVector closestIntersectionPoint  = new PVector(10000, 10000);
+      PVector distanceToIntersection    = new PVector();
 
       for (int k=0; k<bot.numberOfBeams; k++) {
 
-        boolean wallintersectionExists = false;
-        boolean botintersectionExists = false;
+        boolean wallintersectionExists  = false;
+        boolean botintersectionExists   = false;
 
-        PVector p2 = new PVector(bot.beamEndPoints[k].x, bot.beamEndPoints[k].y);
-        PVector sub = PVector.sub(p2, p1);
+        PVector p2    = new PVector(bot.beamEndPoints[k].x, bot.beamEndPoints[k].y);
+        PVector sub   = PVector.sub(p2, p1);
         // y = a * x + b
-        float a = sub.y / sub.x;
-        float b = p1.y - a * p1.x;
+        float a       = sub.y / sub.x;
+        float b       = p1.y - a * p1.x;
         closestIntersectionPoint = new PVector(10000, 10000);
 
         //Check for beam collision with other bots
@@ -148,9 +148,12 @@ class Swarm {
           for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
             //println("beam: "+a+" checking: "+b);
             if((wallintersectionExists || botintersectionExists) && m>=0.95){
-              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
+              // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
+              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
+
             }else{
-              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
+              // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
+              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
             }
           }
         }
@@ -162,7 +165,6 @@ class Swarm {
 
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
-    //bots.add(new Bot(setPos));
     bots.add(new Bot(botcount, bots, setPos.set(random(width), random(height)), id_));
   }
 }
