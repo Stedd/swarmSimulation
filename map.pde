@@ -74,7 +74,7 @@ void createMap() {
 
   //Draw parameters
   //Doors
-  float doorWidth         = 0.8;  //Meter
+  float doorWidth         = 1.0;  //Meter
 
   //Office
   float officeWidth       = 4;    //Meter
@@ -240,8 +240,8 @@ void drawMap() {
   if (cellsToRender.size() > 0) {
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
-      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
       frameBuffer.fill(fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));

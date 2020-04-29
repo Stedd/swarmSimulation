@@ -3,7 +3,7 @@ class Bot {
   //Variables
   ArrayList<Bot>            bots;
   int                       botcount = 0;
-
+  
   //bot movement variables
   PVector pos               = new PVector();
   PVector vel               = new PVector();
@@ -25,7 +25,7 @@ class Bot {
   float cameraMinRange      = depthCameraMinRange*fpixelsPerMeter;
   float cameraSpan          = depthCameraSpan*fpixelsPerMeter;
   float beamLength          = 0;
-  int   numberOfBeams       = 4;
+  int   numberOfBeams       = 40;
   PVector[] beamStartPoints;
   PVector[] beamEndPoints;
   PVector[] beamEndPointsIntersect;
@@ -139,11 +139,11 @@ class Bot {
     }
   }
 
-  //   void ultrasonicSensor() {
-  //     beamLength = ultrasonicSpan+botSizePixels;
-  //     beamAng = cameraAng;
-  //     beamEndPoints[0]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
-  // }
+    void ultrasonicSensor() {
+      beamLength = ultrasonicSpan;
+      beamAng = cameraAng;
+      beamEndPoints[0]= new PVector(camera_lens_pos.x + (beamLength*cos(beamAng)) + ((beamLength)*sin(beamAng)), camera_lens_pos.y + (beamLength*-sin(beamAng)) + ((beamLength)*cos(beamAng)));
+  }
 
 
   void move() {
@@ -158,7 +158,7 @@ class Bot {
 
     //linear
     lin_vel = resultantVelocityVector.mag()*cos(theta_ref); 
-    lin_vel = sat(lin_vel, -0*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
+    lin_vel = sat(lin_vel, -0.1*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
     if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
       lin_vel=0;
     }
@@ -295,7 +295,7 @@ class Bot {
         PVector.sub(pos(), targetBot.pos(), botDistVec); 
         if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()>closeBoundary) {
-            ruleVector[n].set(botDistVec.mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6))))); 
+            ruleVector[n].set(botDistVec.mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
             stroke(0, 255, 0, 100); 
             //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
           }
@@ -326,7 +326,7 @@ class Bot {
 
 
   void ruleDepthCamera(){
-    w=DepthCamera_weight/botcount;
+    w=DepthCamera_weight/(botcount+numberOfBeams);
 
     for ( int i = 0; i<numberOfBeams; i++) {
       // float beamAng = cameraAng-(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
@@ -338,8 +338,9 @@ class Bot {
         // println("beam intersect, adding vector");
         float resultantMagnitude = (PVector.sub(beamEndPointsIntersect[i],beamStartPoints[i]).mag() - beamLength)*w;
         float beamangle          = -(fovHorizontal/2) + i * (fovHorizontal/(float(numberOfBeams)-1));
-        float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
-        ruleVector[n].set(resultantMagnitude*0.2*cos(resultantDirection),resultantMagnitude*5*sin(resultantDirection)); // todo, calculate the steering vecto size based on the lenth of the intersect vector comparet to the expected beam lengt and use the inverted beam angle for the direction of this vector
+        // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
+        float resultantDirection = ang + HALF_PI*sign(ang - beamangle);
+        ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); // todo, calculate the steering vecto size based on the lenth of the intersect vector comparet to the expected beam lengt and use the inverted beam angle for the direction of this vector
         // ruleVector[n].normalize();
         ruleVector[n].mult(1);
         // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
@@ -359,8 +360,8 @@ class Bot {
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
-    closeBoundary = botSizePixels + 1.0*fpixelsPerMeter;
-    detBoundary   = botSizePixels + 100*fpixelsPerMeter;
+    closeBoundary = botSizePixels + 2.0*fpixelsPerMeter;
+    detBoundary   = botSizePixels + 17*fpixelsPerMeter;
     
   }
   public PVector pos() {

@@ -165,6 +165,6 @@ class Swarm {
 
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
-    bots.add(new Bot(botcount, bots, setPos.set(random(width), random(height)), id_));
+    bots.add(new Bot(botcount, bots, setPos.set(random(100,width-100), random(100,height-100)), id_));
   }
 }

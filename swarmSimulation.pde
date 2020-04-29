@@ -21,7 +21,7 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 3;
+int       numberOfBots            = 6;
 
 float     time;
 float     dt                      = 0.05;//50ms per frame
@@ -47,7 +47,7 @@ float     depthCameraMaxRange     = 2.8;
 float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
 float     realBotMaxLinearSpeed   = 0.2; //[m/s]
-float     realBotMaxAngularSpeed  = 0.3; //[rad/s]
+float     realBotMaxAngularSpeed  = 0.5; //[rad/s]
 
 float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt; //[pixel/frame]
 float     simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
