@@ -12,6 +12,7 @@ class Bot {
 
   PVector resultantVelocityVector    = new PVector();
   PVector[] ruleVector;
+  int     numberOfVectors;
   float   lin_vel           = 0;
   float   theta_ref         = 0;
   float   ang_vel           = 0; 
@@ -25,7 +26,8 @@ class Bot {
   Sensor ultrasonic         = new Sensor(ultrasonicMinRange,  ultrasonicMaxRange, ultrasonicNoise,    1 , 30, 0);
 
   //IR sensors
-  Sensor infrared           = new Sensor(irMinRange,          irMaxRange,         irNoise,            2,  75, 0);
+  Sensor leftInfrared           = new Sensor(irMinRange,          irMaxRange,         irNoise,        3,  15, 30);
+  Sensor rightInfrared          = new Sensor(irMinRange,          irMaxRange,         irNoise,        3,  15, -30);
 
   //Swarm rule help variable
   float w;
@@ -49,13 +51,13 @@ class Bot {
 
   //Contructor
   Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, int id_) {
-    botcount = botcount_;
-    bots = bots_;
+    botcount        = botcount_;
+    bots            = bots_;
     pos.set(pos_);
-    botID = id_;
-
-    ruleVector=new PVector[botcount*depthCamera.numberOfBeams];
-    for ( int i = 0; i<botcount*depthCamera.numberOfBeams; i++) {
+    botID           = id_;
+    numberOfVectors = botcount*(depthCamera.numberOfBeams + ultrasonic.numberOfBeams + leftInfrared.numberOfBeams + rightInfrared.numberOfBeams);
+    ruleVector      = new PVector[numberOfVectors];
+    for ( int i = 0; i<numberOfVectors; i++) {
       ruleVector[i]=new PVector(0, 0);
     }
   }
@@ -89,6 +91,16 @@ class Bot {
       ruleDepthCamera();
     }
 
+    //RULE: Ultrasonic
+    if (Ultrasonic) {
+      ruleUltrasonic();
+    }
+
+    //RULE: Infrared
+    if (Infrared) {
+      ruleInfrared();
+    }
+
     swarmRulescombine();
 
     //Move robot
@@ -107,9 +119,13 @@ class Bot {
     ultrasonic.ang = -ang+QUARTER_PI;
     ultrasonic.update();
 
-    infrared.sensorPos.set(ultrasonic.sensorPos);
-    infrared.ang = -ang+QUARTER_PI;
-    infrared.update();
+    leftInfrared.sensorPos.set(ultrasonic.sensorPos);
+    leftInfrared.ang = -ang+QUARTER_PI;
+    leftInfrared.update();
+
+    rightInfrared.sensorPos.set(ultrasonic.sensorPos);
+    rightInfrared.ang = -ang+QUARTER_PI;
+    rightInfrared.update();
   }
 
   void move() {
@@ -196,7 +212,8 @@ class Bot {
       stroke(255, 0, 0, 75);
       ultrasonic.draw();
       stroke(0, 0, 255, 75);
-      infrared.draw();
+      leftInfrared.draw();
+      rightInfrared.draw();
     }
 
 
@@ -214,7 +231,7 @@ class Bot {
     //clear resultant vectors before new run
     resultantVelocityVector.set(0, 0); 
 
-    for ( int x = 0; x<botcount*depthCamera.numberOfBeams; x++) {
+    for ( int x = 0; x<numberOfVectors; x++) {
       ruleVector[x].set(0, 0);
     }
   }
@@ -232,7 +249,7 @@ class Bot {
   }
 
   void ruleSeparation() {
-    w=Separation_weight/botcount; 
+    w=Separation_weight; 
     //Read position of other bots
     for (int j = 0; j<botcount; j++) {
       if (j!=botID) {
@@ -252,7 +269,7 @@ class Bot {
   }
 
   void ruleCohesion() {
-    w=Cohesion_weight/botcount; 
+    w=Cohesion_weight; 
     //Read position of other bots
     for (int j = 0; j<botcount; j++) {
       if (j!=botID) {
@@ -272,7 +289,7 @@ class Bot {
   }
 
   void ruleAlignment() {
-    w=Alignment_weight/botcount; 
+    w=Alignment_weight; 
     //Calculate average heading of group
     for (int j = 0; j<botcount; j++) {
       Bot targetBot = bots.get(j); 
@@ -291,7 +308,7 @@ class Bot {
 
 
   void ruleDepthCamera(){
-    w=DepthCamera_weight/(botcount+depthCamera.numberOfBeams);
+    w=DepthCamera_weight;
 
     for ( int i = 0; i<depthCamera.numberOfBeams; i++) {
       if(PVector.sub(depthCamera.beamEndPointsIntersect[i],depthCamera.beamStartPoints[i]).mag()<depthCamera.span){
@@ -300,6 +317,62 @@ class Bot {
         float beamangle          = ang-(depthCamera.fov/2) + i * (depthCamera.fov/(float(depthCamera.numberOfBeams)-1));
         // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
         float resultantDirection = ang + HALF_PI*sign(ang - beamangle);
+        ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
+        ruleVector[n].mult(1);
+        // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
+        n+=1;
+        c+=1.0f;
+      }
+    }
+  }
+
+  void ruleUltrasonic(){
+    w               = Ultrasonic_weight;
+    float beamangle = ang;
+    for ( int i = 0; i<ultrasonic.numberOfBeams; i++) {
+      if(PVector.sub(ultrasonic.beamEndPointsIntersect[i],ultrasonic.beamStartPoints[i]).mag()<ultrasonic.span){
+        // println("beam intersect, adding vector");
+        float resultantMagnitude = (PVector.sub(ultrasonic.beamEndPointsIntersect[i],ultrasonic.beamStartPoints[i]).mag() - ultrasonic.span)*w;
+        
+        if (ultrasonic.numberOfBeams>1) {
+          beamangle         = ang - (ultrasonic.fov/2) + i * (ultrasonic.fov/(float(ultrasonic.numberOfBeams)-1));
+        }
+        // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
+        float resultantDirection = ang;
+        ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
+        ruleVector[n].mult(1);
+        // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
+        n+=1;
+        c+=1.0f;
+      }
+    }
+  }
+
+  void ruleInfrared(){
+    w=Infrared_weight;
+
+    for ( int i = 0; i<leftInfrared.numberOfBeams; i++) {
+      if(PVector.sub(leftInfrared.beamEndPointsIntersect[i],leftInfrared.beamStartPoints[i]).mag()<leftInfrared.span){
+        // println("beam intersect, adding vector");
+        float resultantMagnitude = (PVector.sub(leftInfrared.beamEndPointsIntersect[i],leftInfrared.beamStartPoints[i]).mag() - leftInfrared.span)*w;
+        // float beamangle          = ang-(leftInfrared.fov/2) + i * (leftInfrared.fov/(float(leftInfrared.numberOfBeams)-1));
+        // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
+        float resultantDirection = ang - HALF_PI;
+        ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
+        ruleVector[n].mult(1);
+        // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
+        n+=1;
+        c+=1.0f;
+      }
+    }
+
+    for ( int i = 0; i<rightInfrared.numberOfBeams; i++) {
+      if(PVector.sub(rightInfrared.beamEndPointsIntersect[i],rightInfrared.beamStartPoints[i]).mag()<rightInfrared.span){
+        // println("beam intersect, adding vector");
+        float resultantMagnitude = (PVector.sub(rightInfrared.beamEndPointsIntersect[i],rightInfrared.beamStartPoints[i]).mag() - rightInfrared.span)*w;
+        // float beamangle          = ang-(rightInfrared.fov/2) + i * (rightInfrared.fov/(float(rightInfrared.numberOfBeams)-1));
+        // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
+        float resultantDirection = ang + HALF_PI;
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
         // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
@@ -318,7 +391,7 @@ class Bot {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
     closeBoundary = botSizePixels + 2.0*fpixelsPerMeter;
-    detBoundary   = botSizePixels + 17*fpixelsPerMeter;
+    detBoundary   = botSizePixels + 35*fpixelsPerMeter;
     
   }
   public PVector pos() {

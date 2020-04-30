@@ -35,12 +35,12 @@ int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
-float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
+float     ultrasonicMaxRange      = 1;  //todo: Update values from manual
 int       ultrasonicNoise         = 1;    //wiggle this amount of pixels on intersection
 // float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
 
 float     irMinRange              = 0.25;  //todo: Update values from manual
-float     irMaxRange              = 1.5;  //todo: Update values from manual
+float     irMaxRange              = 1;  //todo: Update values from manual
 int       irNoise                 = 1;    //wiggle this amount of pixels on intersection
 // float     irSpan                  = irMaxRange - irMinRange;
 
@@ -83,7 +83,7 @@ void setup() {
 }
 
 void draw() {
-  frameRate(100);
+  frameRate(300);
   background(backGroundColor);
 
 

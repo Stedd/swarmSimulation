@@ -43,7 +43,8 @@ class Swarm {
 
       checkIntersection(bot.depthCamera, i);
       checkIntersection(bot.ultrasonic, i);
-      checkIntersection(bot.infrared, i);
+      checkIntersection(bot.leftInfrared, i);
+      checkIntersection(bot.rightInfrared, i);
 
     }
   }
