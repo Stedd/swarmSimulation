@@ -7,7 +7,7 @@ float bot_Size;
 float Separation_weight, Cohesion_weight, Alignment_weight, DepthCamera_weight;
 
 //Debug
-boolean Draw_Map, Depth_camera_zone, Detect_Zone, Safe_Zone, Resultant;
+boolean Draw_Map, Sensor_zone, Detect_Zone, Safe_Zone, Resultant;
 
 void buttons() {
   //Buttons
@@ -78,7 +78,7 @@ void buttons() {
     .setSize(20, 20)
     ;
 
-  cp5.addToggle("Depth_camera_zone")
+  cp5.addToggle("Sensor_zone")
     .setValue(1)
     .setPosition(20, height-160)
     .setSize(20, 20)

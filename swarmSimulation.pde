@@ -36,15 +36,15 @@ float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
 float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
-float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
+// float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
 
-float     irMinRange              = 0.5;  //todo: Update values from manual
+float     irMinRange              = 0.1;  //todo: Update values from manual
 float     irMaxRange              = 1.5;  //todo: Update values from manual
-float     irSpan                  = irMaxRange - irMinRange;
+// float     irSpan                  = irMaxRange - irMinRange;
 
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
-float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
+// float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
 float     realBotMaxLinearSpeed   = 0.2; //[m/s]
 float     realBotMaxAngularSpeed  = 0.5; //[rad/s]

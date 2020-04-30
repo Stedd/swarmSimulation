@@ -42,7 +42,7 @@ class Swarm {
       bot.Loop();
 
       //Detect depth camera ray intersection with bots and walls
-      PVector p1                        = new PVector(bot.camera_lens_pos.x, bot.camera_lens_pos.y);
+      PVector p1                        = bot.depthCamera.sensorPos;
       PVector closestIntersectionPoint  = new PVector(10000, 10000);
       PVector distanceToIntersection    = new PVector();
 
@@ -141,7 +141,7 @@ class Swarm {
           bot.depthCamera.beamEndPointsIntersect[k].set(closestIntersectionPoint);
         }
 
-        if (PVector.sub(bot.depthCamera.beamEndPointsIntersect[k], bot.camera_lens_pos).mag()>PVector.sub(bot.depthCamera.beamStartPoints[k], bot.camera_lens_pos).mag()) {
+        if (PVector.sub(bot.depthCamera.beamEndPointsIntersect[k], bot.depthCamera.sensorPos).mag()>PVector.sub(bot.depthCamera.beamStartPoints[k], bot.depthCamera.sensorPos).mag()) {
           PVector start = bot.depthCamera.beamStartPoints[k];
           PVector end   = bot.depthCamera.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
