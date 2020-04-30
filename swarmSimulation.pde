@@ -7,7 +7,6 @@ Swarm     swarmsystem;
 
 //Map variables
 PGraphics frameBuffer;
-boolean   updated = true;
 int       updateCount             = 0;
 
 //Util
@@ -22,38 +21,50 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 1;
+
+int       numberOfBots            = 4;
 
 float     time;
-float     dt                      = 0.016;//100ms per frame
+float     dt                      = 0.05;//50ms per frame
 
-float pixelsPerMeter              = 50;
-int   cellSize                    = 5;
-float realCellSize                = float(cellSize)/pixelsPerMeter;
+
+float     fpixelsPerMeter         = 30;
+int       ipixelsPerMeter         = int(fpixelsPerMeter);
+float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
+int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
+int       cellSize                = 2;
+int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
+float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
-float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
-float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
+float     ultrasonicMaxRange      = 1;  //todo: Update values from manual
+int       ultrasonicNoise         = 1;    //wiggle this amount of pixels on intersection
+// float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
 
-float     irMinRange              = 0.5;  //todo: Update values from manual
-float     irMaxRange              = 1.5;  //todo: Update values from manual
-float     irSpan                  = irMaxRange - irMinRange;
+float     irMinRange              = 0.25;  //todo: Update values from manual
+float     irMaxRange              = 1;  //todo: Update values from manual
+int       irNoise                 = 1;    //wiggle this amount of pixels on intersection
+// float     irSpan                  = irMaxRange - irMinRange;
 
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
-float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
+int       depthCameraNoise        = 2;    //wiggle this amount of pixels on intersection
+// float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
-float     realBotMaxLinearSpeed   = 0.3; //[m/s]
+float     realBotMaxLinearSpeed   = 0.2; //[m/s]
 float     realBotMaxAngularSpeed  = 0.5; //[rad/s]
 
-float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*pixelsPerMeter*dt; //[pixel/frame]
+float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt; //[pixel/frame]
 float     simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
 
 
 void setup() {
   //Set up Canvas
-  size(1300, 900);
-  frameBuffer = createGraphics(1300,900);
+  size(1500, 900);
+  frameBuffer = createGraphics(width,height);
+
+  //
+  randomSeed(4);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -62,8 +73,8 @@ void setup() {
   //initialize map arrays
   initMap();
 
-  //Load pre-generated map
-  loadMap();
+  //pre-generate map
+  createMap();
 
   //Initialize buttons
   buttons();
@@ -74,14 +85,16 @@ void setup() {
 }
 
 void draw() {
-  frameRate(600);
+  frameRate(300);
   background(backGroundColor);
 
 
   if (edit) {
     editMap();
     drawEditMap();
-
+    if (Draw_Map) {
+      image(frameBuffer,0,0);
+    }
     textMode(MODEL);
     textAlign(CENTER);
     textFont(f, 50);
@@ -89,18 +102,13 @@ void draw() {
     text("Map edit mode", width/2, height/2-5);
   } else {
     drawMap();
-    if (Draw_Map & updated) {
+    if (Draw_Map) {
       image(frameBuffer,0,0);
     }
-
     text("Map updates: " + updateCount, width-600, 40);
-
     //drawEdges();
-
     swarmsystem.Loop();
   }
-
   time();
-
   fps();
 }

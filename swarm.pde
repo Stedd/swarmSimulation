@@ -41,21 +41,30 @@ class Swarm {
 
       bot.Loop();
 
-      //Detect depth camera ray intersection with bots and walls
-      PVector p1 = new PVector(bot.camera_lens_pos.x, bot.camera_lens_pos.y);
-      PVector closestIntersectionPoint = new PVector(10000, 10000);
-      PVector distanceToIntersection  = new PVector();
+      checkIntersection(bot.depthCamera, i);
+      checkIntersection(bot.ultrasonic, i);
+      checkIntersection(bot.leftInfrared, i);
+      checkIntersection(bot.rightInfrared, i);
 
-      for (int k=0; k<bot.numberOfBeams; k++) {
+    }
+  }
 
-        boolean wallintersectionExists = false;
-        boolean botintersectionExists = false;
+  void checkIntersection(Sensor sensor, int i){
+          //Detect depth camera ray intersection with bots and walls
+      PVector p1                        = sensor.sensorPos;
+      PVector closestIntersectionPoint  = new PVector(10000, 10000);
+      PVector distanceToIntersection    = new PVector();
 
-        PVector p2 = new PVector(bot.beamEndPoints[k].x, bot.beamEndPoints[k].y);
-        PVector sub = PVector.sub(p2, p1);
+      for (int k=0; k<sensor.numberOfBeams; k++) {
+
+        boolean wallintersectionExists  = false;
+        boolean botintersectionExists   = false;
+
+        PVector p2    = new PVector(sensor.beamEndPoints[k].x, sensor.beamEndPoints[k].y);
+        PVector sub   = PVector.sub(p2, p1);
         // y = a * x + b
-        float a = sub.y / sub.x;
-        float b = p1.y - a * p1.x;
+        float a       = sub.y / sub.x;
+        float b       = p1.y - a * p1.x;
         closestIntersectionPoint = new PVector(10000, 10000);
 
         //Check for beam collision with other bots
@@ -115,8 +124,8 @@ class Swarm {
               && (x > min(p3.x, p4.x)) && (x < max(p3.x, p4.x)) && (y > min(p3.y, p4.y)) && (y < max(p3.y, p4.y))) {
               wallintersectionExists = true;
 
-              PVector closestIntersection     = PVector.sub(p1, closestIntersectionPoint);
-              PVector intersectionPoint = new PVector(x+random(-3, 3), y);
+              PVector closestIntersection   = PVector.sub(p1, closestIntersectionPoint);
+              PVector intersectionPoint     = new PVector(x+random(-sensor.noise, sensor.noise), y+random(-sensor.noise, sensor.noise));
               PVector.sub(p1, intersectionPoint, distanceToIntersection);
               //println(distanceToIntersection);
               if (distanceToIntersection.mag()<closestIntersection.mag()) {
@@ -132,61 +141,37 @@ class Swarm {
 
             //discoverCell(closestIntersectionPoint);
 
-            bot.beamEndPointsIntersect[k].set(closestIntersectionPoint);
+            sensor.beamEndPointsIntersect[k].set(closestIntersectionPoint);
           } else {
-            bot.beamEndPointsIntersect[k].set(bot.beamEndPoints[k]);
+            sensor.beamEndPointsIntersect[k].set(sensor.beamEndPoints[k]);
           }
         }
         if (botintersectionExists&&(closestIntersectionPoint.x<width)&&(closestIntersectionPoint.y<height)) {
-          bot.beamEndPointsIntersect[k].set(closestIntersectionPoint);
+          sensor.beamEndPointsIntersect[k].set(closestIntersectionPoint);
         }
-      }
 
-      //for loop through beams
-      for (int a=0; a<bot.numberOfBeams; a++) {
-        if (PVector.sub(bot.beamEndPointsIntersect[a], bot.camera_lens_pos).mag()>PVector.sub(bot.beamStartPoints[a], bot.camera_lens_pos).mag()) {
-          PVector start = bot.beamStartPoints[a];
-          PVector end   = bot.beamEndPointsIntersect[a];
+        if (PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>PVector.sub(sensor.beamStartPoints[k], sensor.sensorPos).mag()) {
+          PVector start = sensor.beamStartPoints[k];
+          PVector end   = sensor.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
-          for (float b=0; b<=1; b+=float(cellSize)/(bot.cameraSpan*1.75)) {
+          for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
             //println("beam: "+a+" checking: "+b);
-            discoverCell(PVector.add(start, PVector.mult(diff, b)));
+            if((wallintersectionExists || botintersectionExists) && m>=0.95){
+              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
+              // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
+
+            }else{
+              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
+              // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+            }
           }
         }
+
       }
-    }
-  }
-
-
-  void discoverCell(PVector scanPoint) {
-    int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
-    xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-    int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
-    yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-    int l = yCellOver*(width/cellSize) + xCellOver;
-    Cell currentCell = cells.get(l);
-    if (!currentCell.discovered) {
-      currentCell.discovered=true;
-      cellsToRender.append(l);
-    }
-  }
-
-  void updateCell(PVector scanPoint) {
-    int xCellOver = int(map(scanPoint.x, 0, width, 0, width/cellSize));
-    xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-    int yCellOver = int(map(scanPoint.y, 0, height, 0, height/cellSize));
-    yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-    int l = yCellOver*(width/cellSize) + xCellOver;
-    Cell currentCell = cells.get(l);
-    if (!currentCell.discovered) {
-      currentCell.discovered=true;
-      updated = true;
-    }
   }
 
   public void addBot(int id_) {
     PVector setPos = new PVector(0, 0);
-    //bots.add(new Bot(setPos));
-    bots.add(new Bot(botcount, bots, setPos.set(random(width), random(height)), id_));
+    bots.add(new Bot(botcount, bots, setPos.set(random(100,width-100), random(100,height-100)), id_));
   }
 }

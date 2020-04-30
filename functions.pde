@@ -38,3 +38,11 @@ void keyReleased() {
     swarmsystem.Init();
   }
 }
+
+float sign(float a1) {
+  if (a1==0) return 0;
+  if (a1<0) return -1;
+  if (a1>0) return 1;
+  // this would not be reached: 
+  return 0;
+}
