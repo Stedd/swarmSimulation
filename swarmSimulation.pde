@@ -36,14 +36,17 @@ float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
 float     ultrasonicMaxRange      = 1.2;  //todo: Update values from manual
+int       ultrasonicNoise         = 1;    //wiggle this amount of pixels on intersection
 // float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
 
-float     irMinRange              = 0.1;  //todo: Update values from manual
+float     irMinRange              = 0.25;  //todo: Update values from manual
 float     irMaxRange              = 1.5;  //todo: Update values from manual
+int       irNoise                 = 1;    //wiggle this amount of pixels on intersection
 // float     irSpan                  = irMaxRange - irMinRange;
 
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
+int       depthCameraNoise        = 2;    //wiggle this amount of pixels on intersection
 // float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
 float     realBotMaxLinearSpeed   = 0.2; //[m/s]

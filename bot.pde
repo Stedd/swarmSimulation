@@ -19,13 +19,13 @@ class Bot {
   float   moveThreshold     = 0.1;
 
   //depth camera sensor
-  Sensor depthCamera        = new Sensor(depthCameraMinRange, depthCameraMaxRange,  15,  59, 0);
+  Sensor depthCamera        = new Sensor(depthCameraMinRange, depthCameraMaxRange, depthCameraNoise,  15, 59, 0);
 
   //ultrasonic sensor
-  Sensor ultrasonic         = new Sensor(ultrasonicMinRange,  ultrasonicMaxRange,   1 , 30, 0);
+  Sensor ultrasonic         = new Sensor(ultrasonicMinRange,  ultrasonicMaxRange, ultrasonicNoise,    1 , 30, 0);
 
   //IR sensors
-  Sensor infrared           = new Sensor(irMinRange,          irMaxRange,           2,  80, 0);
+  Sensor infrared           = new Sensor(irMinRange,          irMaxRange,         irNoise,            2,  75, 0);
 
   //Swarm rule help variable
   float w;
@@ -91,10 +91,6 @@ class Bot {
 
     swarmRulescombine();
 
-
-    
-    // depthCamera();
-
     //Move robot
     move();
 
@@ -107,11 +103,11 @@ class Bot {
     depthCamera.ang = -ang+QUARTER_PI;
     depthCamera.update();
 
-    ultrasonic.sensorPos.set(depthCamera.sensorPos);
+    ultrasonic.sensorPos.set(pos.x + (botSizePixels/4)*cos(-ang), pos.y - (botSizePixels/4)*sin(-ang));
     ultrasonic.ang = -ang+QUARTER_PI;
     ultrasonic.update();
 
-    infrared.sensorPos.set(depthCamera.sensorPos);
+    infrared.sensorPos.set(ultrasonic.sensorPos);
     infrared.ang = -ang+QUARTER_PI;
     infrared.update();
   }
@@ -193,7 +189,7 @@ class Bot {
     //Draw robot name
     // text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
 
-    //Draw depth camera zone
+    //Draw sensor zone
     if (Sensor_zone) {
       stroke(0, 255, 0, 75);
       depthCamera.draw();
@@ -310,8 +306,6 @@ class Bot {
         n+=1;
         c+=1.0f;
       }
-      
-      
     }
   }
 

@@ -240,8 +240,8 @@ void drawMap() {
   if (cellsToRender.size() > 0) {
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
-      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
       frameBuffer.fill(fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));

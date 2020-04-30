@@ -8,6 +8,7 @@ class Sensor {
     float       minRange;
     float       maxRange;
     float       span;
+    float       noise;
     float       fov;
     float       ang;
     float       angOffset;
@@ -15,10 +16,11 @@ class Sensor {
     int         numberOfBeams;
 
     //constructor
-    Sensor(float minRange_, float maxRange_, int numberOfBeams_, float fov_, float angOffset_){
+    Sensor(float minRange_, float maxRange_, float noise_, int numberOfBeams_, float fov_, float angOffset_){
         minRange                = minRange_*fpixelsPerMeter;
         maxRange                = maxRange_*fpixelsPerMeter;
         span                    = maxRange-minRange;
+        noise                   = noise_;
         numberOfBeams           = numberOfBeams_;
         fov                     = (fov_*PI)/180;
         angOffset               = (angOffset_*PI)/180;
@@ -39,10 +41,10 @@ class Sensor {
         float beamAng           = ang + angOffset;
         for ( int i = 0; i<numberOfBeams; i++) {
             if (numberOfBeams>1) {
-                beamAng           = ang + angOffset - (fov/2) + i * (fov/(float(numberOfBeams)-1));
+                beamAng         = ang + angOffset - (fov/2) + i * (fov/(float(numberOfBeams)-1));
             }
-            beamStartPoints[i]          = new PVector(sensorPos.x + (minRange*cos(beamAng)) + ((minRange)*sin(beamAng)), sensorPos.y + (minRange*-sin(beamAng)) + ((minRange)*cos(beamAng)));
-            beamEndPoints[i]            = new PVector(sensorPos.x + (maxRange*cos(beamAng)) + ((maxRange)*sin(beamAng)), sensorPos.y + (maxRange*-sin(beamAng)) + ((maxRange)*cos(beamAng)));
+            beamStartPoints[i]  = new PVector(sensorPos.x + (minRange*cos(beamAng)) + ((minRange)*sin(beamAng)), sensorPos.y + (minRange*-sin(beamAng)) + ((minRange)*cos(beamAng)));
+            beamEndPoints[i]    = new PVector(sensorPos.x + (maxRange*cos(beamAng)) + ((maxRange)*sin(beamAng)), sensorPos.y + (maxRange*-sin(beamAng)) + ((maxRange)*cos(beamAng)));
             // beamEndPointsIntersect[i]   = beamEndPoints[i];
         }
     }
