@@ -46,12 +46,12 @@ class Swarm {
       PVector closestIntersectionPoint  = new PVector(10000, 10000);
       PVector distanceToIntersection    = new PVector();
 
-      for (int k=0; k<bot.numberOfBeams; k++) {
+      for (int k=0; k<bot.depthCamera.numberOfBeams; k++) {
 
         boolean wallintersectionExists  = false;
         boolean botintersectionExists   = false;
 
-        PVector p2    = new PVector(bot.beamEndPoints[k].x, bot.beamEndPoints[k].y);
+        PVector p2    = new PVector(bot.depthCamera.beamEndPoints[k].x, bot.depthCamera.beamEndPoints[k].y);
         PVector sub   = PVector.sub(p2, p1);
         // y = a * x + b
         float a       = sub.y / sub.x;
@@ -132,18 +132,18 @@ class Swarm {
 
             //discoverCell(closestIntersectionPoint);
 
-            bot.beamEndPointsIntersect[k].set(closestIntersectionPoint);
+            bot.depthCamera.beamEndPointsIntersect[k].set(closestIntersectionPoint);
           } else {
-            bot.beamEndPointsIntersect[k].set(bot.beamEndPoints[k]);
+            bot.depthCamera.beamEndPointsIntersect[k].set(bot.depthCamera.beamEndPoints[k]);
           }
         }
         if (botintersectionExists&&(closestIntersectionPoint.x<width)&&(closestIntersectionPoint.y<height)) {
-          bot.beamEndPointsIntersect[k].set(closestIntersectionPoint);
+          bot.depthCamera.beamEndPointsIntersect[k].set(closestIntersectionPoint);
         }
 
-        if (PVector.sub(bot.beamEndPointsIntersect[k], bot.camera_lens_pos).mag()>PVector.sub(bot.beamStartPoints[k], bot.camera_lens_pos).mag()) {
-          PVector start = bot.beamStartPoints[k];
-          PVector end   = bot.beamEndPointsIntersect[k];
+        if (PVector.sub(bot.depthCamera.beamEndPointsIntersect[k], bot.camera_lens_pos).mag()>PVector.sub(bot.depthCamera.beamStartPoints[k], bot.camera_lens_pos).mag()) {
+          PVector start = bot.depthCamera.beamStartPoints[k];
+          PVector end   = bot.depthCamera.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
           for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
             //println("beam: "+a+" checking: "+b);

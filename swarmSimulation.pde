@@ -21,7 +21,7 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
-int       numberOfBots            = 6;
+int       numberOfBots            = 4;
 
 float     time;
 float     dt                      = 0.05;//50ms per frame
@@ -42,7 +42,7 @@ float     irMinRange              = 0.5;  //todo: Update values from manual
 float     irMaxRange              = 1.5;  //todo: Update values from manual
 float     irSpan                  = irMaxRange - irMinRange;
 
-float     depthCameraMinRange     = 0.1;
+float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
 float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
