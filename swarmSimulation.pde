@@ -21,10 +21,12 @@ float     frate;
 float     fint                    = 0.25;
 
 //Simulation Parameters
+
 int       numberOfBots            = 4;
 
 float     time;
 float     dt                      = 0.05;//50ms per frame
+
 
 float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);

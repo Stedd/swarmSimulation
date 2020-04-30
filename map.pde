@@ -238,6 +238,7 @@ void drawEdges() {
 void drawMap() {
   frameBuffer.beginDraw();
   if (cellsToRender.size() > 0) {
+
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
       int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
