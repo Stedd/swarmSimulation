@@ -21,13 +21,13 @@ void buttons() {
     ;
 
   cp5.addToggle("Separation")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, 50)
     .setSize(20, 20)
     ;
 
   cp5.addSlider("Separation_weight")
-    .setValue(0.05)
+    .setValue(0.07)
     .setPosition(60, 50)
     //.setSize(20, 60)
     .setRange(0, 0.1)
@@ -40,7 +40,7 @@ void buttons() {
     ;
 
   cp5.addSlider("Cohesion_weight")
-    .setValue(0.15)
+    .setValue(0.09)
     .setPosition(60, 100)
     //.setSize(20, 60)
     .setRange(0, 0.3)
@@ -60,13 +60,13 @@ void buttons() {
     ;
 
   cp5.addToggle("DepthCamera")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, 200)
     .setSize(20, 20)
     ;
 
   cp5.addSlider("DepthCamera_weight")
-    .setValue(0.4)
+    .setValue(0.39)
     .setPosition(60, 200)
     //.setSize(20, 60)
     .setRange(0, 5)
@@ -79,7 +79,7 @@ void buttons() {
     ;
 
   cp5.addSlider("Ultrasonic_weight")
-    .setValue(4)
+    .setValue(5)
     .setPosition(60, 250)
     //.setSize(20, 60)
     .setRange(0, 5)

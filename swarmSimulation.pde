@@ -22,10 +22,10 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 4;
+int       numberOfBots            = 7;
 
 float     time;
-float     dt                      = 0.05;//50ms per frame
+float     dt                      = 0.05; //50ms per frame
 
 
 float     fpixelsPerMeter         = 30;
@@ -36,20 +36,17 @@ int       cellSize                = 2;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
-float     ultrasonicMinRange      = 0.25; //todo: Update values from manual
-float     ultrasonicMaxRange      = 1;  //todo: Update values from manual
+float     ultrasonicMinRange      = 0.25; 
+float     ultrasonicMaxRange      = 1.5;  
 int       ultrasonicNoise         = 1;    //wiggle this amount of pixels on intersection
-// float     ultrasonicSpan          = ultrasonicMaxRange - ultrasonicMinRange;
 
-float     irMinRange              = 0.25;  //todo: Update values from manual
-float     irMaxRange              = 1;  //todo: Update values from manual
+float     irMinRange              = 0.25;  
+float     irMaxRange              = 1.4;  
 int       irNoise                 = 1;    //wiggle this amount of pixels on intersection
-// float     irSpan                  = irMaxRange - irMinRange;
 
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
 int       depthCameraNoise        = 2;    //wiggle this amount of pixels on intersection
-// float     depthCameraSpan         = depthCameraMaxRange - depthCameraMinRange;
 
 float     realBotMaxLinearSpeed   = 0.2; //[m/s]
 float     realBotMaxAngularSpeed  = 0.5; //[rad/s]

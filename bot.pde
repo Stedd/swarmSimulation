@@ -20,14 +20,14 @@ class Bot {
   float   moveThreshold     = 0.1;
 
   //depth camera sensor
-  Sensor depthCamera        = new Sensor(depthCameraMinRange, depthCameraMaxRange, depthCameraNoise,  15, 59, 0);
+  Sensor depthCamera        = new Sensor(depthCameraMinRange, depthCameraMaxRange, depthCameraNoise,  15, 59,  0);
 
   //ultrasonic sensor
-  Sensor ultrasonic         = new Sensor(ultrasonicMinRange,  ultrasonicMaxRange, ultrasonicNoise,    1 , 30, 0);
+  Sensor ultrasonic         = new Sensor(ultrasonicMinRange,  ultrasonicMaxRange, ultrasonicNoise,    1 , 30,  0);
 
   //IR sensors
-  Sensor leftInfrared           = new Sensor(irMinRange,          irMaxRange,         irNoise,        3,  15, 30);
-  Sensor rightInfrared          = new Sensor(irMinRange,          irMaxRange,         irNoise,        3,  15, -30);
+  Sensor leftInfrared       = new Sensor(irMinRange,          irMaxRange,         irNoise,            3,  15,  30);
+  Sensor rightInfrared      = new Sensor(irMinRange,          irMaxRange,         irNoise,            3,  15, -30);
 
   //Swarm rule help variable
   float w;
@@ -140,10 +140,11 @@ class Bot {
 
     //linear
     lin_vel = resultantVelocityVector.mag()*cos(theta_ref); 
-    lin_vel = sat(lin_vel, -0.1*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
+    lin_vel = sat(lin_vel, -0*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
     if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
       lin_vel=0;
     }
+    // lin_vel = simBotMaxLinearSpeed;
 
     //angular
     ang_vel = resultantVelocityVector.mag()*sin(theta_ref); 
@@ -156,9 +157,7 @@ class Bot {
     }
     //ang_vel=-0.0015;
     //iterate angle of bot
-    ang += ang_vel; 
-
-    // lin_vel = simBotMaxLinearSpeed;
+    ang += ang_vel;
 
     //iterate position of bot
     vel.set(lin_vel*cos(ang), lin_vel*sin(ang)); 
