@@ -39,6 +39,19 @@ class Swarm {
 
       bot.setSize(bot_Size);
 
+      //Assign new target to bot
+
+      // if(frameCount%500==0){
+      //   updateTarget();
+      // }
+
+      if(bot.needNewTarget){
+        updateTarget(i);
+      }
+
+      //Send target to bot
+      bot.target_pos = targetPos[i];
+
       bot.Loop();
 
       checkIntersection(bot.depthCamera,    i, true);

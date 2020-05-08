@@ -1,13 +1,13 @@
 
 //Variables
-boolean Separation, Cohesion, Alignment, DepthCamera, Ultrasonic, Infrared;
+boolean Separation, Cohesion, Alignment, DepthCamera, Ultrasonic, Infrared, Target;
 float bot_Size;
 
 //Swarm rule weights
-float Separation_weight, Cohesion_weight, Alignment_weight, DepthCamera_weight, Ultrasonic_weight, Infrared_weight;
+float Separation_weight, Cohesion_weight, Alignment_weight, DepthCamera_weight, Ultrasonic_weight, Infrared_weight, Target_weight;
 
 //Debug
-boolean Draw_Map, Sensor_zone, Detect_Zone, Safe_Zone, Resultant;
+boolean Draw_Target, Draw_Map, Sensor_zone, Detect_Zone, Safe_Zone, Resultant;
 
 void buttons() {
   //Buttons
@@ -34,7 +34,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Cohesion")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, 100)
     .setSize(20, 20)
     ;
@@ -60,7 +60,7 @@ void buttons() {
     ;
 
   cp5.addToggle("DepthCamera")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, 200)
     .setSize(20, 20)
     ;
@@ -96,6 +96,25 @@ void buttons() {
     .setPosition(60, 300)
     //.setSize(20, 60)
     .setRange(0, 5)
+    ;
+
+  cp5.addToggle("Target")
+    .setValue(1)
+    .setPosition(20, 350)
+    .setSize(20, 20)
+    ;
+
+  cp5.addSlider("Target_weight")
+    .setValue(50)
+    .setPosition(60, 350)
+    //.setSize(20, 60)
+    .setRange(0, 50)
+    ;
+
+  cp5.addToggle("Draw_Target")
+    .setValue(1)
+    .setPosition(20, height-240)
+    .setSize(20, 20)
     ;
 
   cp5.addToggle("Draw_Map")

@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 7;
+int       numberOfBots            = 5;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
@@ -38,11 +38,11 @@ float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; 
 float     ultrasonicMaxRange      = 1.5;  
-int       ultrasonicNoise         = 1;    //wiggle this amount of pixels on intersection
+int       ultrasonicNoise         = 0;    //wiggle this amount of pixels on intersection
 
 float     irMinRange              = 0.25;  
 float     irMaxRange              = 1.4;  
-int       irNoise                 = 1;    //wiggle this amount of pixels on intersection
+int       irNoise                 = 0;    //wiggle this amount of pixels on intersection
 
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
@@ -59,13 +59,16 @@ void setup() {
   //Set up Canvas
   size(1500, 900);
   frameBuffer = createGraphics(width,height);
-
+  println(width);
   //
-  randomSeed(4);
+  // randomSeed(4);
 
   //Util
   f = createFont("Arial", 16, true);
   startFrame = 0;
+
+  //init Exploration
+  initExploration();
 
   //initialize map arrays
   initMap();

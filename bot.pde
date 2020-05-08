@@ -9,6 +9,7 @@ class Bot {
   PVector vel               = new PVector();
   PVector heading_vec       = new PVector();
   PVector temp_heading_vec  = new PVector();
+  PVector target_pos        = new PVector();
 
   PVector resultantVelocityVector    = new PVector();
   PVector[] ruleVector;
@@ -30,9 +31,10 @@ class Bot {
   Sensor rightInfrared      = new Sensor(irMinRange,          irMaxRange,         irNoise,            3,  15, -30);
 
   //Swarm rule help variable
-  float w;
-  int   n;
-  float c;
+  float                     w;
+  int                       n;
+  float                     c;
+  boolean                   needNewTarget;
 
   //Sensor variables
   float    closeBoundary    = 0;
@@ -55,7 +57,7 @@ class Bot {
     bots            = bots_;
     pos.set(pos_);
     botID           = id_;
-    numberOfVectors = botcount*(depthCamera.numberOfBeams + ultrasonic.numberOfBeams + leftInfrared.numberOfBeams + rightInfrared.numberOfBeams);
+    numberOfVectors = botcount*(depthCamera.numberOfBeams + ultrasonic.numberOfBeams + leftInfrared.numberOfBeams + rightInfrared.numberOfBeams) + 1;
     ruleVector      = new PVector[numberOfVectors];
     for ( int i = 0; i<numberOfVectors; i++) {
       ruleVector[i]=new PVector(0, 0);
@@ -99,6 +101,11 @@ class Bot {
     //RULE: Infrared
     if (Infrared) {
       ruleInfrared();
+    }
+
+    //RULE: Target
+    if (Target) {
+      ruleTarget();
     }
 
     swarmRulescombine();
@@ -192,6 +199,15 @@ class Bot {
       ellipse(pos.x, pos.y, closeBoundary, closeBoundary);
     }
 
+    //Draw Target
+    if (Draw_Target) {
+    fill(175);
+    text("Bot "+botID + " target.", target_pos.x-14, target_pos.y-20);
+    stroke(255,0,0); 
+    fill(255,0,0);
+    ellipse(target_pos.x, target_pos.y, 15, 15); 
+    }
+
     //Draw Robot frame
     stroke(0); 
     fill(100);
@@ -200,9 +216,11 @@ class Bot {
     //Draw Robot heading indicator
     strokeWeight(2); 
     line(pos.x, pos.y, pos.x+((botSizePixels/2)*cos(ang)), pos.y+((botSizePixels/2)*sin(ang))); 
+    strokeWeight(1);
 
     //Draw robot name
     // text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
+    text("Bot "+botID + ".", pos.x-14, pos.y-20);
 
     //Draw sensor zone
     if (Sensor_zone) {
@@ -380,6 +398,23 @@ class Bot {
       }
     }
   }
+
+  void ruleTarget() {
+      w=Target_weight; 
+      //Read position of other bots
+      PVector.sub(pos, target_pos, botDistVec); 
+      if (botDistVec.mag()>closeBoundary) {
+        needNewTarget = false;
+        ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+        stroke(0, 255, 0, 100); 
+        //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
+              n+=1; 
+      c+=1.0f;
+      }else{
+        needNewTarget = true;
+        println("Bot: " + botID + " requesting new target");
+      }
+    }
 
 
   //return position

@@ -27,13 +27,6 @@ class Edge {
 }
 
 
-// class Cell {
-//   float probability     = 0.5;
-//   float mapValue        = 1.0;             
-//   int[] edge_id         = new int[4];
-//   boolean[] edge_exist  = new boolean[4];
-// }
-
 class Cell {
   float sum             = 0.0;
   float numberOfmeas    = 0; 
