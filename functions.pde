@@ -47,16 +47,28 @@ float sign(float a1) {
   return 0;
 }
 
-int cellIndex(PVector pos){
-  int xCellOver = int(map(pos.x, 0, width, 0, width/cellSize));
+PVector cellPos(PVector pos){
+  int xCellOver = ceil(map(pos.x, 0, width, 0, width/cellSize));
   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-  int yCellOver = int(map(pos.y, 0, height, 0, height/cellSize));
+  int yCellOver = ceil(map(pos.y, 0, height, 0, height/cellSize));
   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-  return yCellOver*(width/cellSize) + xCellOver;
+  return new PVector(xCellOver, yCellOver);
+}
+
+// int cellIndex(PVector pos){
+//   int xCellOver = ceil(map(pos.x, 0, width, 0, width/cellSize));
+//   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+//   int yCellOver = ceil(map(pos.y, 0, height, 0, height/cellSize));
+//   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+//   return yCellOver*(width/cellSize) + xCellOver;
+// }
+
+int cellIndex(PVector pos){
+  return int(pos.y)*cellSize*(width/cellSize) + int(pos.x)*cellSize;
 }
 
 float cellValue(PVector pos){
-  return(1-cells.get(cellIndex(pos)).probability)*500);
+  return(1-cells.get(cellIndex(pos)).probability)*500;
 }
 
 float pathDist(PVector a, PVector b){

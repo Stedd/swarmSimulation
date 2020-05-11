@@ -61,7 +61,7 @@ void setup() {
   frameBuffer = createGraphics(width,height);
   println(width);
   //
-  // randomSeed(4);
+  randomSeed(4);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -85,7 +85,7 @@ void setup() {
 }
 
 void draw() {
-  frameRate(10);
+  frameRate(300);
   background(backGroundColor);
 
 
@@ -106,7 +106,7 @@ void draw() {
       image(frameBuffer,0,0);
     }
     text("Map updates: " + updateCount, width-600, 40);
-    //drawEdges();
+    // drawEdges();
     swarmsystem.Loop();
   }
   time();
