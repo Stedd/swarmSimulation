@@ -67,7 +67,7 @@ void createMap() {
 
   //Draw parameters
   //Doors
-  float doorWidth         = 1.0;  //Meter
+  float doorWidth         = 0.8;  //Meter
 
   //Office
   float officeWidth       = 4;    //Meter

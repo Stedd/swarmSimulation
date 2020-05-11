@@ -52,6 +52,12 @@ class Swarm {
       //Send target to bot
       bot.target_pos = targetPos[i];
 
+      //Path Planning
+      if(bot.needNewPath){
+        recalculatePath(bot);
+        // bot.waypoints = calculatedpoints;
+      }
+
       bot.Loop();
 
       checkIntersection(bot.depthCamera,    i, true);

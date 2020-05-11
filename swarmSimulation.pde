@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 5;
+int       numberOfBots            = 1;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
@@ -85,7 +85,7 @@ void setup() {
 }
 
 void draw() {
-  frameRate(300);
+  frameRate(10);
   background(backGroundColor);
 
 

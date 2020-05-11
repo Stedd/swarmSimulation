@@ -36,26 +36,45 @@ class Bot {
   float                     c;
   boolean                   needNewTarget;
 
+
   //Sensor variables
   float    closeBoundary    = 0;
   float    detBoundary      = 0;
   PVector                   botDistVec  = new PVector();
 
+  
   //Bot properties
   int   botID               = 0;
   float botSizeReal         = (closeBoundary-30)/2;
   float botSizePixels       = (closeBoundary-30)/2;
+
+  //Path planner variables
+  boolean needNewPath       = false;
+  ArrayList<PVector>        waypoints;
   
+  // Bot is stuck variables
+    boolean                 botIsStuck;
+    PVector                 prevPos = pos;
+    float                   linVelStuckThreshold = 0.0005;
+    float                   angVelStuckThreshold = 0.0005;
 
-
+  
   //debug
-  int debugTarget =5;
+  int debugTarget           = 5;
 
+  
   //Contructor
   Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, int id_) {
+    
+    //init path planner
+    waypoints       = new ArrayList<PVector>();
+    needNewPath     = true;
+
+    //set bot variables
     botcount        = botcount_;
     bots            = bots_;
     pos.set(pos_);
+    prevPos.set(pos_);
     botID           = id_;
     numberOfVectors = botcount*(depthCamera.numberOfBeams + ultrasonic.numberOfBeams + leftInfrared.numberOfBeams + rightInfrared.numberOfBeams) + 1;
     ruleVector      = new PVector[numberOfVectors];
@@ -67,11 +86,13 @@ class Bot {
   //Functions
   void Loop() {
 
-    //Swarm rules
-    swarmRulesInit();
-
     //Sensors
     sensors();
+
+    stuck();
+
+    //Swarm rules
+    swarmRulesInit();
 
     //RULE: Separation
     if (Separation) {
@@ -111,10 +132,24 @@ class Bot {
     swarmRulescombine();
 
     //Move robot
+    prevPos = pos;
     move();
 
     //Display robot
     display();
+  }
+
+  boolean stuck(){
+    botIsStuck  = false;
+    needNewPath = false;
+
+    if(lin_vel < linVelStuckThreshold && ang_vel < angVelStuckThreshold){
+      botIsStuck = true;
+      // println("Bot "+botID + " is stuck. Recalculating route");
+      //recalculate route
+      needNewPath = true;
+    }
+    return botIsStuck;
   }
 
   void sensors(){
@@ -148,21 +183,19 @@ class Bot {
     //linear
     lin_vel = resultantVelocityVector.mag()*cos(theta_ref); 
     lin_vel = sat(lin_vel, -0*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
-    if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
-      lin_vel=0;
-    }
     // lin_vel = simBotMaxLinearSpeed;
 
     //angular
     ang_vel = resultantVelocityVector.mag()*sin(theta_ref); 
     ang_vel = sat(ang_vel, -simBotMaxAngularSpeed, simBotMaxAngularSpeed); 
-
+    //ang_vel = -0.0015;
 
     //Stop if velocity vector is lower than the threshold
     if (!(abs(resultantVelocityVector.mag())>moveThreshold)) {
+      lin_vel=0;
       ang_vel=0;
     }
-    //ang_vel=-0.0015;
+
     //iterate angle of bot
     ang += ang_vel;
 
@@ -400,22 +433,21 @@ class Bot {
   }
 
   void ruleTarget() {
-      w=Target_weight; 
-      //Read position of other bots
-      PVector.sub(pos, target_pos, botDistVec); 
-      if (botDistVec.mag()>closeBoundary) {
-        needNewTarget = false;
-        ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
-        stroke(0, 255, 0, 100); 
-        //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
-              n+=1; 
-      c+=1.0f;
-      }else{
-        needNewTarget = true;
-        println("Bot: " + botID + " requesting new target");
-      }
+    w=Target_weight; 
+    //Read position of other bots
+    PVector.sub(pos, target_pos, botDistVec); 
+    if (botDistVec.mag()>closeBoundary) {
+      needNewTarget = false;
+      ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+      stroke(0, 255, 0, 100); 
+      //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
+            n+=1; 
+    c+=1.0f;
+    }else{
+      needNewTarget = true;
+      println("Bot: " + botID + " requesting new target");
     }
-
+  }
 
   //return position
   public void setPos(PVector newPos_) {

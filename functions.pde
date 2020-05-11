@@ -46,3 +46,19 @@ float sign(float a1) {
   // this would not be reached: 
   return 0;
 }
+
+int cellIndex(PVector pos){
+  int xCellOver = int(map(pos.x, 0, width, 0, width/cellSize));
+  xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
+  int yCellOver = int(map(pos.y, 0, height, 0, height/cellSize));
+  yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+  return yCellOver*(width/cellSize) + xCellOver;
+}
+
+float cellValue(PVector pos){
+  return(1-cells.get(cellIndex(pos)).probability)*500);
+}
+
+float pathDist(PVector a, PVector b){
+  return PVector.sub(a,b).mag();
+}
