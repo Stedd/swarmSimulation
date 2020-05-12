@@ -32,7 +32,7 @@ float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 2;
+int       cellSize                = 3;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 

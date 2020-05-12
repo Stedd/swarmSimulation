@@ -48,10 +48,11 @@ float sign(float a1) {
 }
 
 PVector cellPos(PVector pos){
-  int xCellOver = ceil(map(pos.x, 0, width, 0, width/cellSize));
+  int xCellOver = int(map(pos.x, 0, width, 0, width/cellSize));
   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-  int yCellOver = ceil(map(pos.y, 0, height, 0, height/cellSize));
+  int yCellOver = int(map(pos.y, 0, height, 0, height/cellSize));
   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
+  println(xCellOver + ',' + yCellOver);
   return new PVector(xCellOver, yCellOver);
 }
 
@@ -64,7 +65,7 @@ PVector cellPos(PVector pos){
 // }
 
 int cellIndex(PVector pos){
-  return int(pos.y)*cellSize*(width/cellSize) + int(pos.x)*cellSize;
+  return int(pos.y)*(width/cellSize) + int(pos.x);
 }
 
 float cellValue(PVector pos){
