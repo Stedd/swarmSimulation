@@ -60,7 +60,7 @@ void buttons() {
     ;
 
   cp5.addToggle("DepthCamera")
-    .setValue(0)
+    .setValue(1)
     .setPosition(20, 200)
     .setSize(20, 20)
     ;
@@ -124,7 +124,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Sensor_zone")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, height-160)
     .setSize(20, 20)
     ;
@@ -142,7 +142,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Resultant")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, height-40)
     .setSize(20, 20)
     ;

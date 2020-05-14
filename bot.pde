@@ -49,14 +49,14 @@ class Bot {
   float botSizePixels       = (closeBoundary-30)/2;
 
   //Path planner variables
-  boolean needNewPath       = false;
+  boolean needNewPath       = true;
   ArrayList<PVector>        waypoints;
   
   // Bot is stuck variables
     boolean                 botIsStuck;
     PVector                 prevPos = pos;
-    float                   linVelStuckThreshold = 0.0005;
-    float                   angVelStuckThreshold = 0.0005;
+    float                   linVelStuckThreshold = 0.0000005;
+    float                   angVelStuckThreshold = 0.0000005;
 
   
   //debug
@@ -143,7 +143,7 @@ class Bot {
     botIsStuck  = false;
     needNewPath = false;
 
-    if(lin_vel < linVelStuckThreshold && ang_vel < angVelStuckThreshold){
+    if(lin_vel < abs(linVelStuckThreshold) && ang_vel < abs(angVelStuckThreshold)){
       botIsStuck = true;
       // println("Bot "+botID + " is stuck. Recalculating route");
       //recalculate route

@@ -32,7 +32,7 @@ float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 3;
+int       cellSize                = 25;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
@@ -46,7 +46,7 @@ int       irNoise                 = 0;    //wiggle this amount of pixels on inte
 
 float     depthCameraMinRange     = 0.55;
 float     depthCameraMaxRange     = 2.8;
-int       depthCameraNoise        = 2;    //wiggle this amount of pixels on intersection
+int       depthCameraNoise        = 1;    //wiggle this amount of pixels on intersection
 
 float     realBotMaxLinearSpeed   = 0.2; //[m/s]
 float     realBotMaxAngularSpeed  = 0.5; //[rad/s]
@@ -74,10 +74,14 @@ void setup() {
   initMap();
 
   //pre-generate map
-  createMap();
+  // createMap();
 
   //Initialize buttons
   buttons();
+
+  //debug
+  simBotMaxLinearSpeed    = 0; //[pixel/frame]
+  simBotMaxAngularSpeed   = 0; //[rad/frame]
 
   //Initialize Swarm
   swarmsystem = new Swarm(numberOfBots);
@@ -107,6 +111,7 @@ void draw() {
     }
     text("Map updates: " + updateCount, width-600, 40);
     // drawEdges();
+    drawWayPoints();
     swarmsystem.Loop();
   }
   time();

@@ -7,6 +7,7 @@ class Swarm {
 
   int     botcount     = 0;
 
+  int nextLoop;
 
   //Constructor
   Swarm(int botcount_) {
@@ -53,7 +54,8 @@ class Swarm {
       bot.target_pos = targetPos[i];
 
       //Path Planning
-      if(bot.needNewPath){
+      if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>nextLoop){
+        nextLoop = millis()+1000;
         recalculatePath(bot);
         // bot.waypoints = calculatedpoints;
       }
@@ -173,7 +175,7 @@ class Swarm {
           PVector start = sensor.beamStartPoints[k];
           PVector end   = sensor.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
-          for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
+          for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1)) {
             //println("beam: "+a+" checking: "+b);
             if(discover){
               if((wallintersectionExists || botintersectionExists) && m>=0.95){

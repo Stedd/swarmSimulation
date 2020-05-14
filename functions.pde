@@ -52,7 +52,7 @@ PVector cellPos(PVector pos){
   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
   int yCellOver = int(map(pos.y, 0, height, 0, height/cellSize));
   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-  println(xCellOver + ',' + yCellOver);
+  // println(xCellOver + ',' + yCellOver);
   return new PVector(xCellOver, yCellOver);
 }
 
@@ -65,13 +65,44 @@ PVector cellPos(PVector pos){
 // }
 
 int cellIndex(PVector pos){
-  return int(pos.y)*(width/cellSize) + int(pos.x);
+  println(pos);
+  return int((pos.y*width)/cellSize) + int(pos.x);
+}
+
+float cellRealValue(PVector pos){
+  // println(pos);
+  if (cells.get(cellIndex(pos)).mapValue <=0.49){
+    return 100000;
+  }else{
+    return 1;
+  }
+  // return(1-cells.get(cellIndex(pos)).probability)*0.5;
 }
 
 float cellValue(PVector pos){
-  return(1-cells.get(cellIndex(pos)).probability)*500;
+  if (cells.get(cellIndex(pos)).probability <=0.49){
+    return 100000;
+  }else if (cells.get(cellIndex(pos)).probability >0.49 && cells.get(cellIndex(pos)).probability <=0.9) {
+    return 2;
+  }else{
+    return 1;
+  }
+  // return(1-cells.get(cellIndex(pos)).probability)*0.5;
 }
 
 float pathDist(PVector a, PVector b){
   return PVector.sub(a,b).mag();
+}
+
+public int getIndexOfMin(ArrayList<Node> nodes) {
+    float min = Float.MAX_VALUE;
+    int index = -1;
+    for (int i = 0; i < nodes.size(); i++) {
+        Float f = nodes.get(i).globalValue;
+        if (Float.compare(f, min) < 0) {
+            min = f.floatValue();
+            index = i;
+        }
+    }
+    return index;
 }
