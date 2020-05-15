@@ -51,11 +51,11 @@ class Swarm {
       }
 
       //Send target to bot
-      bot.target_pos = targetPos[i];
+      bot.target_pos = targetPos[0];
 
       //Path Planning
       if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>nextLoop){
-        nextLoop = millis()+1000;
+        nextLoop = millis()+100;
         recalculatePath(bot);
         // bot.waypoints = calculatedpoints;
       }

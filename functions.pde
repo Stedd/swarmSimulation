@@ -64,14 +64,31 @@ PVector cellPos(PVector pos){
 //   return yCellOver*(width/cellSize) + xCellOver;
 // }
 
-int cellIndex(PVector pos){
-  println(pos);
-  return int((pos.y*width)/cellSize) + int(pos.x);
+PVector indexRealPos(int index){
+  int x = index%(width);
+  int y = floor(index/(width));
+  return new PVector(x,y);
 }
 
-float cellRealValue(PVector pos){
+PVector indexPos(int index){
+  int x = index%(width/cellSize);
+  int y = floor(index/(width/cellSize));
+  return new PVector(x,y);
+}
+
+int cellRealIndex(PVector pos){
   // println(pos);
-  if (cells.get(cellIndex(pos)).mapValue <=0.49){
+  return int((floor(pos.y)*width)) + floor(pos.x);
+}
+
+int cellIndex(PVector pos){
+  // println(pos);
+  return int((floor(pos.y)*width)/cellSize) + floor(pos.x);
+}
+
+float cellRealValue(int index){
+  // println(pos);
+  if (cells.get(index).mapValue <=0.49){
     return 100000;
   }else{
     return 1;
@@ -105,4 +122,13 @@ public int getIndexOfMin(ArrayList<Node> nodes) {
         }
     }
     return index;
+}
+
+void modifyNode(int id_, int parent_, boolean visited_, float globalValue_, float localValue_){
+  Node tempNode = nodes.get(id_);
+  tempNode.parent       = parent_;
+  tempNode.pos          = indexPos(id_);
+  tempNode.visited      = visited_;
+  tempNode.globalValue  = globalValue_;
+  tempNode.localValue   = localValue_;
 }

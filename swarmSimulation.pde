@@ -32,7 +32,7 @@ float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 25;
+int       cellSize                = 10;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
@@ -61,7 +61,7 @@ void setup() {
   frameBuffer = createGraphics(width,height);
   println(width);
   //
-  randomSeed(4);
+  randomSeed(42);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -74,7 +74,7 @@ void setup() {
   initMap();
 
   //pre-generate map
-  // createMap();
+  createMap();
 
   //Initialize buttons
   buttons();
@@ -111,7 +111,9 @@ void draw() {
     }
     text("Map updates: " + updateCount, width-600, 40);
     // drawEdges();
+    drawChecked();
     drawWayPoints();
+// drawPoints();
     swarmsystem.Loop();
   }
   time();
