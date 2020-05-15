@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 1;
+int       numberOfBots            = 4;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
@@ -32,7 +32,7 @@ float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 10;
+int       cellSize                = 3;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
@@ -44,9 +44,9 @@ float     irMinRange              = 0.25;
 float     irMaxRange              = 1.4;  
 int       irNoise                 = 0;    //wiggle this amount of pixels on intersection
 
-float     depthCameraMinRange     = 0.55;
+float     depthCameraMinRange     = 0.8;
 float     depthCameraMaxRange     = 2.8;
-int       depthCameraNoise        = 1;    //wiggle this amount of pixels on intersection
+int       depthCameraNoise        = 3;    //wiggle this amount of pixels on intersection
 
 float     realBotMaxLinearSpeed   = 0.2; //[m/s]
 float     realBotMaxAngularSpeed  = 0.5; //[rad/s]
@@ -60,8 +60,8 @@ void setup() {
   size(1500, 900);
   frameBuffer = createGraphics(width,height);
   println(width);
-  //
-  randomSeed(42);
+  //r
+  // randomSeed(42);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -79,9 +79,9 @@ void setup() {
   //Initialize buttons
   buttons();
 
-  //debug
-  simBotMaxLinearSpeed    = 0; //[pixel/frame]
-  simBotMaxAngularSpeed   = 0; //[rad/frame]
+  // //debug
+  // simBotMaxLinearSpeed    = 0; //[pixel/frame]
+  // simBotMaxAngularSpeed   = 0; //[rad/frame]
 
   //Initialize Swarm
   swarmsystem = new Swarm(numberOfBots);
@@ -111,8 +111,8 @@ void draw() {
     }
     text("Map updates: " + updateCount, width-600, 40);
     // drawEdges();
-    drawChecked();
-    drawWayPoints();
+    // drawChecked();
+    // drawWayPoints();
 // drawPoints();
     swarmsystem.Loop();
   }

@@ -66,7 +66,7 @@ void buttons() {
     ;
 
   cp5.addSlider("DepthCamera_weight")
-    .setValue(0.39)
+    .setValue(0.15)
     .setPosition(60, 200)
     //.setSize(20, 60)
     .setRange(0, 5)
@@ -79,7 +79,7 @@ void buttons() {
     ;
 
   cp5.addSlider("Ultrasonic_weight")
-    .setValue(5)
+    .setValue(4)
     .setPosition(60, 250)
     //.setSize(20, 60)
     .setRange(0, 5)
@@ -92,7 +92,7 @@ void buttons() {
     ;
 
   cp5.addSlider("Infrared_weight")
-    .setValue(5)
+    .setValue(2.5)
     .setPosition(60, 300)
     //.setSize(20, 60)
     .setRange(0, 5)
@@ -105,10 +105,10 @@ void buttons() {
     ;
 
   cp5.addSlider("Target_weight")
-    .setValue(50)
+    .setValue(150)
     .setPosition(60, 350)
     //.setSize(20, 60)
-    .setRange(0, 50)
+    .setRange(0, 300)
     ;
 
   cp5.addToggle("Draw_Target")

@@ -88,10 +88,11 @@ int cellIndex(PVector pos){
 
 float cellRealValue(int index){
   // println(pos);
-  if (cells.get(index).mapValue <=0.49){
+  if (cells.get(index).probability <=0.499){
+  // if (cells.get(index).mapValue <=0.49){
     return 100000;
   }else{
-    return 1;
+    return cells.get(index).probability;
   }
   // return(1-cells.get(cellIndex(pos)).probability)*0.5;
 }

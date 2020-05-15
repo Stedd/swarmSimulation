@@ -67,18 +67,18 @@ void createMap() {
 
   //Draw parameters
   //Doors
-  float doorWidth         = 0.8;  //Meter
+  float doorWidth         = 1.2;  //Meter
 
   //Office
-  float officeWidth       = 4;    //Meter
-  float officeHeight      = 3;    //Meter
+  float officeWidth       = 7;    //Meter
+  float officeHeight      = 7;    //Meter
 
   int   buildingCornerX   = 2;
   int   buildingCornerY   = 2;
 
   int   numberOfRooms     = floor(((width/fpixelsPerMeter)-buildingCornerX)/((officeWidth)*1.05));
   int   numberOfCorridors = floor(((height/fpixelsPerMeter)-buildingCornerY)/((officeHeight)*1.05));
-  int   wallThickness     = 1;
+  int   wallThickness     = 3;
   
   //help variables
   float froomWidth        = officeWidth*icellPerMeter;
@@ -234,9 +234,9 @@ void drawMap() {
 
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
-      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
-      frameBuffer.stroke(200);
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
+      // frameBuffer.stroke(200);
       frameBuffer.fill(fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));

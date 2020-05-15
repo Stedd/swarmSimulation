@@ -9,6 +9,7 @@ class Bot {
   PVector vel               = new PVector();
   PVector heading_vec       = new PVector();
   PVector temp_heading_vec  = new PVector();
+  PVector goal_pos          = new PVector();
   PVector target_pos        = new PVector();
 
   PVector resultantVelocityVector    = new PVector();
@@ -21,7 +22,7 @@ class Bot {
   float   moveThreshold     = 0.1;
 
   //depth camera sensor
-  Sensor depthCamera        = new Sensor(depthCameraMinRange, depthCameraMaxRange, depthCameraNoise,  15, 59,  0);
+  Sensor depthCamera        = new Sensor(depthCameraMinRange, depthCameraMaxRange, depthCameraNoise,  10, 59,  0);
 
   //ultrasonic sensor
   Sensor ultrasonic         = new Sensor(ultrasonicMinRange,  ultrasonicMaxRange, ultrasonicNoise,    1 , 30,  0);
@@ -51,12 +52,13 @@ class Bot {
   //Path planner variables
   boolean needNewPath       = true;
   ArrayList<PVector>        waypoints;
+  int                       nextLoop;
   
   // Bot is stuck variables
     boolean                 botIsStuck;
     PVector                 prevPos = pos;
-    float                   linVelStuckThreshold = 0.0000005;
-    float                   angVelStuckThreshold = 0.0000005;
+    float                   linVelStuckThreshold = 0.000005;
+    float                   angVelStuckThreshold = 0.000005;
 
   
   //debug
@@ -125,9 +127,15 @@ class Bot {
     }
 
     //RULE: Target
-    if (Target) {
-      ruleTarget();
+    if (waypoints.size()>0) {
+      if(Target){
+        ruleTarget();
+      }
     }
+    // else{
+    //   needNewTarget = true;
+    // }
+
 
     swarmRulescombine();
 
@@ -234,11 +242,17 @@ class Bot {
 
     //Draw Target
     if (Draw_Target) {
-    fill(175);
-    text("Bot "+botID + " target.", target_pos.x-14, target_pos.y-20);
-    stroke(255,0,0); 
-    fill(255,0,0);
-    ellipse(target_pos.x, target_pos.y, 15, 15); 
+      fill(175);
+      text("Bot "+botID + " target.", goal_pos.x-14, goal_pos.y-20);
+      noStroke(); 
+      //Draw goal position
+      fill(255,0,0);
+      ellipse(goal_pos.x, goal_pos.y, 15, 15); 
+      //Draw waypoints
+      for(int i = 0; i<waypoints.size()-1;i+=7){
+          fill(0,0,255);
+          ellipse(waypoints.get(i).x, waypoints.get(i).y, 4, 4);
+      }
     }
 
     //Draw Robot frame
@@ -273,6 +287,7 @@ class Bot {
       stroke(0, 0, 255); 
       line(pos.x, pos.y, pos.x+10*resultantVelocityVector.x, pos.y+10*resultantVelocityVector.y);
     }
+
   }
 
   void swarmRulesInit() {
@@ -434,18 +449,24 @@ class Bot {
 
   void ruleTarget() {
     w=Target_weight; 
-    //Read position of other bots
+
+    target_pos = waypoints.get(0);
+
     PVector.sub(pos, target_pos, botDistVec); 
-    if (botDistVec.mag()>closeBoundary) {
+    if (botDistVec.mag()>20) {
       needNewTarget = false;
       ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
       stroke(0, 255, 0, 100); 
-      //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
-            n+=1; 
-    c+=1.0f;
+      n+=1; 
+      c+=1.0f;
     }else{
-      needNewTarget = true;
+      waypoints.remove(0);
+
+    }
+    PVector.sub(pos, goal_pos, botDistVec);
+    if(botDistVec.mag()<closeBoundary){
       println("Bot: " + botID + " requesting new target");
+      needNewTarget = true;
     }
   }
 
