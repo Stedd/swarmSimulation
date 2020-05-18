@@ -27,7 +27,7 @@ class Node {
 }
 
 //Variables
-ArrayList<Node> path         = new ArrayList<Node>();   //todo: init properly for each bot
+ArrayList<Node> path         = new ArrayList<Node>();
 ArrayList<Node> nodes        = new ArrayList<Node>();
 ArrayList<Node> nodesChecked = new ArrayList<Node>();
 ArrayList<Node> nodesToCheck = new ArrayList<Node>();
@@ -70,7 +70,6 @@ void recalculatePath(Bot bot){
     while(!finished && nodesToCheck.size()>0){
 
         currentNode = nodes.get(nodesToCheck.get(getIndexOfMin(nodesToCheck)).id);
-        // println("node: " + currentNode.id + " selected");
 
         //Calculate index of target cells
         for (int i = 0; i < 4; ++i) {
@@ -89,50 +88,29 @@ void recalculatePath(Bot bot){
             neighborIndex[3] = cellIndex(new PVector(currentNode.pos.x-1, currentNode.pos.y));
         }
 
-        //Check all neighbours of current cell
         for(int i = 0; i<4;i++){
             if(neighborIndex[i]!=-1){
                 neighborNode = nodes.get(neighborIndex[i]);
-                // modifyNode(neighborIndex[i], currentNode.id, false, pathDist(neighborNode.pos, goalPos) + cellRealValue(neighborIndex[i]), cellRealValue(neighborIndex[i]));
-
-                // println("finished criteria: Neighbor id " + neighborIndex[i] + ". Goal id " + goalIndex);
                 if(neighborIndex[i] == goalIndex){
-                    
                     finished = true;
-                    // println("FINISHED!!!!!!!!!");
                     modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
                     nodesChecked.add(neighborNode);
                     break;
                 }else{
                     if(currentNode.localValue + 1 <= neighborNode.localValue){
-                        // println("+++node is closer, editing+++");
-                        // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), pathDist(neighborNode.pos, startPos));
                         modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
                         if(!neighborNode.visited && cellRealValue(neighborIndex[i])<1000){
                             nodesToCheck.add(neighborNode);
                         }
                         nodesChecked.add(neighborNode);
  
-                    }else{
-                        // println("node is not closer, skipping");
                     }
-
                     currentNode.visited = true;
                     nodesToCheck.remove(currentNode);
-                
                 }
-
-                // println(neighborNode.id);
-                // println(neighborNode.parent);
-                // println(neighborNode.visited);
-                // println(neighborNode.globalValue);
-                // println(neighborNode.localValue);
             }
         }
-        // ii+=1;
-    }
-    // println("***Pathfinder finished***");
-    
+    }   
     int pathIndex = goalIndex;
     while(!(pathIndex == startIndex) && ii<3000){
         currentNode = nodes.get(pathIndex);
@@ -140,17 +118,6 @@ void recalculatePath(Bot bot){
         pathIndex = currentNode.parent;
         ii+=1;        
     }
-
-
-    // println("goal position:" + cellPos(bot.target_pos));
-    // println("start position:" + cellPos(bot.pos));
-    // //     int startIndex = cellIndex(cellPos(bot.pos));
-    // // int goalIndex  = cellIndex(cellPos(bot.target_pos));
-    // println("****Path****");
-    // for(int i = 0; i<path.size();i++){
-    //     println(path.get(i).pos + ", global value: " + path.get(i).globalValue);
-    //     println(path.get(i).id + ", parent: " + path.get(i).parent);
-    // }
 }
 
 void drawPoints(){
@@ -165,7 +132,6 @@ void drawChecked(){
         noStroke();
         fill(255,0,255);
         ellipse(nodesChecked.get(i).pos.x*cellSize+cellSize/2, nodesChecked.get(i).pos.y*cellSize+cellSize/2, 3, 3);
-
     }
 }
 
@@ -173,8 +139,6 @@ void drawWayPoints(){
     for(int i = 0; i<path.size()-1;i++){
         strokeWeight(10);
         fill(0,255,0);
-        // line(path.get(i).pos.x*cellSize+cellSize/2, path.get(i).pos.y*cellSize+cellSize/2, path.get(i+1).pos.x*cellSize+cellSize/2, path.get(i+1).pos.y*cellSize+cellSize/2); 
         ellipse(path.get(i).pos.x*cellSize+cellSize/2, path.get(i).pos.y*cellSize+cellSize/2, 5, 5);
-
     }
 }

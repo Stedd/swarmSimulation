@@ -63,8 +63,6 @@ class Swarm {
           float y = path.get(j).pos.y*cellSize;
           bot.waypoints.add(new PVector(x,y));          
         }
-        // bot.waypoints = path.;
-        // bot.waypoints = calculatedpoints;
       }
 
       bot.Loop();
@@ -78,7 +76,7 @@ class Swarm {
   }
 
   void checkIntersection(Sensor sensor, int i, boolean discover){
-          //Detect depth camera ray intersection with bots and walls
+      //Detect depth camera ray intersection with bots and walls
       PVector p1                        = sensor.sensorPos;
       PVector closestIntersectionPoint  = new PVector(10000, 10000);
       PVector distanceToIntersection    = new PVector();
@@ -142,12 +140,6 @@ class Swarm {
             float x = (b1 - b) / (a - a1);
             float y = a * x + b;
 
-            //println("x: "+x+" y: "+y);
-            //ellipse(x, y, 20, 20);
-            //stroke(155, 155, 255);
-            //line(p1.x, p1.y, p2.x, p2.y);
-            //line(p3.x, p3.y, p4.x, p4.y);
-
             if ((x > min(p1.x, p2.x)) && (x < max(p1.x, p2.x)) && (y > min(p1.y, p2.y)) && (y < max(p1.y, p2.y))
               && (x > min(p3.x, p4.x)) && (x < max(p3.x, p4.x)) && (y > min(p3.y, p4.y)) && (y < max(p3.y, p4.y))) {
               wallintersectionExists = true;
@@ -155,20 +147,14 @@ class Swarm {
               PVector closestIntersection   = PVector.sub(p1, closestIntersectionPoint);
               PVector intersectionPoint     = new PVector(x+random(-sensor.noise, sensor.noise), y+random(-sensor.noise, sensor.noise));
               PVector.sub(p1, intersectionPoint, distanceToIntersection);
-              //println(distanceToIntersection);
               if (distanceToIntersection.mag()<closestIntersection.mag()) {
                 closestIntersectionPoint.set(intersectionPoint);
               }
-              //println("intersect at pixel:"+ x + "," + y + " millis: " + millis());
             }
           }
           if (wallintersectionExists&&(closestIntersectionPoint.x<width)&&(closestIntersectionPoint.y<height)) {
             fill(255, 0, 0);
             noStroke();
-            //ellipse(closestIntersectionPoint.x, closestIntersectionPoint.y, 6, 6);
-
-            //discoverCell(closestIntersectionPoint);
-
             sensor.beamEndPointsIntersect[k].set(closestIntersectionPoint);
           } else {
             sensor.beamEndPointsIntersect[k].set(sensor.beamEndPoints[k]);
@@ -183,7 +169,6 @@ class Swarm {
           PVector end   = sensor.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
           for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
-            //println("beam: "+a+" checking: "+b);
             if(discover){
               if((wallintersectionExists || botintersectionExists) && m>=0.95){
               updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
