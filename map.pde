@@ -70,15 +70,15 @@ void createMap() {
   float doorWidth         = 1.2;  //Meter
 
   //Office
-  float officeWidth       = 7;    //Meter
-  float officeHeight      = 7;    //Meter
+  float officeWidth       = 5;    //Meter
+  float officeHeight      = 5;    //Meter
 
   int   buildingCornerX   = 2;
   int   buildingCornerY   = 2;
 
   int   numberOfRooms     = floor(((width/fpixelsPerMeter)-buildingCornerX)/((officeWidth)*1.05));
   int   numberOfCorridors = floor(((height/fpixelsPerMeter)-buildingCornerY)/((officeHeight)*1.05));
-  int   wallThickness     = 3;
+  int   wallThickness     = 1;
   
   //help variables
   float froomWidth        = officeWidth*icellPerMeter;

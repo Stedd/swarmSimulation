@@ -56,9 +56,11 @@ class Bot {
   
   // Bot is stuck variables
     boolean                 botIsStuck;
-    PVector                 prevPos = pos;
-    float                   linVelStuckThreshold = 0.000005;
-    float                   angVelStuckThreshold = 0.000005;
+    int                     nextStuckCheck;
+    PVector                 prevPos;
+    float                   linVelStuckThreshold = 0.0005;
+    float                   angVelStuckThreshold = 0.0005;
+    float                   distanceMoved;
 
   
   //debug
@@ -67,16 +69,20 @@ class Bot {
   
   //Contructor
   Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, int id_) {
-    
+    println("Constructor iteration");
     //init path planner
     waypoints       = new ArrayList<PVector>();
     needNewPath     = true;
+    nextStuckCheck  = millis()+1000;
+    distanceMoved   = 0;
 
     //set bot variables
     botcount        = botcount_;
     bots            = bots_;
-    pos.set(pos_);
-    prevPos.set(pos_);
+    pos             = pos_;
+    // prevPos         = pos_;
+    println("Constructor iteration");
+    prevPos         = new PVector(0,0);
     botID           = id_;
     numberOfVectors = botcount*(depthCamera.numberOfBeams + ultrasonic.numberOfBeams + leftInfrared.numberOfBeams + rightInfrared.numberOfBeams) + 1;
     ruleVector      = new PVector[numberOfVectors];
@@ -91,7 +97,9 @@ class Bot {
     //Sensors
     sensors();
 
+
     stuck();
+
 
     //Swarm rules
     swarmRulesInit();
@@ -111,26 +119,39 @@ class Bot {
       ruleAlignment();
     }
 
-    //RULE: DepthCamera
-    if (DepthCamera) {
-      ruleDepthCamera();
-    }
-
     //RULE: Ultrasonic
     if (Ultrasonic) {
       ruleUltrasonic();
     }
 
-    //RULE: Infrared
-    if (Infrared) {
-      ruleInfrared();
+    float angle = PVector.angleBetween(PVector.sub(pos,depthCamera.sensorPos),PVector.sub(pos,target_pos));
+    // float angle2 = PVector.angleBetween(target_pos, pos);
+    // println("angle to target:" + angle*180/PI);
+    // println("2:" + angle2*180/PI);
+    if(abs(angle*180/PI)<25){
+      //RULE: DepthCamera
+      if (DepthCamera) {
+        ruleDepthCamera();
+      }
+
+      //RULE: Infrared
+      if (Infrared) {
+        ruleInfrared();
+      }
+      simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt;
+      simBotMaxAngularSpeed   = realBotMaxAngularSpeed*dt; //[rad/frame]
+    }else{
+      // println("zero speed");
+      simBotMaxLinearSpeed  = 0.1*fpixelsPerMeter*dt;
+      simBotMaxAngularSpeed = 1.5*dt; //[rad/frame]
     }
+    
 
     //RULE: Target
     if (waypoints.size()>0) {
       if(Target){
         ruleTarget();
-      }
+      } 
     }
     // else{
     //   needNewTarget = true;
@@ -140,24 +161,40 @@ class Bot {
     swarmRulescombine();
 
     //Move robot
-    prevPos = pos;
+    
     move();
 
     //Display robot
     display();
   }
 
-  boolean stuck(){
+  void stuck(){
     botIsStuck  = false;
     needNewPath = false;
 
-    if(lin_vel < abs(linVelStuckThreshold) && ang_vel < abs(angVelStuckThreshold)){
-      botIsStuck = true;
-      // println("Bot "+botID + " is stuck. Recalculating route");
-      //recalculate route
-      needNewPath = true;
+    // println(millis());
+    if(millis()>nextStuckCheck){
+      println(nextStuckCheck);
+      println(prevPos);
+      println(pos);
+      
+      nextStuckCheck = millis()+1000+floor(random(1000));
+
+      float distanceMoved = PVector.sub(prevPos,pos).mag();
+
+      println("********* ITERATING PREVIOUS POSITION *********");
+      prevPos.x = pos.x;
+      prevPos.y = pos.y;
+
+      println("distance from last point" + distanceMoved);
+      if(distanceMoved<0.05*fpixelsPerMeter){
+        println("Bot "+botID + " is stuck. Recalculating route");
+        botIsStuck     = true;
+        needNewPath    = true;
+      }
+
     }
-    return botIsStuck;
+    // return botIsStuck;
   }
 
   void sensors(){
@@ -254,7 +291,6 @@ class Bot {
           ellipse(waypoints.get(i).x, waypoints.get(i).y, 4, 4);
       }
     }
-
     //Draw Robot frame
     stroke(0); 
     fill(100);
@@ -266,8 +302,12 @@ class Bot {
     strokeWeight(1);
 
     //Draw robot name
-    // text("Bot "+botID + ". pos:" + pos.x + "," + pos.y , pos.x-14, pos.y-20);
+    if(true){
+      // text("Bot "+botID + " target.", goal_pos.x-14, goal_pos.y-20);
+    // text("Bot " + botID + ". pos:" + pos.x + "," + pos.y + ". prevPos:" + prevPos.x + "," + prevPos.y, pos.x-14, pos.y-20);
     text("Bot "+botID + ".", pos.x-14, pos.y-20);
+    }
+
 
     //Draw sensor zone
     if (Sensor_zone) {
@@ -453,7 +493,7 @@ class Bot {
     target_pos = waypoints.get(0);
 
     PVector.sub(pos, target_pos, botDistVec); 
-    if (botDistVec.mag()>20) {
+    if (botDistVec.mag()>1*fpixelsPerMeter) {
       needNewTarget = false;
       ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
       stroke(0, 255, 0, 100); 
@@ -464,7 +504,7 @@ class Bot {
 
     }
     PVector.sub(pos, goal_pos, botDistVec);
-    if(botDistVec.mag()<closeBoundary){
+    if(botDistVec.mag()<1.2*fpixelsPerMeter){
       println("Bot: " + botID + " requesting new target");
       needNewTarget = true;
     }
@@ -477,7 +517,7 @@ class Bot {
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
-    closeBoundary = botSizePixels + 2.0*fpixelsPerMeter;
+    closeBoundary = botSizePixels + 0.75*fpixelsPerMeter;
     detBoundary   = botSizePixels + 35*fpixelsPerMeter;
     
   }

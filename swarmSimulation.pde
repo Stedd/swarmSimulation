@@ -44,11 +44,11 @@ float     irMinRange              = 0.25;
 float     irMaxRange              = 1.4;  
 int       irNoise                 = 0;    //wiggle this amount of pixels on intersection
 
-float     depthCameraMinRange     = 0.8;
+float     depthCameraMinRange     = 0.25;
 float     depthCameraMaxRange     = 2.8;
-int       depthCameraNoise        = 3;    //wiggle this amount of pixels on intersection
+int       depthCameraNoise        = 0;    //wiggle this amount of pixels on intersection
 
-float     realBotMaxLinearSpeed   = 0.2; //[m/s]
+float     realBotMaxLinearSpeed   = 0.8; //[m/s]
 float     realBotMaxAngularSpeed  = 0.5; //[rad/s]
 
 float     simBotMaxLinearSpeed    = realBotMaxLinearSpeed*fpixelsPerMeter*dt; //[pixel/frame]

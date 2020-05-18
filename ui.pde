@@ -27,10 +27,10 @@ void buttons() {
     ;
 
   cp5.addSlider("Separation_weight")
-    .setValue(0.07)
+    .setValue(0.45)
     .setPosition(60, 50)
     //.setSize(20, 60)
-    .setRange(0, 0.1)
+    .setRange(0, 0.5)
     ;
 
   cp5.addToggle("Cohesion")
@@ -66,10 +66,10 @@ void buttons() {
     ;
 
   cp5.addSlider("DepthCamera_weight")
-    .setValue(0.15)
+    .setValue(10)
     .setPosition(60, 200)
     //.setSize(20, 60)
-    .setRange(0, 5)
+    .setRange(0, 15)
     ;
 
   cp5.addToggle("Ultrasonic")
@@ -79,10 +79,10 @@ void buttons() {
     ;
 
   cp5.addSlider("Ultrasonic_weight")
-    .setValue(4)
+    .setValue(8)
     .setPosition(60, 250)
     //.setSize(20, 60)
-    .setRange(0, 5)
+    .setRange(0, 40)
     ;
 
   cp5.addToggle("Infrared")
@@ -92,10 +92,10 @@ void buttons() {
     ;
 
   cp5.addSlider("Infrared_weight")
-    .setValue(2.5)
+    .setValue(7)
     .setPosition(60, 300)
     //.setSize(20, 60)
-    .setRange(0, 5)
+    .setRange(0, 15)
     ;
 
   cp5.addToggle("Target")

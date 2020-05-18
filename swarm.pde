@@ -18,7 +18,13 @@ class Swarm {
   public void Init() {
     bots = new ArrayList<Bot>();
     for ( int i = 0; i<botcount; i++) {
-      addBot(i);
+      int formationWidth  = 2;
+      // int l = yCellOver*(width/cellSize) + xCellOver;
+      float startX = width - 300 + i%(formationWidth)*bot_Size;
+      float startY = 100 + bot_Size *  floor(i/(formationWidth));
+      // float startX = 100 + i* bot_Size; 
+      // float startY = 100 + float(floor(i/formationWidth))* bot_Size; 
+      addBot(i, startX, startY);
     }
   }
 
@@ -48,6 +54,10 @@ class Swarm {
 
       if(bot.needNewTarget){
         updateTarget(i);
+        // if(cellRealValue(cellIndex(cellPos(bot.goal_pos)))>10000){
+        //   bot.needNewTarget = true;
+        // }
+        bot.needNewPath = true;
       }
 
       //Send target to bot
@@ -55,7 +65,7 @@ class Swarm {
 
       //Path Planning
       if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>bot.nextLoop){
-        bot.nextLoop = millis()+2000;
+        bot.nextLoop = millis()+200;
         recalculatePath(bot);
         bot.waypoints.clear();
         for (int j = path.size()-1; j >=0 ; j--) {
@@ -164,29 +174,92 @@ class Swarm {
           sensor.beamEndPointsIntersect[k].set(closestIntersectionPoint);
         }
 
-        if (PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>PVector.sub(sensor.beamStartPoints[k], sensor.sensorPos).mag()) {
+        if (PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>PVector.sub(sensor.beamStartPoints[k], sensor.sensorPos).mag() && PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>0) {
           PVector start = sensor.beamStartPoints[k];
           PVector end   = sensor.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
-          for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
-            if(discover){
-              if((wallintersectionExists || botintersectionExists) && m>=0.95){
-              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
-              // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
+          float xLast = 0;
+          float yLast = 0;
+          for (float m=0; m<=1.1; m+=(cellSize)/(diff.mag()*2)) {
+            PVector currentCell = PVector.add(start, PVector.mult(diff, m));
+            if(currentCell.x != xLast && currentCell.y != yLast){
+              if(discover){
+                if((wallintersectionExists || botintersectionExists) && (m>=0.95-(cellSize)/(diff.mag()*3))){
+                updateCell(currentCell,0.0, 0.03);
+                // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
 
-              }else{
-                updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
-                // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+                }else{
+                  updateCell(currentCell,1.0, 0.03);
+                  // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+                }
               }
             }
+            xLast = currentCell.x;
+            yLast = currentCell.y;
           }
-        }
 
+
+
+          // int foo = 0;
+          // float dx = end.x - start.x;
+
+          // float dy = end.y - start.y;
+
+          // float p  = 2*dy-dx;
+          // float y  = start.y;
+          // float x  = start.x;
+
+          // if(discover){
+          //     println("dx: " + dx);
+          //     println("dy: " + dy);
+          //     println("dy/dx: " + dy/dx);
+          // }
+
+
+          // // println("p: " + p);
+          // // for (int x=int(start.x); x <= int(end.x); x+=1) {
+          // while(x<end.x && foo <50){
+          //   if(discover){
+
+          //     // println("p: " + p);
+          //     if((wallintersectionExists || botintersectionExists)){
+          //     updateCell(PVector.add(start, new PVector(x, y)), 0.0, 0.05);
+          //     // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
+
+          //     }else{
+          //       updateCell(PVector.add(start,new PVector(x, y)),1.0, 0.05);
+          //       // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+          //     }
+          //   }
+          //   if(p>=0){
+          //     y += 1;
+          //     p += 2*dy-2*dx;
+          //     // println("p: " + p);
+          //   }else{
+          //     p += 2*dy;
+          //     x += 1;
+          //   }
+          //   foo+=1;
+          //   // println("x: " + x + ". y: " + y);
+          // }
+
+
+
+
+
+
+
+
+
+
+
+
+        }
       }
   }
 
-  public void addBot(int id_) {
+  public void addBot(int id_, float x_, float y_) {
     PVector setPos = new PVector(0, 0);
-    bots.add(new Bot(botcount, bots, setPos.set(random(100,width-100), random(100,height-100)), id_));
+    bots.add(new Bot(botcount, bots, setPos.set(x_, y_), id_));
   }
 }

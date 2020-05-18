@@ -51,7 +51,13 @@ void recalculatePath(Bot bot){
     boolean finished = false;
     
     //Move from pixel to cell coordinates
-    int startIndex = cellIndex(cellPos(bot.pos));
+    PVector startBehindBot = bot.heading_vec;
+    startBehindBot.mult(-1.0f);
+    startBehindBot.normalize();
+    startBehindBot.mult(random(1,3)*fpixelsPerMeter);
+
+    int startIndex = cellIndex(cellPos(PVector.add(bot.pos,startBehindBot)));
+    // int startIndex = cellIndex(cellPos(bot.pos));
     int goalIndex  = cellIndex(cellPos(bot.goal_pos));
 
     startPos = indexPos(startIndex);
@@ -93,13 +99,17 @@ void recalculatePath(Bot bot){
                 neighborNode = nodes.get(neighborIndex[i]);
                 if(neighborIndex[i] == goalIndex){
                     finished = true;
-                    modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
+                    // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
+                    modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue + 300*(2-cellRealValue(neighborNode.id)));
                     nodesChecked.add(neighborNode);
                     break;
                 }else{
-                    if(currentNode.localValue + 1 <= neighborNode.localValue){
-                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
-                        if(!neighborNode.visited && cellRealValue(neighborIndex[i])<1000){
+                    // if(currentNode.localValue + 1 <= neighborNode.localValue){
+                    if(currentNode.localValue + 300*(2-cellRealValue(neighborNode.id)) <= neighborNode.localValue){
+                        // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
+                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 300*(2-cellRealValue(neighborNode.id)), currentNode.localValue + 300*(2-cellRealValue(neighborNode.id)));
+                        // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) , currentNode.localValue + 300*(2-cellRealValue(neighborNode.id)));
+                        if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
                             nodesToCheck.add(neighborNode);
                         }
                         nodesChecked.add(neighborNode);
@@ -112,11 +122,14 @@ void recalculatePath(Bot bot){
         }
     }   
     int pathIndex = goalIndex;
-    while(!(pathIndex == startIndex) && ii<3000){
+    while(!(pathIndex == startIndex) && ii<6000){
         currentNode = nodes.get(pathIndex);
         path.add(currentNode);
         pathIndex = currentNode.parent;
         ii+=1;        
+    }
+    if(ii>=6000){
+      bot.needNewTarget = true;
     }
 }
 
@@ -188,7 +201,7 @@ float cellRealValue(int index){
   // if (cells.get(index).mapValue <=0.49){
     return 100000;
   }else{
-    return cells.get(index).probability;
+    return cells.get(index).probability + 1;
   }
   // return(1-cells.get(cellIndex(pos)).probability)*0.5;
 }
