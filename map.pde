@@ -72,7 +72,7 @@ void createMap() {
   float doorWidth         = 1.2;  //Meter
 
   //Office
-  float officeWidth       = 5;    //Meter
+  float officeWidth       = 6;    //Meter
   float officeHeight      = 5;    //Meter
 
   int   buildingCornerX   = 2;
@@ -227,15 +227,17 @@ void drawMap() {
 
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
       // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
       // frameBuffer.stroke(200);
       // println(cells.get(cell).cSpace);
       // frameBuffer.fill(fill);
-            frameBuffer.fill(fill,cells.get(cell).cSpace*255,fill);
+      frameBuffer.fill(0,(1-cells.get(cell).cSpace)*255,0);
+      // frameBuffer.fill(fill,cells.get(cell).cSpace*255,fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));
       frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
+
     }
     frameBuffer.endDraw();
     cellsToRender.clear();
@@ -276,7 +278,8 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
     cellsToRender.append(l);
   }
   //cspace
-  float cSpaceWidth = 0.7*fcellPerMeter;
+  float doorZoneWidth = 0.7*fcellPerMeter;
+  float cSpaceWidth = 1.5*fcellPerMeter;
   currentCell = cells.get(l);
   Cell currentBufferCell = cellsBuffer.get(l);
   Cell currentTargetCell;
@@ -292,13 +295,13 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver-2)*(width/cellSize) + xCellOver;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            println("*********************Doorway************************");
+            // println("*********************Doorway************************");
             //doorway
-            cSpaceWidth = 0.5*fcellPerMeter;
+            // cSpaceWidth = doorZoneWidth*fcellPerMeter;
             for (int xx = xCellOver-int(cSpaceWidth); xx < xCellOver+int(cSpaceWidth); xx++) {
               float distanceToWall = 0;
-              for (int yy = yCellOver; yy > yCellOver-int(cSpaceWidth); yy--) {
-                println("*****Doorway******");
+              for (int yy = yCellOver; yy > yCellOver-int(doorZoneWidth); yy--) {
+                // println("*****Doorway******");
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
                 float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
@@ -311,24 +314,28 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
               }
             }
           }else{
-            println("inside wall, do nothing");
+            // println("inside wall, do nothing");
             //inside wall, do nothing
           }
         }else{
-          println("Normal wall");
-          //iterate northward
-          float distanceToWall = 0;
-          for (int yy = yCellOver; yy > yCellOver-int(cSpaceWidth); yy--) {
-            // println("Northern edge exist");
-            l=yy*(width/cellSize) + xCellOver;
-            currentTargetCell = cells.get(l);
-            float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-            if(currentTargetCell.cSpace>newCSpaceValue){
-              currentTargetCell.cSpace = newCSpaceValue;
+          l=(yCellOver-int(1.3*fcellPerMeter))*(width/cellSize) + xCellOver;
+          currentTargetCell = cells.get(l);
+          if(currentTargetCell.mapValue != 0){
+            // println("Normal wall");
+            //iterate northward
+            float distanceToWall = 0;
+            for (int yy = yCellOver; yy > yCellOver-int(cSpaceWidth); yy--) {
+              // println("Northern edge exist");
+              l=yy*(width/cellSize) + xCellOver;
+              currentTargetCell = cells.get(l);
+              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
+              if(currentTargetCell.cSpace>newCSpaceValue){
+                currentTargetCell.cSpace = newCSpaceValue;
+              }
+              cellsToRender.append(l);
+              // println(currentCell.cSpace);
+              distanceToWall += 1;
             }
-            cellsToRender.append(l);
-            // println(currentCell.cSpace);
-            distanceToWall += 1;
           }
         }
       }
@@ -341,13 +348,13 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver+2)*(width/cellSize) + xCellOver;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            println("*********************Doorway************************");
+            // println("*********************Doorway************************");
             //doorway
-            cSpaceWidth = 0.5*fcellPerMeter;
+            // cSpaceWidth = doorZoneWidth*fcellPerMeter;
             for (int xx = xCellOver-int(cSpaceWidth); xx < xCellOver+int(cSpaceWidth); xx++) {
               float distanceToWall = 0;
-              for (int yy = yCellOver; yy < yCellOver+int(cSpaceWidth); yy++) {
-                println("*****Doorway******");
+              for (int yy = yCellOver; yy < yCellOver+int(doorZoneWidth); yy++) {
+                // println("*****Doorway******");
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
                 float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
@@ -360,23 +367,27 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
               }
             }
           }else{
-            println("inside wall, do nothing");
+            // println("inside wall, do nothing");
             //inside wall, do nothing
           }
         }else{
-          //iterate northward
-          float distanceToWall = 0;
-          for (int yy = yCellOver; yy < yCellOver+int(cSpaceWidth); yy++) {
-            // println("Northern edge exist");
-            l=yy*(width/cellSize) + xCellOver;
-            currentCell = cells.get(l);
-            float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-            if(currentCell.cSpace>newCSpaceValue){
-              currentCell.cSpace = newCSpaceValue;
+          l=(yCellOver+int(1.3*fcellPerMeter))*(width/cellSize) + xCellOver;
+          currentTargetCell = cells.get(l);
+          if(currentTargetCell.mapValue != 0){
+            //iterate northward
+            float distanceToWall = 0;
+            for (int yy = yCellOver; yy < yCellOver+int(cSpaceWidth); yy++) {
+              // println("Northern edge exist");
+              l=yy*(width/cellSize) + xCellOver;
+              currentCell = cells.get(l);
+              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
+              if(currentCell.cSpace>newCSpaceValue){
+                currentCell.cSpace = newCSpaceValue;
+              }
+              cellsToRender.append(l);
+              // println(currentCell.cSpace);
+              distanceToWall += 1;
             }
-            cellsToRender.append(l);
-            // println(currentCell.cSpace);
-            distanceToWall += 1;
           }
         }
       }
@@ -390,13 +401,13 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver)*(width/cellSize) + xCellOver+2;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            println("*********************Doorway************************");
+            // println("*********************Doorway************************");
             //doorway
-            cSpaceWidth = 0.5*fcellPerMeter;
+            // cSpaceWidth = doorZoneWidth*fcellPerMeter;
             for (int yy = yCellOver-int(cSpaceWidth); yy < yCellOver+int(cSpaceWidth); yy++) {
               float distanceToWall = 0;
-              for (int xx = xCellOver; xx < xCellOver+int(cSpaceWidth); xx++) {
-                println("*****Doorway******");
+              for (int xx = xCellOver; xx < xCellOver+int(doorZoneWidth); xx++) {
+                // println("*****Doorway******");
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
                 float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
@@ -409,23 +420,27 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
               }
             }
           }else{
-            println("inside wall, do nothing");
+            // println("inside wall, do nothing");
             //inside wall, do nothing
           }
         }else{
-          //iterate northward
-          float distanceToWall = 0;
-          for (int xx = xCellOver; xx < xCellOver+int(cSpaceWidth); xx++) {
-            // println("Northern edge exist");
-            l= yCellOver*(width/cellSize) + xx;
-            currentCell = cells.get(l);
-            float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-            if(currentCell.cSpace>newCSpaceValue){
-              currentCell.cSpace = newCSpaceValue;
+          l=(yCellOver)*(width/cellSize) + xCellOver+int(1.3*fcellPerMeter);
+          currentTargetCell = cells.get(l);
+          if(currentTargetCell.mapValue != 0){
+            //iterate northward
+            float distanceToWall = 0;
+            for (int xx = xCellOver; xx < xCellOver+int(cSpaceWidth); xx++) {
+              // println("Northern edge exist");
+              l= yCellOver*(width/cellSize) + xx;
+              currentCell = cells.get(l);
+              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
+              if(currentCell.cSpace>newCSpaceValue){
+                currentCell.cSpace = newCSpaceValue;
+              }
+              cellsToRender.append(l);
+              // println(currentCell.cSpace);
+              distanceToWall += 1;
             }
-            cellsToRender.append(l);
-            // println(currentCell.cSpace);
-            distanceToWall += 1;
           }
         }
       }
@@ -439,13 +454,13 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver)*(width/cellSize) + xCellOver-2;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            println("*********************Doorway************************");
+            // println("*********************Doorway************************");
             //doorway
-            cSpaceWidth = 0.5*fcellPerMeter;
+            // cSpaceWidth = doorZoneWidth*fcellPerMeter;
             for (int yy = yCellOver-int(cSpaceWidth); yy < yCellOver+int(cSpaceWidth); yy++) {
               float distanceToWall = 0;
-              for (int xx = xCellOver; xx > xCellOver-int(cSpaceWidth); xx--) {
-                println("*****Doorway******");
+              for (int xx = xCellOver; xx > xCellOver-int(doorZoneWidth); xx--) {
+                // println("*****Doorway******");
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
                 float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
@@ -458,23 +473,26 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
               }
             }
           }else{
-            println("inside wall, do nothing");
+            // println("inside wall, do nothing");
             //inside wall, do nothing
           }
         }else{
-          //iterate northward
-          float distanceToWall = 0;
-          for (int xx = xCellOver; xx > xCellOver-int(cSpaceWidth); xx--) {
-            // println("Northern edge exist");
-            l= yCellOver*(width/cellSize) + xx;
-            currentCell = cells.get(l);
-            float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-            if(currentCell.cSpace>newCSpaceValue){
-              currentCell.cSpace = newCSpaceValue;
+          l=(yCellOver)*(width/cellSize) + xCellOver-int(1.3*fcellPerMeter);
+          currentTargetCell = cells.get(l);
+          if(currentTargetCell.mapValue != 0){
+            float distanceToWall = 0;
+            for (int xx = xCellOver; xx > xCellOver-int(cSpaceWidth); xx--) {
+              // println("Northern edge exist");
+              l= yCellOver*(width/cellSize) + xx;
+              currentCell = cells.get(l);
+              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
+              if(currentCell.cSpace>newCSpaceValue){
+                currentCell.cSpace = newCSpaceValue;
+              }
+              cellsToRender.append(l);
+              // println(currentCell.cSpace);
+              distanceToWall += 1;
             }
-            cellsToRender.append(l);
-            // println(currentCell.cSpace);
-            distanceToWall += 1;
           }
         }
       }
@@ -534,8 +552,9 @@ void keyPressed() {
     for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
       cells.get(i).probability = 0.5;
       cellsToRender.append(i);
-  }
+    }
       updateEdges();
+      swarmsystem.Init();
     }
   }
 }
@@ -546,7 +565,9 @@ void editMap() {
   edgePool.clear();
   for (int i= 0; i<cellsBuffer.size(); i++) {
     cells.get(i).probability = 0.5;
+    cells.get(i).cSpace = 1;
     cellsBuffer.get(i).probability = 0.5;
+    cellsBuffer.get(i).cSpace = 1;
     for (int j= 0; j<4; j++) {
       cells.get(i).edge_id[j] = 0;
       cells.get(i).edge_exist[j] = false;

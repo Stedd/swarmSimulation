@@ -15,15 +15,17 @@ void updateAllTagets(){
 
 void updateTarget(int i){
     PVector tmpPos = new PVector(random(200,1000), random(200,600));
-    // PVector tmpPosCell = tmpPos.mult(1/cellSize);
+    // PVector tmpPosCell = new PVector();
+    // tmpPosCell.x = tmpPos.x;
+    // tmpPosCell.y = tmpPos.y;
+    // tmpPosCell.mult(1/cellSize);
 
     
-    // if(cells.get(cellIndex(tmpPosCell)).mapValue ==0){
-        // updateTarget(i);
-    // }else{
+    // if(!(cells.get(cellIndex(tmpPosCell)).mapValue == 0)){
         goal_Pos[i] = tmpPos;
+    // }else {
+    //     println("new target not valid");
     // }
-    
 }
 
 

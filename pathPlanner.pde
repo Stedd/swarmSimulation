@@ -107,7 +107,7 @@ void recalculatePath(Bot bot){
                     // if(currentNode.localValue + 1 <= neighborNode.localValue){
                     if(currentNode.localValue + cellRealValue(neighborNode.id) <= neighborNode.localValue){
                         // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
-                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 1000*(1-cells.get(neighborNode.id).cSpace), currentNode.localValue + cellRealValue(neighborNode.id));
+                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 5000*(1-cells.get(neighborNode.id).cSpace), currentNode.localValue + cellRealValue(neighborNode.id));
                         // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) , currentNode.localValue + 300*(2-cellRealValue(neighborNode.id)));
                         if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
                             nodesToCheck.add(neighborNode);
@@ -131,6 +131,16 @@ void recalculatePath(Bot bot){
     if(ii>=2000){
       bot.needNewTarget = true;
     }
+}
+
+float cellRealValue(int index){
+  // println(pos);
+  if (cells.get(index).probability <=0.499){ 
+  // if (cells.get(index).mapValue <=0.49){
+    return 100000;
+  }else{
+    return 20*(1-cells.get(index).probability) + 30*(1-cells.get(index).cSpace);
+  }
 }
 
 void drawPoints(){
@@ -193,17 +203,6 @@ int cellRealIndex(PVector pos){
 int cellIndex(PVector pos){
   // println(pos);
   return int((floor(pos.y)*width)/cellSize) + floor(pos.x);
-}
-
-float cellRealValue(int index){
-  // println(pos);
-  if (cells.get(index).probability <=0.499){ 
-  // if (cells.get(index).mapValue <=0.49){
-    return 100000;
-  }else{
-    return 1*(1-cells.get(index).probability) + 10*(1-cells.get(index).cSpace);
-  }
-  // return(1-cells.get(cellIndex(pos)).probability)*0.5;
 }
 
 float cellValue(PVector pos){

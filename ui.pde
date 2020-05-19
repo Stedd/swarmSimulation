@@ -27,10 +27,10 @@ void buttons() {
     ;
 
   cp5.addSlider("Separation_weight")
-    .setValue(0.45)
+    .setValue(1.5)
     .setPosition(60, 50)
     //.setSize(20, 60)
-    .setRange(0, 0.5)
+    .setRange(0, 3)
     ;
 
   cp5.addToggle("Cohesion")

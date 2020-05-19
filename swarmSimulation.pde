@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 2;
+int       numberOfBots            = 3;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
@@ -32,7 +32,7 @@ float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 3;
+int       cellSize                = 4;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     fcellPerMeter           = fpixelsPerMeter/cellSize;
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
@@ -62,7 +62,7 @@ void setup() {
   frameBuffer = createGraphics(width,height);
   println(width);
   //r
-  // randomSeed(42);
+  randomSeed(9734021);
 
   //Util
   f = createFont("Arial", 16, true);

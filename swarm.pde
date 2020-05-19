@@ -43,7 +43,7 @@ class Swarm {
           bot.setPos(mousePos);
         }
       }
-
+      // bot.needNewTarget = false;
       bot.setSize(bot_Size);
 
       //Assign new target to bot
@@ -65,14 +65,16 @@ class Swarm {
 
       //Path Planning
       if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>bot.nextLoop){
-        bot.nextLoop = millis()+200;
-        recalculatePath(bot);
+        bot.needNewTarget = false;
+        bot.nextLoop = millis()+1000;
         bot.waypoints.clear();
+        recalculatePath(bot);
         for (int j = path.size()-1; j >=0 ; j--) {
           float x = path.get(j).pos.x*cellSize;
           float y = path.get(j).pos.y*cellSize;
           bot.waypoints.add(new PVector(x,y));          
         }
+
       }
 
       bot.Loop();
