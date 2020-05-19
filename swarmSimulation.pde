@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 4;
+int       numberOfBots            = 2;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
@@ -34,6 +34,7 @@ float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
 int       cellSize                = 3;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
+float     fcellPerMeter           = fpixelsPerMeter/cellSize;
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
 
 float     ultrasonicMinRange      = 0.25; 

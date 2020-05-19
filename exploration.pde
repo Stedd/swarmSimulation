@@ -19,7 +19,7 @@ void updateTarget(int i){
 
     
     // if(cells.get(cellIndex(tmpPosCell)).mapValue ==0){
-    //     updateTarget(i);
+        // updateTarget(i);
     // }else{
         goal_Pos[i] = tmpPos;
     // }

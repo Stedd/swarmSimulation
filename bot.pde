@@ -56,7 +56,7 @@ class Bot {
   
   // Bot is stuck variables
     boolean                 botIsStuck;
-    int                     nextStuckCheck;
+    float                   nextStuckCheck;
     PVector                 prevPos;
     float                   linVelStuckThreshold = 0.0005;
     float                   angVelStuckThreshold = 0.0005;
@@ -73,7 +73,7 @@ class Bot {
     //init path planner
     waypoints       = new ArrayList<PVector>();
     needNewPath     = true;
-    nextStuckCheck  = millis()+1000;
+    nextStuckCheck  = time+1;
     distanceMoved   = 0;
 
     //set bot variables
@@ -124,11 +124,7 @@ class Bot {
       ruleUltrasonic();
     }
 
-    float angle = PVector.angleBetween(PVector.sub(pos,depthCamera.sensorPos),PVector.sub(pos,target_pos));
-    // float angle2 = PVector.angleBetween(target_pos, pos);
-    // println("angle to target:" + angle*180/PI);
-    // println("2:" + angle2*180/PI);
-    if(abs(angle*180/PI)<25){
+    if(abs(PVector.angleBetween(PVector.sub(pos,depthCamera.sensorPos),PVector.sub(pos,target_pos))*180/PI)<25){
       //RULE: DepthCamera
       if (DepthCamera) {
         ruleDepthCamera();
@@ -173,22 +169,22 @@ class Bot {
     needNewPath = false;
 
     // println(millis());
-    if(millis()>nextStuckCheck){
-      println(nextStuckCheck);
-      println(prevPos);
-      println(pos);
+    if(time>nextStuckCheck){
+      // println(nextStuckCheck);
+      // println(prevPos);
+      // println(pos);
       
-      nextStuckCheck = millis()+1000+floor(random(1000));
+      nextStuckCheck = time+2+floor(random(-0.5,0.5));
 
       float distanceMoved = PVector.sub(prevPos,pos).mag();
 
-      println("********* ITERATING PREVIOUS POSITION *********");
+      // println("********* ITERATING PREVIOUS POSITION *********");
       prevPos.x = pos.x;
       prevPos.y = pos.y;
 
-      println("distance from last point" + distanceMoved);
-      if(distanceMoved<0.05*fpixelsPerMeter){
-        println("Bot "+botID + " is stuck. Recalculating route");
+      // println("distance from last point" + distanceMoved);
+      if(distanceMoved<0.05*fpixelsPerMeter&&!needNewTarget){
+        // println("Bot "+botID + " is stuck. Recalculating route");
         botIsStuck     = true;
         needNewPath    = true;
       }
@@ -504,10 +500,19 @@ class Bot {
 
     }
     PVector.sub(pos, goal_pos, botDistVec);
-    if(botDistVec.mag()<1.2*fpixelsPerMeter){
+
+    if(botDistVec.mag()<1.4*fpixelsPerMeter){
       println("Bot: " + botID + " requesting new target");
       needNewTarget = true;
     }
+    PVector tmpVec = new PVector();
+    tmpVec.set(goal_pos);
+    PVector tmpPosCell = tmpVec.mult(1/cellSize);
+    if(cells.get(cellIndex(tmpPosCell)).mapValue ==0){
+      println("Bot: " + botID + " requesting new target, it is over a wall");
+      needNewTarget = true;
+    }
+
   }
 
   //return position
