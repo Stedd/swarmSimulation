@@ -7,6 +7,7 @@ class Swarm {
 
   int     botcount     = 0;
 
+  
 
   //Constructor
   Swarm(int botcount_) {
@@ -17,7 +18,10 @@ class Swarm {
   public void Init() {
     bots = new ArrayList<Bot>();
     for ( int i = 0; i<botcount; i++) {
-      addBot(i);
+      int formationWidth  = 2;
+      float startX = width - 400 + i%(formationWidth)*bot_Size;
+      float startY = 100 + bot_Size *  floor(i/(formationWidth));
+      addBot(i, startX, startY);
     }
   }
 
@@ -36,21 +40,43 @@ class Swarm {
           bot.setPos(mousePos);
         }
       }
-
       bot.setSize(bot_Size);
+
+      //Assign new target to bot
+      if(bot.needNewTarget){
+        updateTarget(i);
+        bot.needNewTarget = false;
+        bot.needNewPath   = true;
+      }
+
+      //Send target to bot
+      bot.goal_pos = goal_Pos[i];
+
+      //Path Planning
+      if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>bot.nextLoop){
+        bot.nextLoop = millis()+int(random(900,1100));
+        bot.waypoints.clear();
+        recalculatePath(bot);
+        for (int j = path.size()-1; j >=0 ; j--) {
+          float x = path.get(j).pos.x*cellSize;
+          float y = path.get(j).pos.y*cellSize;
+          bot.waypoints.add(new PVector(x,y));          
+        }
+
+      }
 
       bot.Loop();
 
-      checkIntersection(bot.depthCamera, i);
-      checkIntersection(bot.ultrasonic, i);
-      checkIntersection(bot.leftInfrared, i);
-      checkIntersection(bot.rightInfrared, i);
+      checkIntersection(bot.depthCamera,    i, true);
+      checkIntersection(bot.ultrasonic,     i, false);
+      checkIntersection(bot.leftInfrared,   i, false);
+      checkIntersection(bot.rightInfrared,  i, false);
 
     }
   }
 
-  void checkIntersection(Sensor sensor, int i){
-          //Detect depth camera ray intersection with bots and walls
+  void checkIntersection(Sensor sensor, int i, boolean discover){
+      //Detect depth camera ray intersection with bots and walls
       PVector p1                        = sensor.sensorPos;
       PVector closestIntersectionPoint  = new PVector(10000, 10000);
       PVector distanceToIntersection    = new PVector();
@@ -114,12 +140,6 @@ class Swarm {
             float x = (b1 - b) / (a - a1);
             float y = a * x + b;
 
-            //println("x: "+x+" y: "+y);
-            //ellipse(x, y, 20, 20);
-            //stroke(155, 155, 255);
-            //line(p1.x, p1.y, p2.x, p2.y);
-            //line(p3.x, p3.y, p4.x, p4.y);
-
             if ((x > min(p1.x, p2.x)) && (x < max(p1.x, p2.x)) && (y > min(p1.y, p2.y)) && (y < max(p1.y, p2.y))
               && (x > min(p3.x, p4.x)) && (x < max(p3.x, p4.x)) && (y > min(p3.y, p4.y)) && (y < max(p3.y, p4.y))) {
               wallintersectionExists = true;
@@ -127,20 +147,14 @@ class Swarm {
               PVector closestIntersection   = PVector.sub(p1, closestIntersectionPoint);
               PVector intersectionPoint     = new PVector(x+random(-sensor.noise, sensor.noise), y+random(-sensor.noise, sensor.noise));
               PVector.sub(p1, intersectionPoint, distanceToIntersection);
-              //println(distanceToIntersection);
               if (distanceToIntersection.mag()<closestIntersection.mag()) {
                 closestIntersectionPoint.set(intersectionPoint);
               }
-              //println("intersect at pixel:"+ x + "," + y + " millis: " + millis());
             }
           }
           if (wallintersectionExists&&(closestIntersectionPoint.x<width)&&(closestIntersectionPoint.y<height)) {
             fill(255, 0, 0);
             noStroke();
-            //ellipse(closestIntersectionPoint.x, closestIntersectionPoint.y, 6, 6);
-
-            //discoverCell(closestIntersectionPoint);
-
             sensor.beamEndPointsIntersect[k].set(closestIntersectionPoint);
           } else {
             sensor.beamEndPointsIntersect[k].set(sensor.beamEndPoints[k]);
@@ -150,28 +164,35 @@ class Swarm {
           sensor.beamEndPointsIntersect[k].set(closestIntersectionPoint);
         }
 
-        if (PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>PVector.sub(sensor.beamStartPoints[k], sensor.sensorPos).mag()) {
+        if (PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>PVector.sub(sensor.beamStartPoints[k], sensor.sensorPos).mag() && PVector.sub(sensor.beamEndPointsIntersect[k], sensor.sensorPos).mag()>0) {
           PVector start = sensor.beamStartPoints[k];
           PVector end   = sensor.beamEndPointsIntersect[k];
           PVector diff = PVector.sub(end, start);
-          for (float m=0; m<=1; m+=float(cellSize)/(diff.mag()*1.75)) {
-            //println("beam: "+a+" checking: "+b);
-            if((wallintersectionExists || botintersectionExists) && m>=0.95){
-              updateCell(PVector.add(start, PVector.mult(diff, m)),0.0, 0.05);
-              // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
+          float xLast = 0;
+          float yLast = 0;
+          for (float m=0; m<=1.1; m+=(cellSize)/(diff.mag()*2)) {
+            PVector currentCell = PVector.add(start, PVector.mult(diff, m));
+            if(currentCell.x != xLast && currentCell.y != yLast){
+              if(discover){
+                if((wallintersectionExists || botintersectionExists) && (m>=0.95-(cellSize)/(diff.mag()*3))){
+                updateCell(currentCell,0.0, 0.03);
+                // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
 
-            }else{
-              updateCell(PVector.add(start, PVector.mult(diff, m)),1.0, 0.05);
-              // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+                }else{
+                  updateCell(currentCell,1.0, 0.03);
+                  // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
+                }
+              }
             }
+            xLast = currentCell.x;
+            yLast = currentCell.y;
           }
         }
-
       }
   }
 
-  public void addBot(int id_) {
+  public void addBot(int id_, float x_, float y_) {
     PVector setPos = new PVector(0, 0);
-    bots.add(new Bot(botcount, bots, setPos.set(random(100,width-100), random(100,height-100)), id_));
+    bots.add(new Bot(botcount, bots, setPos.set(x_, y_), id_));
   }
 }
