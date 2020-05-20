@@ -19,11 +19,8 @@ class Swarm {
     bots = new ArrayList<Bot>();
     for ( int i = 0; i<botcount; i++) {
       int formationWidth  = 2;
-      // int l = yCellOver*(width/cellSize) + xCellOver;
       float startX = width - 400 + i%(formationWidth)*bot_Size;
       float startY = 100 + bot_Size *  floor(i/(formationWidth));
-      // float startX = 100 + i* bot_Size; 
-      // float startY = 100 + float(floor(i/formationWidth))* bot_Size; 
       addBot(i, startX, startY);
     }
   }
@@ -43,15 +40,9 @@ class Swarm {
           bot.setPos(mousePos);
         }
       }
-      // bot.needNewTarget = false;
       bot.setSize(bot_Size);
 
       //Assign new target to bot
-
-      // if(frameCount%500==0){
-      //   updateTarget();
-      // }
-
       if(bot.needNewTarget){
         updateTarget(i);
         bot.needNewTarget = false;
@@ -196,63 +187,6 @@ class Swarm {
             xLast = currentCell.x;
             yLast = currentCell.y;
           }
-
-
-
-          // int foo = 0;
-          // float dx = end.x - start.x;
-
-          // float dy = end.y - start.y;
-
-          // float p  = 2*dy-dx;
-          // float y  = start.y;
-          // float x  = start.x;
-
-          // if(discover){
-          //     println("dx: " + dx);
-          //     println("dy: " + dy);
-          //     println("dy/dx: " + dy/dx);
-          // }
-
-
-          // // println("p: " + p);
-          // // for (int x=int(start.x); x <= int(end.x); x+=1) {
-          // while(x<end.x && foo <50){
-          //   if(discover){
-
-          //     // println("p: " + p);
-          //     if((wallintersectionExists || botintersectionExists)){
-          //     updateCell(PVector.add(start, new PVector(x, y)), 0.0, 0.05);
-          //     // updateCell(PVector.add(start, PVector.mult(diff, m)),0.0);
-
-          //     }else{
-          //       updateCell(PVector.add(start,new PVector(x, y)),1.0, 0.05);
-          //       // updateCell(PVector.add(start, PVector.mult(diff, m)),1.0);
-          //     }
-          //   }
-          //   if(p>=0){
-          //     y += 1;
-          //     p += 2*dy-2*dx;
-          //     // println("p: " + p);
-          //   }else{
-          //     p += 2*dy;
-          //     x += 1;
-          //   }
-          //   foo+=1;
-          //   // println("x: " + x + ". y: " + y);
-          // }
-
-
-
-
-
-
-
-
-
-
-
-
         }
       }
   }

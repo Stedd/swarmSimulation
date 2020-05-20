@@ -72,7 +72,6 @@ class Bot {
   
   //Contructor
   Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, int id_) {
-    // println("Constructor iteration");
     //init path planner
     waypoints       = new ArrayList<PVector>();
     needNewPath     = true;
@@ -85,8 +84,6 @@ class Bot {
     botcount        = botcount_;
     bots            = bots_;
     pos             = pos_;
-    // prevPos         = pos_;
-    // println("Constructor iteration");
     prevPos         = new PVector(0,0);
     prevStuckPos    = new PVector(0,0);
     botID           = id_;
@@ -168,25 +165,14 @@ class Bot {
     botIsStuck  = false;
     needNewPath = false;
 
-    // println(millis());
     if(time>nextStuckCheck){
-      // println(nextStuckCheck);
-      // println(prevPos);
-      // println(pos);
-      
       nextStuckCheck = time+5+floor(random(-0.5,0.5));
-
       float distanceMoved = PVector.sub(prevPos,pos).mag();
       float distanceFromStuck = PVector.sub(prevStuckPos,pos).mag();
-      // println("********* ITERATING PREVIOUS POSITION *********");
       prevPos.x = pos.x;
       prevPos.y = pos.y;
-      // println("distance from last point" + distanceMoved);
-      // if(distanceMoved<0.01*fpixelsPerMeter&& distanceFromStuck>0.10*fpixelsPerMeter && !needNewTarget){
       if(distanceMoved<0.01*fpixelsPerMeter){
         if(distanceFromStuck>0.10*fpixelsPerMeter && !needNewTarget){
-          // println("Bot "+botID + " is stuck. Recalculating route");
-          // waypoints.clear();
           botIsStuck     = true;
           needNewPath    = true;
           prevStuckPos.x = pos.x;
@@ -202,7 +188,6 @@ class Bot {
       }
 
     }
-    // return botIsStuck;
   }
 
   void sensors(){
@@ -466,14 +451,10 @@ class Bot {
 
     for ( int i = 0; i<leftInfrared.numberOfBeams; i++) {
       if(PVector.sub(leftInfrared.beamEndPointsIntersect[i],leftInfrared.beamStartPoints[i]).mag()<leftInfrared.span){
-        // println("beam intersect, adding vector");
         float resultantMagnitude = (PVector.sub(leftInfrared.beamEndPointsIntersect[i],leftInfrared.beamStartPoints[i]).mag() - leftInfrared.span)*w;
-        // float beamangle          = ang-(leftInfrared.fov/2) + i * (leftInfrared.fov/(float(leftInfrared.numberOfBeams)-1));
-        // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
         float resultantDirection = ang - HALF_PI;
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
-        // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
         n+=1;
         c+=1.0f;
       }
@@ -483,12 +464,9 @@ class Bot {
       if(PVector.sub(rightInfrared.beamEndPointsIntersect[i],rightInfrared.beamStartPoints[i]).mag()<rightInfrared.span){
         // println("beam intersect, adding vector");
         float resultantMagnitude = (PVector.sub(rightInfrared.beamEndPointsIntersect[i],rightInfrared.beamStartPoints[i]).mag() - rightInfrared.span)*w;
-        // float beamangle          = ang-(rightInfrared.fov/2) + i * (rightInfrared.fov/(float(rightInfrared.numberOfBeams)-1));
-        // float resultantDirection = ang - beamangle*(1/abs(ang - beamangle));
         float resultantDirection = ang + HALF_PI;
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
-        // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
         n+=1;
         c+=1.0f;
       }
@@ -502,7 +480,6 @@ class Bot {
 
     PVector.sub(pos, target_pos, botDistVec); 
     if (botDistVec.mag()>1*fpixelsPerMeter) {
-      // needNewTarget = false;
       ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
       stroke(0, 255, 0, 100); 
       n+=1; 

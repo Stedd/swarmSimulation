@@ -31,8 +31,6 @@ ArrayList<Node> path         = new ArrayList<Node>();
 ArrayList<Node> nodes        = new ArrayList<Node>();
 ArrayList<Node> nodesChecked = new ArrayList<Node>();
 ArrayList<Node> nodesToCheck = new ArrayList<Node>();
-// PVector startPos;
-// PVector goalPos;
 PVector[]       neighborPos;
 int[]           neighborIndex;
 Node            currentNode;
@@ -50,14 +48,12 @@ void recalculatePath(Bot bot){
     nodesToCheck.clear();
     boolean finished = false;
     
-    //Move from pixel to cell coordinates
     PVector startBehindBot = bot.heading_vec;
     startBehindBot.mult(-1.0f);
     startBehindBot.normalize();
     startBehindBot.mult(random(1.5,1.7)*fpixelsPerMeter);
 
     int startIndex = cellIndex(cellPos(PVector.add(bot.pos,startBehindBot)));
-    // int startIndex = cellIndex(cellPos(bot.pos));
     int goalIndex  = cellIndex(cellPos(bot.goal_pos));
 
     startPos = indexPos(startIndex);
@@ -99,21 +95,16 @@ void recalculatePath(Bot bot){
                 neighborNode = nodes.get(neighborIndex[i]);
                 if(neighborIndex[i] == goalIndex){
                     finished = true;
-                    // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
                     modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue + cellRealValue(neighborNode.id));
                     nodesChecked.add(neighborNode);
                     break;
                 }else{
-                    // if(currentNode.localValue + 1 <= neighborNode.localValue){
                     if(currentNode.localValue + cellRealValue(neighborNode.id) <= neighborNode.localValue){
-                        // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue +1);
                         modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 30*(1-cells.get(neighborNode.id).cSpace), currentNode.localValue + cellRealValue(neighborNode.id));
-                        // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) , currentNode.localValue + 300*(2-cellRealValue(neighborNode.id)));
                         if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
                             nodesToCheck.add(neighborNode);
                         }
                         nodesChecked.add(neighborNode);
- 
                     }
                     currentNode.visited = true;
                     nodesToCheck.remove(currentNode);
@@ -133,42 +124,14 @@ void recalculatePath(Bot bot){
         pathIndex = currentNode.parent;
         ii+=1;        
     }
-    // if(ii>=2000){
-    //   bot.needNewTarget = true;
-    // }
 }
 
 float cellRealValue(int index){
-  // println(pos);
   if (cells.get(index).probability <=0.499){ 
-  // if (cells.get(index).mapValue <=0.49){
     return 100000;
   }else{
     return 20*(1-cells.get(index).probability) + 30*(1-cells.get(index).cSpace);
   }
-}
-
-void drawPoints(){
-    fill(0,255,0);
-    ellipse(startPos.x*cellSize + cellSize/2, startPos.y*cellSize + cellSize/2,30,30);
-    fill(0,0,255);
-    ellipse(goalPos.x*cellSize + cellSize/2, goalPos.y*cellSize + cellSize/2,30,30);
-}
-
-void drawChecked(){
-    for(int i = 0; i<nodesChecked.size();i++){
-        noStroke();
-        fill(255,0,255);
-        ellipse(nodesChecked.get(i).pos.x*cellSize+cellSize/2, nodesChecked.get(i).pos.y*cellSize+cellSize/2, 3, 3);
-    }
-}
-
-void drawWayPoints(){
-    for(int i = 0; i<path.size()-1;i++){
-        strokeWeight(10);
-        fill(0,255,0);
-        ellipse(path.get(i).pos.x*cellSize+cellSize/2, path.get(i).pos.y*cellSize+cellSize/2, 5, 5);
-    }
 }
 
 PVector cellPos(PVector pos){
@@ -176,17 +139,8 @@ PVector cellPos(PVector pos){
   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
   int yCellOver = int(map(pos.y, 0, height, 0, height/cellSize));
   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-  // println(xCellOver + ',' + yCellOver);
   return new PVector(xCellOver, yCellOver);
 }
-
-// int cellIndex(PVector pos){
-//   int xCellOver = ceil(map(pos.x, 0, width, 0, width/cellSize));
-//   xCellOver = constrain(xCellOver, 0, (width/cellSize)-1);
-//   int yCellOver = ceil(map(pos.y, 0, height, 0, height/cellSize));
-//   yCellOver = constrain(yCellOver, 0, (height/cellSize)-1);
-//   return yCellOver*(width/cellSize) + xCellOver;
-// }
 
 PVector indexRealPos(int index){
   int x = index%(width);
@@ -201,12 +155,10 @@ PVector indexPos(int index){
 }
 
 int cellRealIndex(PVector pos){
-  // println(pos);
   return int((floor(pos.y)*width)) + floor(pos.x);
 }
 
 int cellIndex(PVector pos){
-  // println(pos);
   return int((floor(pos.y)*width)/cellSize) + floor(pos.x);
 }
 
@@ -218,7 +170,6 @@ float cellValue(PVector pos){
   }else{
     return 1;
   }
-  // return(1-cells.get(cellIndex(pos)).probability)*0.5;
 }
 
 float pathDist(PVector a, PVector b){
@@ -245,4 +196,27 @@ void modifyNode(int id_, int parent_, boolean visited_, float globalValue_, floa
   tempNode.visited      = visited_;
   tempNode.globalValue  = globalValue_;
   tempNode.localValue   = localValue_;
+}
+
+void drawPoints(){
+    fill(0,255,0);
+    ellipse(startPos.x*cellSize + cellSize/2, startPos.y*cellSize + cellSize/2,30,30);
+    fill(0,0,255);
+    ellipse(goalPos.x*cellSize + cellSize/2, goalPos.y*cellSize + cellSize/2,30,30);
+}
+
+void drawChecked(){
+    for(int i = 0; i<nodesChecked.size();i++){
+        noStroke();
+        fill(255,0,255);
+        ellipse(nodesChecked.get(i).pos.x*cellSize+cellSize/2, nodesChecked.get(i).pos.y*cellSize+cellSize/2, 3, 3);
+    }
+}
+
+void drawWayPoints(){
+    for(int i = 0; i<path.size()-1;i++){
+        strokeWeight(10);
+        fill(0,255,0);
+        ellipse(path.get(i).pos.x*cellSize+cellSize/2, path.get(i).pos.y*cellSize+cellSize/2, 5, 5);
+    }
 }

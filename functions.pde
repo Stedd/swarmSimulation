@@ -26,7 +26,6 @@ void fps() {
     frate = float(fcount) / fint;
     fcount = 0;
     lastm = m;
-    //println("fps: " + frate);
   }
   fill(0, 50, 155);
   textFont(f, 20);
@@ -43,6 +42,5 @@ float sign(float a1) {
   if (a1==0) return 0;
   if (a1<0) return -1;
   if (a1>0) return 1;
-  // this would not be reached: 
   return 0;
 }
