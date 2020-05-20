@@ -20,7 +20,7 @@ class Swarm {
     for ( int i = 0; i<botcount; i++) {
       int formationWidth  = 2;
       // int l = yCellOver*(width/cellSize) + xCellOver;
-      float startX = width - 300 + i%(formationWidth)*bot_Size;
+      float startX = width - 400 + i%(formationWidth)*bot_Size;
       float startY = 100 + bot_Size *  floor(i/(formationWidth));
       // float startX = 100 + i* bot_Size; 
       // float startY = 100 + float(floor(i/formationWidth))* bot_Size; 
@@ -54,10 +54,8 @@ class Swarm {
 
       if(bot.needNewTarget){
         updateTarget(i);
-        // if(cellRealValue(cellIndex(cellPos(bot.goal_pos)))>10000){
-        //   bot.needNewTarget = true;
-        // }
-        bot.needNewPath = true;
+        bot.needNewTarget = false;
+        bot.needNewPath   = true;
       }
 
       //Send target to bot
@@ -65,8 +63,7 @@ class Swarm {
 
       //Path Planning
       if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>bot.nextLoop){
-        bot.needNewTarget = false;
-        bot.nextLoop = millis()+1000;
+        bot.nextLoop = millis()+int(random(900,1100));
         bot.waypoints.clear();
         recalculatePath(bot);
         for (int j = path.size()-1; j >=0 ; j--) {

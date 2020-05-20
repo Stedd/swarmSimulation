@@ -72,7 +72,7 @@ class Bot {
   
   //Contructor
   Bot(int botcount_, ArrayList<Bot> bots_, PVector pos_, int id_) {
-    println("Constructor iteration");
+    // println("Constructor iteration");
     //init path planner
     waypoints       = new ArrayList<PVector>();
     needNewPath     = true;
@@ -86,7 +86,7 @@ class Bot {
     bots            = bots_;
     pos             = pos_;
     // prevPos         = pos_;
-    println("Constructor iteration");
+    // println("Constructor iteration");
     prevPos         = new PVector(0,0);
     prevStuckPos    = new PVector(0,0);
     botID           = id_;
@@ -154,15 +154,10 @@ class Bot {
         ruleTarget();
       } 
     }
-    // else{
-    //   needNewTarget = true;
-    // }
-
 
     swarmRulescombine();
 
     //Move robot
-    
     move();
 
     //Display robot
@@ -187,18 +182,20 @@ class Bot {
       prevPos.x = pos.x;
       prevPos.y = pos.y;
       // println("distance from last point" + distanceMoved);
-      if(distanceMoved<0.01*fpixelsPerMeter&& distanceFromStuck>0.10*fpixelsPerMeter && !needNewTarget){
-        // println("Bot "+botID + " is stuck. Recalculating route");
-        // waypoints.clear();
-        botIsStuck     = true;
-        needNewPath    = true;
-        prevStuckPos.x = pos.x;
-        prevStuckPos.y = pos.y;
-        stuckCounter   = 0;
-      }else {
+      // if(distanceMoved<0.01*fpixelsPerMeter&& distanceFromStuck>0.10*fpixelsPerMeter && !needNewTarget){
+      if(distanceMoved<0.01*fpixelsPerMeter){
+        if(distanceFromStuck>0.10*fpixelsPerMeter && !needNewTarget){
+          // println("Bot "+botID + " is stuck. Recalculating route");
+          // waypoints.clear();
+          botIsStuck     = true;
+          needNewPath    = true;
+          prevStuckPos.x = pos.x;
+          prevStuckPos.y = pos.y;
+          stuckCounter   = 0;
+        }
         stuckCounter   += 1;
       }
-      if(stuckCounter>20){
+      if(stuckCounter>3){
         println("Stuck for too long, requesting new target");
         needNewTarget = true;
         stuckCounter   = 0;
@@ -517,17 +514,9 @@ class Bot {
     PVector.sub(pos, goal_pos, botDistVec);
 
     if(botDistVec.mag()<1.4*fpixelsPerMeter){
-      println("Bot: " + botID + " requesting new target");
+      println("Bot " + botID + ". Requesting new target");
       needNewTarget = true;
     }
-    // PVector tmpVec = new PVector();
-    // tmpVec.set(goal_pos);
-    // PVector tmpPosCell = tmpVec.mult(1/cellSize);
-    // if(cells.get(cellIndex(tmpPosCell)).mapValue ==0){
-    //   println("Bot: " + botID + " requesting new target, it is over a wall");
-    //   needNewTarget = true;
-    // }
-
   }
 
   //return position
@@ -537,7 +526,7 @@ class Bot {
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
-    closeBoundary = botSizePixels + 0.75*fpixelsPerMeter;
+    closeBoundary = botSizePixels + 1.25*fpixelsPerMeter;
     detBoundary   = botSizePixels + 35*fpixelsPerMeter;
     
   }

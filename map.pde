@@ -227,12 +227,12 @@ void drawMap() {
 
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
-      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
       // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
       // frameBuffer.stroke(200);
       // println(cells.get(cell).cSpace);
-      // frameBuffer.fill(fill);
-      frameBuffer.fill(0,(1-cells.get(cell).cSpace)*255,0);
+      frameBuffer.fill(fill);
+      // frameBuffer.fill(0,(1-cells.get(cell).cSpace)*255,0);
       // frameBuffer.fill(fill,cells.get(cell).cSpace*255,fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));

@@ -66,7 +66,7 @@ void buttons() {
     ;
 
   cp5.addSlider("DepthCamera_weight")
-    .setValue(10)
+    .setValue(15)
     .setPosition(60, 200)
     //.setSize(20, 60)
     .setRange(0, 15)
@@ -92,7 +92,7 @@ void buttons() {
     ;
 
   cp5.addSlider("Infrared_weight")
-    .setValue(7)
+    .setValue(15)
     .setPosition(60, 300)
     //.setSize(20, 60)
     .setRange(0, 15)
