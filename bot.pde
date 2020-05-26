@@ -35,7 +35,7 @@ class Bot {
   float                     w;
   int                       n;
   float                     c;
-  boolean                   needNewTarget;
+  boolean                   needNewTarget = true;
 
 
   //Sensor variables
@@ -50,7 +50,7 @@ class Bot {
   float botSizePixels       = (closeBoundary-30)/2;
 
   //Path planner variables
-  boolean needNewPath       = true;
+  boolean needNewPath       = false;
   ArrayList<PVector>        waypoints;
   int                       nextLoop;
   

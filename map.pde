@@ -71,7 +71,7 @@ void createMap() {
 
   //Office
   float officeWidth       = 4;    //Meter
-  float officeHeight      = 3;    //Meter
+  float officeHeight      = 5;    //Meter
 
   int   buildingCornerX   = 2;
   int   buildingCornerY   = 2;
@@ -225,8 +225,8 @@ void drawMap() {
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
 
-      // int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
-      int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
+      int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
+      // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
 
       // int fill = 255;
 

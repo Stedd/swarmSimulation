@@ -22,13 +22,13 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 1;
+int       numberOfBots            = 8;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
 
 
-float     fpixelsPerMeter         = 60;
+float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
@@ -63,7 +63,8 @@ void setup() {
   println(width);
 
   // randomSeed(9734021); //map used in report
-  randomSeed(81549300);
+  // randomSeed(81549300);
+  // randomSeed(9000);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -76,7 +77,7 @@ void setup() {
   initMap();
 
   //pre-generate map
-  // createMap();
+  createMap();
 
   //Initialize buttons
   buttons();
