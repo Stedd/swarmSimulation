@@ -22,17 +22,17 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 3;
+int       numberOfBots            = 1;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
 
 
-float     fpixelsPerMeter         = 30;
+float     fpixelsPerMeter         = 60;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 4;
+int       cellSize                = 3;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     fcellPerMeter           = fpixelsPerMeter/cellSize;
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
@@ -61,8 +61,9 @@ void setup() {
   size(1500, 900);
   frameBuffer = createGraphics(width,height);
   println(width);
-  //r
-  randomSeed(9734021);
+
+  // randomSeed(9734021); //map used in report
+  randomSeed(81549300);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -75,7 +76,7 @@ void setup() {
   initMap();
 
   //pre-generate map
-  createMap();
+  // createMap();
 
   //Initialize buttons
   buttons();

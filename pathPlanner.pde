@@ -29,7 +29,7 @@ class Node {
 //Variables
 ArrayList<Node> path         = new ArrayList<Node>();
 ArrayList<Node> nodes        = new ArrayList<Node>();
-ArrayList<Node> nodesChecked = new ArrayList<Node>();
+ArrayList<Node> nodesChecked = new ArrayList<Node>(); // for debugging
 ArrayList<Node> nodesToCheck = new ArrayList<Node>();
 PVector[]       neighborPos;
 int[]           neighborIndex;
@@ -44,7 +44,7 @@ void recalculatePath(Bot bot){
     println("Bot "+bot.botID + ". Recalculating route");
     path.clear();
     nodes.clear();
-    nodesChecked.clear();
+    nodesChecked.clear(); // for debugging
     nodesToCheck.clear();
     boolean finished = false;
     
@@ -96,7 +96,7 @@ void recalculatePath(Bot bot){
                 if(neighborIndex[i] == goalIndex){
                     finished = true;
                     modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue + cellRealValue(neighborNode.id));
-                    nodesChecked.add(neighborNode);
+                    nodesChecked.add(neighborNode); // for debugging
                     break;
                 }else{
                     if(currentNode.localValue + cellRealValue(neighborNode.id) <= neighborNode.localValue){
@@ -104,7 +104,7 @@ void recalculatePath(Bot bot){
                         if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
                             nodesToCheck.add(neighborNode);
                         }
-                        nodesChecked.add(neighborNode);
+                        nodesChecked.add(neighborNode); // for debugging
                     }
                     currentNode.visited = true;
                     nodesToCheck.remove(currentNode);
@@ -205,6 +205,7 @@ void drawPoints(){
     ellipse(goalPos.x*cellSize + cellSize/2, goalPos.y*cellSize + cellSize/2,30,30);
 }
 
+// for debugging
 void drawChecked(){
     for(int i = 0; i<nodesChecked.size();i++){
         noStroke();

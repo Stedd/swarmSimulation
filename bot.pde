@@ -298,7 +298,7 @@ class Bot {
     if(true){
       // text("Bot "+botID + " target.", goal_pos.x-14, goal_pos.y-20);
     // text("Bot " + botID + ". pos:" + pos.x + "," + pos.y + ". prevPos:" + prevPos.x + "," + prevPos.y, pos.x-14, pos.y-20);
-    text("Bot "+botID + ".", pos.x-14, pos.y-20);
+    // text("Bot "+botID + ".", pos.x-14, pos.y-20);
     }
 
 
@@ -503,7 +503,7 @@ class Bot {
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
-    closeBoundary = botSizePixels + 1.25*fpixelsPerMeter;
+    closeBoundary = botSizePixels + 0.5*fpixelsPerMeter;
     detBoundary   = botSizePixels + 35*fpixelsPerMeter;
     
   }

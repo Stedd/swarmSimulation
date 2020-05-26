@@ -27,6 +27,15 @@ class Swarm {
 
 
   public void Loop() {
+
+    // for ( int i = 0; i<240; i++) {
+    //   int formationWidth  = 20;
+    //   float startX = 200 + i%(formationWidth)*bot_Size;
+    //   float startY = 100 + bot_Size * floor(i/(formationWidth));
+    //   fill(0,125,125);
+    //   ellipse(startX, startY, 10, 10);
+    // }
+
     updateSwarm();
     mousePos.set(mouseX, mouseY);
   }
