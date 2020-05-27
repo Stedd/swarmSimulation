@@ -48,12 +48,13 @@ void recalculatePath(Bot bot){
     nodesToCheck.clear();
     boolean finished = false;
     
-    PVector startBehindBot = bot.heading_vec;
-    startBehindBot.mult(-1.0f);
-    startBehindBot.normalize();
-    startBehindBot.mult(random(1.5,1.7)*fpixelsPerMeter);
+    // PVector startBehindBot = bot.heading_vec;
+    // startBehindBot.mult(-1.0f);
+    // startBehindBot.normalize();
+    // startBehindBot.mult(random(1.5,1.7)*fpixelsPerMeter);
+    // int startIndex = cellIndex(cellPos(PVector.add(bot.pos,startBehindBot)));
 
-    int startIndex = cellIndex(cellPos(PVector.add(bot.pos,startBehindBot)));
+    int startIndex = cellIndex(cellPos(bot.pos));
     int goalIndex  = cellIndex(cellPos(bot.goal_pos));
 
     startPos = indexPos(startIndex);

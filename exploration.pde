@@ -68,7 +68,7 @@ void updateTarget(Bot bot, int i){
             for (int l = 0; l < numberOfBots; ++l) {
                 if(l!=i && PVector.sub(goal_Pos[l], scanPoints[k]).mag() < (3*fpixelsPerMeter)){
                     tooClose = true;
-                    println("target is too close to other bots target");
+                    // println("target is too close to other bots target");
                 }
                 
             }
@@ -79,11 +79,11 @@ void updateTarget(Bot bot, int i){
                 roiSumLast = roiSum;
             }
 
-            println(roiSum);
-            ellipse(scanPoints[k].x,scanPoints[k].y,roiSize,roiSize);
-            println(k);
-            println(ang);
-            println(scanPoints[k]);
+            // println(roiSum);
+            // ellipse(scanPoints[k].x,scanPoints[k].y,roiSize,roiSize);
+            // println(k);
+            // println(ang);
+            // println(scanPoints[k]);
             
         }
         k++;
@@ -96,8 +96,8 @@ void updateTarget(Bot bot, int i){
     }
 
     // goal_Pos[i] = new PVector(random(100,width-100), random(100,height-100));
-    println("setting goal");
-    println(roiTarget);
+    // println("setting goal");
+    // println(roiTarget);
     goal_Pos[i] = scanPoints[roiTarget];
 }
 
