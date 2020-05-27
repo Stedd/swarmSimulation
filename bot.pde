@@ -219,12 +219,12 @@ class Bot {
     //Speed controllers
 
     //linear
-    lin_vel = resultantVelocityVector.mag()*cos(theta_ref); 
+    lin_vel = simBotMaxLinearSpeed*resultantVelocityVector.mag()*cos(theta_ref); 
     lin_vel = sat(lin_vel, -0*simBotMaxLinearSpeed, simBotMaxLinearSpeed); 
     // lin_vel = simBotMaxLinearSpeed;
 
     //angular
-    ang_vel = resultantVelocityVector.mag()*sin(theta_ref); 
+    ang_vel = simBotMaxAngularSpeed*resultantVelocityVector.mag()*sin(theta_ref); 
     ang_vel = sat(ang_vel, -simBotMaxAngularSpeed, simBotMaxAngularSpeed); 
     //ang_vel = -0.0015;
 
@@ -334,6 +334,18 @@ class Bot {
     }
   }
 
+  // void swarmRulescombine() {
+  //   //Set the target vector
+  //   for (int k = 0; k<n; k++) {
+  //     if (ruleVector[k].x!=0 && ruleVector[k].y!=0) {
+  //       resultantVelocityVector.add(ruleVector[k]);
+  //     }
+  //   }
+  //   if (n!=0) {
+  //     resultantVelocityVector.mult(1/c);
+  //   }
+  // }
+
   void swarmRulescombine() {
     //Set the target vector
     for (int k = 0; k<n; k++) {
@@ -341,9 +353,13 @@ class Bot {
         resultantVelocityVector.add(ruleVector[k]);
       }
     }
+    println("number of rules:" + n);
     if (n!=0) {
-      resultantVelocityVector.mult(1/c);
+      resultantVelocityVector.mult(10/c);
     }
+    // if (resultantVelocityVector.mag()>1) {
+    //   resultantVelocityVector.normalize();
+    // }
   }
 
   void ruleSeparation() {
@@ -356,7 +372,11 @@ class Bot {
         // if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()<closeBoundary) {
             // ruleVector[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6)))); 
-            ruleVector[n].set(botDistVec.normalize().mult(100*w*tanh((closeBoundary-botDistVec.mag()*3e-6))));
+            ruleVector[n].set(botDistVec.mult(100*w*tanh((closeBoundary-botDistVec.mag()*3e-6))));
+            if(ruleVector[n].mag()>1){
+              ruleVector[n].normalize();
+            }
+            ruleVector[n].mult(w/botcount);
             stroke(255, 0, 0, 100); 
             line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
             n+=1; 
@@ -378,6 +398,10 @@ class Bot {
         if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()>closeBoundary) {
             ruleVector[n].set(botDistVec.mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+            if(ruleVector[n].mag()>1){
+              ruleVector[n].normalize();
+            }
+            ruleVector[n].mult(w/botcount);
             stroke(0, 255, 0, 100); 
             //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
           }
@@ -401,6 +425,10 @@ class Bot {
     ruleVector[n].normalize(ruleVector[n]); 
     PVector.sub(heading_vec.normalize(), ruleVector[n], temp_heading_vec); 
     ruleVector[n].mult(w*temp_heading_vec.mag()); 
+    if(ruleVector[n].mag()>1){
+      ruleVector[n].normalize();
+    }
+    ruleVector[n].mult(w/botcount);
 
     n+=1; 
     c+=1.0;
@@ -419,6 +447,10 @@ class Bot {
         float resultantDirection = ang + HALF_PI*sign(ang - beamangle);
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
+        if(ruleVector[n].mag()>1){
+          ruleVector[n].normalize();
+        }
+        ruleVector[n].mult(w/depthCamera.numberOfBeams);
         // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
         n+=1;
         c+=1.0f;
@@ -441,6 +473,10 @@ class Bot {
         float resultantDirection = ang;
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
+        if(ruleVector[n].mag()>1){
+          ruleVector[n].normalize();
+        }
+        ruleVector[n].mult(w/ultrasonic.numberOfBeams);
         // println("Beam: " + i + ". Resultant vector: " + ruleVector[n]);
         n+=1;
         c+=1.0f;
@@ -457,6 +493,10 @@ class Bot {
         float resultantDirection = ang - HALF_PI;
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
+        if(ruleVector[n].mag()>1){
+          ruleVector[n].normalize();
+        }
+        ruleVector[n].mult(w/leftInfrared.numberOfBeams);
         n+=1;
         c+=1.0f;
       }
@@ -469,6 +509,10 @@ class Bot {
         float resultantDirection = ang + HALF_PI;
         ruleVector[n].set(resultantMagnitude*1*cos(resultantDirection),resultantMagnitude*1*sin(resultantDirection)); 
         ruleVector[n].mult(1);
+        if(ruleVector[n].mag()>1){
+          ruleVector[n].normalize();
+        }
+        ruleVector[n].mult(w/leftInfrared.numberOfBeams);
         n+=1;
         c+=1.0f;
       }
@@ -482,7 +526,11 @@ class Bot {
 
     PVector.sub(pos, target_pos, botDistVec); 
     if (botDistVec.mag()>1*fpixelsPerMeter) {
-      ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+      ruleVector[n].set(botDistVec.mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+      if(ruleVector[n].mag()>1){
+        ruleVector[n].normalize();
+      }
+      ruleVector[n].mult(w);
       stroke(0, 255, 0, 100); 
       n+=1; 
       c+=1.0f;

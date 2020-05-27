@@ -26,7 +26,7 @@ void buttons() {
     ;
 
   cp5.addSlider("Separation_weight")
-    .setValue(1.5)
+    .setValue(3)
     .setPosition(60, 50)
     .setRange(0, 3)
     ;
@@ -38,9 +38,9 @@ void buttons() {
     ;
 
   cp5.addSlider("Cohesion_weight")
-    .setValue(0.09)
+    .setValue(0.5)
     .setPosition(60, 100)
-    .setRange(0, 0.3)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("Alignment")
@@ -50,9 +50,9 @@ void buttons() {
     ;
 
   cp5.addSlider("Alignment_weight")
-    .setValue(40)
+    .setValue(0.5)
     .setPosition(60, 150)
-    .setRange(0, 300)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("DepthCamera")
@@ -62,9 +62,9 @@ void buttons() {
     ;
 
   cp5.addSlider("DepthCamera_weight")
-    .setValue(15)
+    .setValue(1)
     .setPosition(60, 200)
-    .setRange(0, 15)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("Ultrasonic")
@@ -74,9 +74,9 @@ void buttons() {
     ;
 
   cp5.addSlider("Ultrasonic_weight")
-    .setValue(8)
+    .setValue(1)
     .setPosition(60, 250)
-    .setRange(0, 40)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("Infrared")
@@ -86,9 +86,9 @@ void buttons() {
     ;
 
   cp5.addSlider("Infrared_weight")
-    .setValue(15)
+    .setValue(1)
     .setPosition(60, 300)
-    .setRange(0, 15)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("Target")
@@ -98,9 +98,9 @@ void buttons() {
     ;
 
   cp5.addSlider("Target_weight")
-    .setValue(150)
+    .setValue(0.5)
     .setPosition(60, 350)
-    .setRange(0, 300)
+    .setRange(0, 1)
     ;
 
   cp5.addToggle("Draw_Target")

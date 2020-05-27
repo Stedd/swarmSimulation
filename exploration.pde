@@ -74,7 +74,7 @@ void updateTarget(Bot bot, int i){
             }
 
 
-            if (roiSum>roiSumLast && roiSum>300 && cells.get(cellIndex(cellScanPoint)).probability>0.3 && !tooClose){
+            if (roiSum>roiSumLast && roiSum>300 && cells.get(cellIndex(cellScanPoint)).probability>0.1 && !tooClose){
                 roiTarget = k;
                 roiSumLast = roiSum;
             }
