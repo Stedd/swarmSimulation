@@ -4,6 +4,7 @@ ArrayList<Cell>  cellsBuffer;
 IntList   cellsToRender;
 
 //Util
+float   mapDiscoveredPercent = 0;
 boolean bufferUpdated = false;
 int NORTH = 0;
 int SOUTH = 1;

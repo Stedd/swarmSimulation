@@ -41,7 +41,7 @@ void updateTarget(Bot bot, int i){
     for ( int j = 0; j<numberOfscanPoints; j++) {
       scanPoints[j]=new PVector(0, 0);
     }
-    while(roiTarget==-1){
+    while(roiTarget==-1 && scanDist < 70*fpixelsPerMeter){
     int k = 0;
     for (float ang = 0; ang <= TWO_PI-0.1; ang+=(TWO_PI/numberOfscanPoints)) {
         scanPoints[k]  = new PVector(bot.pos.x + (scanDist*cos(ang)) + ((scanDist)*sin(ang)), bot.pos.y + (scanDist*-sin(ang)) + ((scanDist)*cos(ang)));
@@ -98,7 +98,13 @@ void updateTarget(Bot bot, int i){
     // goal_Pos[i] = new PVector(random(100,width-100), random(100,height-100));
     // println("setting goal");
     // println(roiTarget);
-    goal_Pos[i] = scanPoints[roiTarget];
+    if(roiTarget!=-1){
+        goal_Pos[i] = scanPoints[roiTarget];
+    }
+    else {
+        println("No scan zone is valid!, did not set a goal_Pos");
+    }
+    
 }
 
 

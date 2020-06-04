@@ -22,9 +22,10 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 12;
+int       numberOfBots            = 1;
 
 float     time;
+// float     finalTime;
 float     dt                      = 0.05; //50ms per frame
 
 
@@ -95,8 +96,13 @@ void draw() {
   frameRate(300);
   background(backGroundColor);
 
+  if(updateCount % 25 == 0){
+    mapDiscoveredPercent = percentDiscovered();
 
-  if (edit) {
+  }
+
+  if(mapDiscoveredPercent < 90){
+    if (edit) {
     editMap();
     drawEditMap();
     if (Draw_Map) {
@@ -112,7 +118,7 @@ void draw() {
     if (Draw_Map) {
       image(frameBuffer,0,0);
     }
-    text("Map updates: " + updateCount, width-600, 40);
+    text("Discovered: " + nf(mapDiscoveredPercent, 2, 1) + "%", width-600, 40);
     // drawEdges();
     // drawChecked();
     // drawWayPoints();
@@ -121,4 +127,11 @@ void draw() {
   }
   time();
   fps();
+  }
+  else{
+    // finalTime = time;
+    println(time);
+    while(true){
+    }
+  }
 }
