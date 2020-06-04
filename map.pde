@@ -4,6 +4,7 @@ ArrayList<Cell>  cellsBuffer;
 IntList   cellsToRender;
 
 //Util
+float   mapDiscoveredPercent = 0;
 boolean bufferUpdated = false;
 int NORTH = 0;
 int SOUTH = 1;
@@ -28,8 +29,6 @@ class Edge {
 
 
 class Cell {
-  // float sum             = 0.0;
-  // float numberOfmeas    = 0; 
   float cSpace            = 1.0;
   float probability       = 0.5;
   float mapValue          = 1.0;             
@@ -69,10 +68,10 @@ void createMap() {
 
   //Draw parameters
   //Doors
-  float doorWidth         = 1.2;  //Meter
+  float doorWidth         = 0.8;  //Meter
 
   //Office
-  float officeWidth       = 6;    //Meter
+  float officeWidth       = 4;    //Meter
   float officeHeight      = 5;    //Meter
 
   int   buildingCornerX   = 2;
@@ -226,13 +225,15 @@ void drawMap() {
 
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
+
       int fill = constrain(round(255*cells.get(cell).probability), 0, 255);
       // int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255); // for debugging
-      // frameBuffer.stroke(200);
-      // println(cells.get(cell).cSpace);
+
+      // int fill = 255;
+
       frameBuffer.fill(fill);
-      // frameBuffer.fill(0,(1-cells.get(cell).cSpace)*255,0);
-      // frameBuffer.fill(fill,cells.get(cell).cSpace*255,fill);
+
+      // frameBuffer.fill((1-cells.get(cell).cSpace)*255);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));
       frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
@@ -251,7 +252,7 @@ void drawEditMap() {
     for (int cell : cellsToRender){
       frameBuffer.noStroke();
       int fill = constrain(round(255*cells.get(cell).mapValue), 0, 255);
-      frameBuffer.stroke(200);
+      // frameBuffer.stroke(200);//for debugging
       frameBuffer.fill(fill);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));
@@ -277,7 +278,7 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
     cellsToRender.append(l);
   }
   //cspace
-  float doorZoneWidth = 0.7*fcellPerMeter;
+  float doorZoneWidth = 0.55*fcellPerMeter;
   float cSpaceWidth = 1.5*fcellPerMeter;
   currentCell = cells.get(l);
   Cell currentBufferCell = cellsBuffer.get(l);

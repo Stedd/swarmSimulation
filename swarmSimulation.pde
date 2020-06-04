@@ -22,9 +22,10 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 3;
+int       numberOfBots            = 15;
 
 float     time;
+// float     finalTime;
 float     dt                      = 0.05; //50ms per frame
 
 
@@ -32,7 +33,7 @@ float     fpixelsPerMeter         = 30;
 int       ipixelsPerMeter         = int(fpixelsPerMeter);
 float     fpixelsPerCentimeter    = fpixelsPerMeter/100;
 int       ipixelsPerCentimeter    = int(fpixelsPerCentimeter);
-int       cellSize                = 4;
+int       cellSize                = 3;
 int       icellPerMeter           = int(ipixelsPerMeter/cellSize);
 float     fcellPerMeter           = fpixelsPerMeter/cellSize;
 float     realCellSize            = float(cellSize)/fpixelsPerMeter;
@@ -61,8 +62,10 @@ void setup() {
   size(1500, 900);
   frameBuffer = createGraphics(width,height);
   println(width);
-  //r
-  randomSeed(9734021);
+
+  randomSeed(65491361); //map used in report
+  // randomSeed(81549300);
+  // randomSeed(9000);
 
   //Util
   f = createFont("Arial", 16, true);
@@ -93,8 +96,13 @@ void draw() {
   frameRate(300);
   background(backGroundColor);
 
+  if(updateCount % 25 == 0){
+    mapDiscoveredPercent = percentDiscovered();
 
-  if (edit) {
+  }
+
+  if(mapDiscoveredPercent < 90){
+    if (edit) {
     editMap();
     drawEditMap();
     if (Draw_Map) {
@@ -110,7 +118,7 @@ void draw() {
     if (Draw_Map) {
       image(frameBuffer,0,0);
     }
-    text("Map updates: " + updateCount, width-600, 40);
+    text("Discovered: " + nf(mapDiscoveredPercent, 2, 1) + "%", width-600, 40);
     // drawEdges();
     // drawChecked();
     // drawWayPoints();
@@ -119,4 +127,11 @@ void draw() {
   }
   time();
   fps();
+  }
+  else{
+    // finalTime = time;
+    println(time);
+    while(true){
+    }
+  }
 }

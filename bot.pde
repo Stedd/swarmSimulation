@@ -35,7 +35,7 @@ class Bot {
   float                     w;
   int                       n;
   float                     c;
-  boolean                   needNewTarget;
+  boolean                   needNewTarget = true;
 
 
   //Sensor variables
@@ -50,7 +50,7 @@ class Bot {
   float botSizePixels       = (closeBoundary-30)/2;
 
   //Path planner variables
-  boolean needNewPath       = true;
+  boolean needNewPath       = false;
   ArrayList<PVector>        waypoints;
   int                       nextLoop;
   
@@ -181,7 +181,7 @@ class Bot {
         }
         stuckCounter   += 1;
       }
-      if(stuckCounter>3){
+      if(stuckCounter>4){
         println("Stuck for too long, requesting new target");
         needNewTarget = true;
         stuckCounter   = 0;
@@ -298,7 +298,7 @@ class Bot {
     if(true){
       // text("Bot "+botID + " target.", goal_pos.x-14, goal_pos.y-20);
     // text("Bot " + botID + ". pos:" + pos.x + "," + pos.y + ". prevPos:" + prevPos.x + "," + prevPos.y, pos.x-14, pos.y-20);
-    text("Bot "+botID + ".", pos.x-14, pos.y-20);
+      text("Bot "+botID + ".", pos.x-14, pos.y-20);
     }
 
 
@@ -353,15 +353,17 @@ class Bot {
       if (j!=botID) {
         Bot targetBot = bots.get(j); 
         PVector.sub(pos(), targetBot.pos(), botDistVec); 
-        if (botDistVec.mag()<detBoundary) {
+        // if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()<closeBoundary) {
             ruleVector[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6)))); 
+            // ruleVector[n].set(botDistVec.normalize().mult(100*w*tanh((closeBoundary-botDistVec.mag()*3e-6))));
             stroke(255, 0, 0, 100); 
-            //line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
+            line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
+            n+=1; 
+            c+=1.0f;
           }
-          n+=1; 
-          c+=1.0f;
-        }
+          
+        // }
       }
     }
   }
@@ -490,7 +492,10 @@ class Bot {
     }
     PVector.sub(pos, goal_pos, botDistVec);
 
-    if(botDistVec.mag()<1.4*fpixelsPerMeter){
+
+
+    // if(!needNewTarget && botDistVec.mag()<1.4*fpixelsPerMeter || cells.get(cellIndex(cellPos(goal_pos))).probability>0.9 || cells.get(cellIndex(cellPos(goal_pos))).probability<0.1){
+    if(!needNewTarget && botDistVec.mag()<1.4*fpixelsPerMeter){
       println("Bot " + botID + ". Requesting new target");
       needNewTarget = true;
     }
@@ -503,7 +508,7 @@ class Bot {
   public void setSize(float newSize_) {
     botSizeReal   = newSize_/100; 
     botSizePixels = fpixelsPerMeter*botSizeReal;
-    closeBoundary = botSizePixels + 1.25*fpixelsPerMeter;
+    closeBoundary = botSizePixels + 0.5*fpixelsPerMeter;
     detBoundary   = botSizePixels + 35*fpixelsPerMeter;
     
   }

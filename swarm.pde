@@ -27,6 +27,8 @@ class Swarm {
 
 
   public void Loop() {
+
+
     updateSwarm();
     mousePos.set(mouseX, mouseY);
   }
@@ -44,7 +46,7 @@ class Swarm {
 
       //Assign new target to bot
       if(bot.needNewTarget){
-        updateTarget(i);
+        updateTarget(bot, i);
         bot.needNewTarget = false;
         bot.needNewPath   = true;
       }
@@ -54,7 +56,7 @@ class Swarm {
 
       //Path Planning
       if(bot.needNewPath && bot.pos.x !=0 && bot.pos.y !=0 && millis()>bot.nextLoop){
-        bot.nextLoop = millis()+int(random(900,1100));
+        bot.nextLoop = millis()+int(random(200,400));
         bot.waypoints.clear();
         recalculatePath(bot);
         for (int j = path.size()-1; j >=0 ; j--) {

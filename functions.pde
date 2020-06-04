@@ -44,3 +44,30 @@ float sign(float a1) {
   if (a1>0) return 1;
   return 0;
 }
+
+float percentDiscovered(){
+    // float discoveredPercent = 0;
+  int   discoveredCells   = 0;
+  int   totalCells        = 0;
+  for (int x = 3*icellPerMeter; x < (width/cellSize)-3*icellPerMeter; x++) {
+    for (int y = 3*icellPerMeter; y < (height/cellSize)-3*icellPerMeter; y++) {
+      int i = y*(width/cellSize) + x;
+      Cell currentCell = cells.get(i);
+      if(currentCell.probability>0.8 || currentCell.probability<0.2){
+        discoveredCells += 1;
+      }
+      totalCells += 1;
+    }
+  }
+
+  // for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
+  //   Cell currentCell = cells.get(i);
+  //   if(currentCell.probability>0.8 || currentCell.probability<0.2){
+  //     discoveredCells += 1;
+  //   }
+  // }
+  // println(discoveredCells);
+  // println(discoveredCells/(150000));
+  return float(discoveredCells*100)/float(totalCells);
+
+}
