@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 1;
+int       numberOfBots            = 15;
 
 float     time;
 // float     finalTime;
