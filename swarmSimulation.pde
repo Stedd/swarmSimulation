@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 8;
+int       numberOfBots            = 12;
 
 float     time;
 float     dt                      = 0.05; //50ms per frame
@@ -62,7 +62,7 @@ void setup() {
   frameBuffer = createGraphics(width,height);
   println(width);
 
-  // randomSeed(9734021); //map used in report
+  randomSeed(65491361); //map used in report
   // randomSeed(81549300);
   // randomSeed(9000);
 

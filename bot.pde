@@ -355,8 +355,8 @@ class Bot {
         PVector.sub(pos(), targetBot.pos(), botDistVec); 
         // if (botDistVec.mag()<detBoundary) {
           if (botDistVec.mag()<closeBoundary) {
-            // ruleVector[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6)))); 
-            ruleVector[n].set(botDistVec.normalize().mult(100*w*tanh((closeBoundary-botDistVec.mag()*3e-6))));
+            ruleVector[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6)))); 
+            // ruleVector[n].set(botDistVec.normalize().mult(100*w*tanh((closeBoundary-botDistVec.mag()*3e-6))));
             stroke(255, 0, 0, 100); 
             line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
             n+=1; 

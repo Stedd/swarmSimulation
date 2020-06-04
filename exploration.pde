@@ -56,7 +56,7 @@ void updateTarget(Bot bot, int i){
                 for (int y = int(cellScanPoint.y)-roiSize/2; y < int(cellScanPoint.y)+roiSize/2; ++y) {
                     //iterate through roi and sum 
                     float prob = cells.get(cellIndex(new PVector(x,y))).probability;
-                    if( 0.95 > prob && prob > 0.1){
+                    if( 0.90 > prob && prob > 0.1){
                         roiSum+=1;
                     }
                     // roiSum+=1-cells.get(cellIndex(new PVector(x,y))).probability;
@@ -74,7 +74,7 @@ void updateTarget(Bot bot, int i){
             }
 
 
-            if (roiSum>roiSumLast && roiSum>300 && cells.get(cellIndex(cellScanPoint)).probability>0.3 && !tooClose){
+            if (roiSum>roiSumLast && roiSum>300 && cells.get(cellIndex(cellScanPoint)).probability>0.4 && !tooClose){
                 roiTarget = k;
                 roiSumLast = roiSum;
             }
