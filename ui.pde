@@ -104,7 +104,7 @@ void buttons() {
     ;
 
   cp5.addToggle("Draw_Target")
-    .setValue(1)
+    .setValue(0)
     .setPosition(20, height-240)
     .setSize(20, 20)
     ;

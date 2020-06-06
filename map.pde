@@ -29,12 +29,12 @@ class Edge {
 
 
 class Cell {
-  float cSpace            = 1.0;
+  float pField            = 1.0;
   float probability       = 0.5;
   float mapValue          = 1.0;             
   int[] edge_id           = new int[4];
   boolean[] edge_exist    = new boolean[4];
-  boolean cSpaceRendered  = false;
+  boolean pFieldRendered  = false;
 }
 
 
@@ -233,7 +233,7 @@ void drawMap() {
 
       frameBuffer.fill(fill);
 
-      // frameBuffer.fill((1-cells.get(cell).cSpace)*255);
+      // frameBuffer.fill((1-cells.get(cell).pField)*255);
       int x = cell%(width/cellSize);
       int y = floor(cell/(width/cellSize));
       frameBuffer.rect (x*cellSize, y*cellSize, cellSize, cellSize);
@@ -277,13 +277,13 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
     currentCell.probability += difference * modifier;
     cellsToRender.append(l);
   }
-  //cspace
+  //pField
   float doorZoneWidth = 0.55*fcellPerMeter;
-  float cSpaceWidth = 1.5*fcellPerMeter;
+  float pFieldWidth = 1.5*fcellPerMeter;
   currentCell = cells.get(l);
   Cell currentBufferCell = cellsBuffer.get(l);
   Cell currentTargetCell;
-  if(currentCell.mapValue == 0 && !currentCell.cSpaceRendered){
+  if(currentCell.mapValue == 0 && !currentCell.pFieldRendered){
     for (int i = 0; i < 4; i++) {
       if(i==NORTH&&yCellOver>int(1.2*fcellPerMeter)){ 
         l=(yCellOver-1)*(width/cellSize) + xCellOver;
@@ -292,14 +292,14 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver-2)*(width/cellSize) + xCellOver;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            for (int xx = xCellOver-int(cSpaceWidth); xx < xCellOver+int(cSpaceWidth); xx++) {
+            for (int xx = xCellOver-int(pFieldWidth); xx < xCellOver+int(pFieldWidth); xx++) {
               float distanceToWall = 0;
               for (int yy = yCellOver; yy > yCellOver-int(doorZoneWidth); yy--) {
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
-                float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-                if(currentTargetCell.cSpace>newCSpaceValue){
-                  currentTargetCell.cSpace = newCSpaceValue;
+                float newpFieldValue =distanceToWall*(1/pFieldWidth);
+                if(currentTargetCell.pField>newpFieldValue){
+                  currentTargetCell.pField = newpFieldValue;
                 }
                 cellsToRender.append(l);
                 distanceToWall += 1;
@@ -311,12 +311,12 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue != 0){
             float distanceToWall = 0;
-            for (int yy = yCellOver; yy > yCellOver-int(cSpaceWidth); yy--) {
+            for (int yy = yCellOver; yy > yCellOver-int(pFieldWidth); yy--) {
               l=yy*(width/cellSize) + xCellOver;
               currentTargetCell = cells.get(l);
-              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-              if(currentTargetCell.cSpace>newCSpaceValue){
-                currentTargetCell.cSpace = newCSpaceValue;
+              float newpFieldValue =distanceToWall*(1/pFieldWidth);
+              if(currentTargetCell.pField>newpFieldValue){
+                currentTargetCell.pField = newpFieldValue;
               }
               cellsToRender.append(l);
               distanceToWall += 1;
@@ -333,14 +333,14 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver+2)*(width/cellSize) + xCellOver;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            for (int xx = xCellOver-int(cSpaceWidth); xx < xCellOver+int(cSpaceWidth); xx++) {
+            for (int xx = xCellOver-int(pFieldWidth); xx < xCellOver+int(pFieldWidth); xx++) {
               float distanceToWall = 0;
               for (int yy = yCellOver; yy < yCellOver+int(doorZoneWidth); yy++) {
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
-                float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-                if(currentTargetCell.cSpace>newCSpaceValue){
-                  currentTargetCell.cSpace = newCSpaceValue;
+                float newpFieldValue =distanceToWall*(1/pFieldWidth);
+                if(currentTargetCell.pField>newpFieldValue){
+                  currentTargetCell.pField = newpFieldValue;
                 }
                 cellsToRender.append(l);
                 distanceToWall += 1;
@@ -352,12 +352,12 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue != 0){
             float distanceToWall = 0;
-            for (int yy = yCellOver; yy < yCellOver+int(cSpaceWidth); yy++) {
+            for (int yy = yCellOver; yy < yCellOver+int(pFieldWidth); yy++) {
               l=yy*(width/cellSize) + xCellOver;
               currentCell = cells.get(l);
-              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-              if(currentCell.cSpace>newCSpaceValue){
-                currentCell.cSpace = newCSpaceValue;
+              float newpFieldValue =distanceToWall*(1/pFieldWidth);
+              if(currentCell.pField>newpFieldValue){
+                currentCell.pField = newpFieldValue;
               }
               cellsToRender.append(l);
               distanceToWall += 1;
@@ -375,14 +375,14 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver)*(width/cellSize) + xCellOver+2;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            for (int yy = yCellOver-int(cSpaceWidth); yy < yCellOver+int(cSpaceWidth); yy++) {
+            for (int yy = yCellOver-int(pFieldWidth); yy < yCellOver+int(pFieldWidth); yy++) {
               float distanceToWall = 0;
               for (int xx = xCellOver; xx < xCellOver+int(doorZoneWidth); xx++) {
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
-                float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-                if(currentTargetCell.cSpace>newCSpaceValue){
-                  currentTargetCell.cSpace = newCSpaceValue;
+                float newpFieldValue =distanceToWall*(1/pFieldWidth);
+                if(currentTargetCell.pField>newpFieldValue){
+                  currentTargetCell.pField = newpFieldValue;
                 }
                 cellsToRender.append(l);
                 distanceToWall += 1;
@@ -394,12 +394,12 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue != 0){
             float distanceToWall = 0;
-            for (int xx = xCellOver; xx < xCellOver+int(cSpaceWidth); xx++) {
+            for (int xx = xCellOver; xx < xCellOver+int(pFieldWidth); xx++) {
               l= yCellOver*(width/cellSize) + xx;
               currentCell = cells.get(l);
-              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-              if(currentCell.cSpace>newCSpaceValue){
-                currentCell.cSpace = newCSpaceValue;
+              float newpFieldValue =distanceToWall*(1/pFieldWidth);
+              if(currentCell.pField>newpFieldValue){
+                currentCell.pField = newpFieldValue;
               }
               cellsToRender.append(l);
               distanceToWall += 1;
@@ -417,14 +417,14 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           l=(yCellOver)*(width/cellSize) + xCellOver-2;
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue == 1){
-            for (int yy = yCellOver-int(cSpaceWidth); yy < yCellOver+int(cSpaceWidth); yy++) {
+            for (int yy = yCellOver-int(pFieldWidth); yy < yCellOver+int(pFieldWidth); yy++) {
               float distanceToWall = 0;
               for (int xx = xCellOver; xx > xCellOver-int(doorZoneWidth); xx--) {
                 l=yy*(width/cellSize) + xx;
                 currentTargetCell = cells.get(l);
-                float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-                if(currentTargetCell.cSpace>newCSpaceValue){
-                  currentTargetCell.cSpace = newCSpaceValue;
+                float newpFieldValue =distanceToWall*(1/pFieldWidth);
+                if(currentTargetCell.pField>newpFieldValue){
+                  currentTargetCell.pField = newpFieldValue;
                 }
                 cellsToRender.append(l);
                 distanceToWall += 1;
@@ -436,12 +436,12 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
           currentTargetCell = cells.get(l);
           if(currentTargetCell.mapValue != 0){
             float distanceToWall = 0;
-            for (int xx = xCellOver; xx > xCellOver-int(cSpaceWidth); xx--) {
+            for (int xx = xCellOver; xx > xCellOver-int(pFieldWidth); xx--) {
               l= yCellOver*(width/cellSize) + xx;
               currentCell = cells.get(l);
-              float newCSpaceValue =distanceToWall*(1/cSpaceWidth);
-              if(currentCell.cSpace>newCSpaceValue){
-                currentCell.cSpace = newCSpaceValue;
+              float newpFieldValue =distanceToWall*(1/pFieldWidth);
+              if(currentCell.pField>newpFieldValue){
+                currentCell.pField = newpFieldValue;
               }
               cellsToRender.append(l);
               distanceToWall += 1;
@@ -450,7 +450,7 @@ void updateCell(PVector scanPoint, float targetValue, float modifier) {
         }
       }
     }
-    currentCell.cSpaceRendered = true;
+    currentCell.pFieldRendered = true;
   }
 }
 
@@ -518,9 +518,9 @@ void editMap() {
   edgePool.clear();
   for (int i= 0; i<cellsBuffer.size(); i++) {
     cells.get(i).probability = 0.5;
-    cells.get(i).cSpace = 1;
+    cells.get(i).pField = 1;
     cellsBuffer.get(i).probability = 0.5;
-    cellsBuffer.get(i).cSpace = 1;
+    cellsBuffer.get(i).pField = 1;
     for (int j= 0; j<4; j++) {
       cells.get(i).edge_id[j] = 0;
       cells.get(i).edge_exist[j] = false;
