@@ -22,7 +22,7 @@ float     fint                    = 0.25;
 
 //Simulation Parameters
 
-int       numberOfBots            = 15;
+int       numberOfBots            = 4;
 
 float     time;
 // float     finalTime;
@@ -63,9 +63,11 @@ void setup() {
   frameBuffer = createGraphics(width,height);
   println(width);
 
-  randomSeed(65491361); //map used in report
-  // randomSeed(81549300);
-  // randomSeed(9000);
+  // randomSeed(65491361); //results 2
+  // randomSeed(66491361); //results 3
+  // randomSeed(36491469); //results 4
+    randomSeed(36431469); //results 5
+
 
   //Util
   f = createFont("Arial", 16, true);

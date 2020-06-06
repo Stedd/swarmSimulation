@@ -101,7 +101,7 @@ void recalculatePath(Bot bot){
                     break;
                 }else{
                     if(currentNode.localValue + cellRealValue(neighborNode.id) <= neighborNode.localValue){
-                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 30*(1-cells.get(neighborNode.id).cSpace), currentNode.localValue + cellRealValue(neighborNode.id));
+                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 30*(1-cells.get(neighborNode.id).pField), currentNode.localValue + cellRealValue(neighborNode.id));
                         if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
                             nodesToCheck.add(neighborNode);
                         }
@@ -131,7 +131,7 @@ float cellRealValue(int index){
   if (cells.get(index).probability <=0.499){ 
     return 100000;
   }else{
-    return 20*(1-cells.get(index).probability) + 30*(1-cells.get(index).cSpace);
+    return 20*(1-cells.get(index).probability) + 30*(1-cells.get(index).pField);
   }
 }
 

@@ -298,7 +298,7 @@ class Bot {
     if(true){
       // text("Bot "+botID + " target.", goal_pos.x-14, goal_pos.y-20);
     // text("Bot " + botID + ". pos:" + pos.x + "," + pos.y + ". prevPos:" + prevPos.x + "," + prevPos.y, pos.x-14, pos.y-20);
-      text("Bot "+botID + ".", pos.x-14, pos.y-20);
+      // text("Bot "+botID + ".", pos.x-14, pos.y-20);
     }
 
 
@@ -358,7 +358,7 @@ class Bot {
             ruleVector[n].set(botDistVec.mult((2.5e6*w*botcount)*tanh(((closeBoundary-botDistVec.mag())*3e-6)))); 
             // ruleVector[n].set(botDistVec.normalize().mult(100*w*tanh((closeBoundary-botDistVec.mag()*3e-6))));
             stroke(255, 0, 0, 100); 
-            line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
+            // line(pos().x, pos().y, targetBot.pos().x, targetBot.pos().y);
             n+=1; 
             c+=1.0f;
           }
@@ -480,20 +480,18 @@ class Bot {
 
     target_pos = waypoints.get(0);
 
-    PVector.sub(pos, target_pos, botDistVec); 
+    PVector.sub(target_pos, pos, botDistVec); 
     if (botDistVec.mag()>1*fpixelsPerMeter) {
-      ruleVector[n].set(botDistVec.normalize().mult(-w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+      ruleVector[n].set(botDistVec.normalize().mult(w*tanh(((closeBoundary-botDistVec.mag()*3e-6)))));
+      // ruleVector[n].set(botDistVec.normalize().mult(-w));
       stroke(0, 255, 0, 100); 
       n+=1; 
       c+=1.0f;
     }else{
       waypoints.remove(0);
-
     }
+    
     PVector.sub(pos, goal_pos, botDistVec);
-
-
-
     // if(!needNewTarget && botDistVec.mag()<1.4*fpixelsPerMeter || cells.get(cellIndex(cellPos(goal_pos))).probability>0.9 || cells.get(cellIndex(cellPos(goal_pos))).probability<0.1){
     if(!needNewTarget && botDistVec.mag()<1.4*fpixelsPerMeter){
       println("Bot " + botID + ". Requesting new target");
