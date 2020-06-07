@@ -41,90 +41,92 @@ PVector goalPos = new PVector(0,0);
 
 
 void recalculatePath(Bot bot){
-    println("Bot "+bot.botID + ". Recalculating route");
-    path.clear();
-    nodes.clear();
-    nodesChecked.clear(); // for debugging
-    nodesToCheck.clear();
-    boolean finished = false;
-    
-    PVector startBehindBot = bot.heading_vec;
-    startBehindBot.mult(-1.0f);
-    startBehindBot.normalize();
-    startBehindBot.mult(random(1.5,1.7)*fpixelsPerMeter);
-    int startIndex = cellIndex(cellPos(PVector.add(bot.pos,startBehindBot)));
+  println("Bot "+bot.botID + ". Recalculating route");
+  path.clear();
+  nodes.clear();
+  nodesChecked.clear(); // for debugging
+  nodesToCheck.clear();
+  boolean finished = false;
+  
+  PVector startBehindBot = bot.heading_vec;
+  startBehindBot.mult(-1.0f);
+  startBehindBot.normalize();
+  startBehindBot.mult(random(1.5,1.7)*fpixelsPerMeter);
+  int startIndex = cellIndex(cellPos(PVector.add(bot.pos,startBehindBot)));
 
-    // int startIndex = cellIndex(cellPos(bot.pos));
-    int goalIndex  = cellIndex(cellPos(bot.goal_pos));
+  // int startIndex = cellIndex(cellPos(bot.pos));
+  int goalIndex  = cellIndex(cellPos(bot.goal_pos));
 
-    startPos = indexPos(startIndex);
-    goalPos = indexPos(goalIndex);   
+  startPos = indexPos(startIndex);
+  goalPos = indexPos(goalIndex);   
 
-    for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
-        nodes.add(new Node(i));
-    }
+  for ( int i = 0; i<((width/cellSize)*(height/cellSize)); i++) {
+      nodes.add(new Node(i));
+  }
 
-    //Add first waypoint to path
-    modifyNode(startIndex, 0, false, pathDist(startPos, goalPos), 0);
-    nodesToCheck.add(nodes.get(startIndex));
-    neighborIndex    = new int[4];
+  //Add first waypoint to path
+  modifyNode(startIndex, 0, false, pathDist(startPos, goalPos), 0);
+  nodesToCheck.add(nodes.get(startIndex));
+  neighborIndex    = new int[4];
 
-    int ii = 0;
-    while(!finished && nodesToCheck.size()>0){
+  int ii = 0;
+  while(!finished && nodesToCheck.size()>0){
 
-        currentNode = nodes.get(nodesToCheck.get(getIndexOfMin(nodesToCheck)).id);
+      currentNode = nodes.get(nodesToCheck.get(getIndexOfMin(nodesToCheck)).id);
 
-        //Calculate index of target cells
-        for (int i = 0; i < 4; ++i) {
-            neighborIndex[i] = -1;
-        }
-        if(currentNode.pos.y>0){
-            neighborIndex[0] = cellIndex(new PVector(currentNode.pos.x, currentNode.pos.y-1));
-        }
-        if(currentNode.pos.y<(height/cellSize)-1){
-            neighborIndex[1] = cellIndex(new PVector(currentNode.pos.x, currentNode.pos.y+1));
-        }
-        if(currentNode.pos.x<(width/cellSize)-1){
-            neighborIndex[2] = cellIndex(new PVector(currentNode.pos.x+1, currentNode.pos.y));
-        }
-        if(currentNode.pos.x>0){
-            neighborIndex[3] = cellIndex(new PVector(currentNode.pos.x-1, currentNode.pos.y));
-        }
+      //Calculate index of target cells
+      for (int i = 0; i < 4; ++i) {
+          neighborIndex[i] = -1;
+      }
+      if(currentNode.pos.y>0){
+          neighborIndex[0] = cellIndex(new PVector(currentNode.pos.x, currentNode.pos.y-1));
+      }
+      if(currentNode.pos.y<(height/cellSize)-1){
+          neighborIndex[1] = cellIndex(new PVector(currentNode.pos.x, currentNode.pos.y+1));
+      }
+      if(currentNode.pos.x<(width/cellSize)-1){
+          neighborIndex[2] = cellIndex(new PVector(currentNode.pos.x+1, currentNode.pos.y));
+      }
+      if(currentNode.pos.x>0){
+          neighborIndex[3] = cellIndex(new PVector(currentNode.pos.x-1, currentNode.pos.y));
+      }
 
-        for(int i = 0; i<4;i++){
-            if(neighborIndex[i]!=-1){
-                neighborNode = nodes.get(neighborIndex[i]);
-                if(neighborIndex[i] == goalIndex){
-                    finished = true;
-                    modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue + cellRealValue(neighborNode.id));
-                    nodesChecked.add(neighborNode); // for debugging
-                    break;
-                }else{
-                    if(currentNode.localValue + cellRealValue(neighborNode.id) <= neighborNode.localValue){
-                        modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 30*(1-cells.get(neighborNode.id).pField), currentNode.localValue + cellRealValue(neighborNode.id));
-                        if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
-                            nodesToCheck.add(neighborNode);
-                        }
-                        nodesChecked.add(neighborNode); // for debugging
-                    }
-                    currentNode.visited = true;
-                    nodesToCheck.remove(currentNode);
-                }
-            }
-        }
-    }   
-    int pathIndex = goalIndex;
-    while(!(pathIndex == startIndex) && ii<2000){
-        currentNode = nodes.get(pathIndex);
-        if(currentNode.pos.x == 0 && currentNode.pos.y == 0 ){
-          println("waypoint in corner, illegal target");
-          bot.needNewTarget = true;
-          break;
-        }
-        path.add(currentNode);
-        pathIndex = currentNode.parent;
-        ii+=1;        
-    }
+      for(int i = 0; i<4;i++){
+          if(neighborIndex[i]!=-1){
+              neighborNode = nodes.get(neighborIndex[i]);
+              if(neighborIndex[i] == goalIndex){
+                  finished = true;
+                  // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), currentNode.localValue + cellRealValue(neighborNode.id));
+                  modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos), cellRealValue(neighborNode.id));
+                  nodesChecked.add(neighborNode); // for debugging
+                  break;
+              }else{
+                  if(currentNode.localValue + cellRealValue(neighborNode.id) <= neighborNode.localValue){
+                      // modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 30*(1-cells.get(neighborNode.id).pField), currentNode.localValue + cellRealValue(neighborNode.id));
+                      modifyNode(neighborIndex[i], currentNode.id, neighborNode.visited, pathDist(neighborNode.pos, goalPos) + 30*(1-cells.get(neighborNode.id).pField), cellRealValue(neighborNode.id));
+                      if(!neighborNode.visited && cellRealValue(neighborIndex[i])<99000){
+                          nodesToCheck.add(neighborNode);
+                      }
+                      nodesChecked.add(neighborNode); // for debugging
+                  }
+                  currentNode.visited = true;
+                  nodesToCheck.remove(currentNode);
+              }
+          }
+      }
+  }   
+  int pathIndex = goalIndex;
+  while(!(pathIndex == startIndex) && ii<2000){
+      currentNode = nodes.get(pathIndex);
+      if(currentNode.pos.x == 0 && currentNode.pos.y == 0 ){
+        println("waypoint in corner, illegal target");
+        bot.needNewTarget = true;
+        break;
+      }
+      path.add(currentNode);
+      pathIndex = currentNode.parent;
+      ii+=1;        
+  }
 }
 
 float cellRealValue(int index){

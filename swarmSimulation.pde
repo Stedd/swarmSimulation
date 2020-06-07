@@ -64,9 +64,9 @@ void setup() {
   println(width);
 
   // randomSeed(65491361); //results 2
-  // randomSeed(66491361); //results 3
+  randomSeed(66491361); //results 3
   // randomSeed(36491469); //results 4
-    randomSeed(36431469); //results 5
+    // randomSeed(36431469); //results 5
 
 
   //Util
@@ -122,7 +122,7 @@ void draw() {
     }
     text("Discovered: " + nf(mapDiscoveredPercent, 2, 1) + "%", width-600, 40);
     // drawEdges();
-    // drawChecked();
+    drawChecked();
     // drawWayPoints();
     // drawPoints();
     swarmsystem.Loop();
