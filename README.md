@@ -3,3 +3,6 @@ Swarm of robots collaboratively explore an unknown location and creating an occu
 
 Video demonstration:
 https://youtu.be/ly2J2VyR3ys
+
+Pathfinder and sensors visualized:
+https://youtu.be/uDduL_iyKSs
